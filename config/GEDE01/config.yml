@@ -1,0 +1,9 @@
+# See config.example.yml for documentation.
+object_base: orig/GEDE01
+object: sys/main.dol
+hash: ea24b6af954876ce072562ff39cdb4c81d32be1f
+symbols: config/GEDE01/symbols.txt
+splits: config/GEDE01/splits.txt
+# Change this to match the linker version.
+# See config.example.yml for a list.
+mw_comment_version: 11
