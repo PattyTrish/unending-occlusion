@@ -12,3 +12,23 @@ Sections:
 	.sbss       type:bss align:8
 	.sdata2     type:rodata align:8
 	.sbss2      type:bss align:32
+
+Runtime.PPCEABI.H/global_destructor_chain.c:
+	.text       start:0x800F5C0C end:0x800F5C54
+	.dtors      start:0x80237F08 end:0x80237F0C
+	.sbss       start:0x8064CC28 end:0x8064CC2C
+
+Runtime.PPCEABI.H/__init_cpp_exceptions.cpp:
+	.text       start:0x800F63E4 end:0x800F6460
+	.ctors      start:0x80237EE0 end:0x80237EE4
+	.dtors      start:0x80237F00 end:0x80237F08
+	.sdata      start:0x8064B838 end:0x8064B83C
+
+lua/ldo.c:
+	.text       start:0x801604F8 end:0x801610E8
+	.data       start:0x8024F5A0 end:0x8024F5C0
+	.sdata      start:0x8064BA58 end:0x8064BA80
+
+lua/lstate.c:
+	.text       start:0x801667BC end:0x80166AC4
+	.data       start:0x8024FA18 end:0x8024FA38

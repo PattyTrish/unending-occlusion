@@ -211,6 +211,8 @@ cflags_base = [
     "-multibyte",  # For Wii compilers, replace with `-enc SJIS`
     "-i include",
     f"-i build/{config.version}/include",
+    "-i src/msl",
+    "-i src/lua",
     f"-DBUILD_VERSION={version_num}",
     f"-DVERSION_{config.version}",
 ]
@@ -291,8 +293,45 @@ config.libs = [
         "cflags": cflags_runtime,
         "progress_category": "sdk",  # str | List[str]
         "objects": [
-            Object(NonMatching, "Runtime.PPCEABI.H/global_destructor_chain.c"),
-            Object(NonMatching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
+            Object(Matching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
+            Object(Matching, "Runtime.PPCEABI.H/global_destructor_chain.c"),
+        ],
+    },
+    {
+        # Embedded Lua 4.0 core. Linked alphabetically, which is confirmed by the
+        # ten __FILE__ anchors below being in strict alphabetical address order.
+        # Note the allocator is *not* stock: every Lua TU passes its own
+        # __FILE__/__LINE__ into the Silicon Knights allocator at 0x8016B5CC, so
+        # the luaM_* macros in lmem.h were rewritten. Expect local modifications.
+        "lib": "lua",
+        "mw_version": config.linker_version,
+        "cflags": cflags_base,
+        "progress_category": "lua",
+        "objects": [
+            # Confirmed present via __FILE__ strings, in link order.
+            # Addresses are *interior anchors*, not split boundaries.
+            Object(NonMatching, "lua/ldo.c"),       # anchor 0x801604F8
+            Object(NonMatching, "lua/lfunc.c"),     # anchor 0x801610E8
+            Object(NonMatching, "lua/lgc.c"),       # anchor 0x80161B58
+            Object(NonMatching, "lua/lapi.c"),       # anchor ?
+            Object(NonMatching, "lua/lcode.c"),       # anchor ?
+            Object(NonMatching, "lua/ldebug.c"),       # anchor ?
+            Object(NonMatching, "lua/llex.c"),      # anchor ?
+            Object(NonMatching, "lua/lmem.c"),      # anchor 0x8016393C
+            Object(NonMatching, "lua/lobject.c"),   # anchor 0x80163A9C
+            Object(NonMatching, "lua/lparser.c"),   # anchor 0x80164A64
+            Object(NonMatching, "lua/lstate.c"),    # anchor 0x80166894
+            Object(NonMatching, "lua/lstring.c"),   # anchor 0x80166AC4
+            Object(NonMatching, "lua/ltable.c"),    # anchor 0x80167558
+            Object(NonMatching, "lua/ltm.c"),    # anchor ?
+            Object(NonMatching, "lua/lundump.c"),   # anchor 0x80168114
+            Object(NonMatching, "lua/lvm.c"),    # anchor ?
+            Object(NonMatching, "lua/lzio.c"),    # anchor ?
+            # Expected from the alphabetical ordering but not yet located (no
+            # __FILE__ string survives for them): lapi.c, lcode.c, ldebug.c,
+            # llex.c (sits in the 0x80161ED8..0x8016393C gap between lgc and
+            # lmem), ltm.c (0x801679F8..0x80168114, between ltable and lundump),
+            # lvm.c and lzio.c (after lundump).
         ],
     },
 ]
@@ -321,6 +360,7 @@ def link_order_callback(module_id: int, objects: List[str]) -> List[str]:
 config.progress_categories = [
     ProgressCategory("game", "Game Code"),
     ProgressCategory("sdk", "SDK Code"),
+    ProgressCategory("lua", "Lua"),
 ]
 config.progress_each_module = args.verbose
 # Optional extra arguments to `objdiff-cli report generate`
