@@ -26,9 +26,36 @@ Runtime.PPCEABI.H/__init_cpp_exceptions.cpp:
 
 lua/ldo.c:
 	.text       start:0x801604F8 end:0x801610E8
-	.data       start:0x8024F5A0 end:0x8024F5C0
+	.data       start:0x8024F5A0 end:0x8024F5E0
 	.sdata      start:0x8064BA58 end:0x8064BA80
+
+lua/llex.c:
+	.text       start:0x80161FD0 end:0x80163224
+	.rodata     start:0x8023A7F8 end:0x8023A868
+	.data       start:0x8024F5EC end:0x8024F700
+	.sdata      start:0x8064BB1C end:0x8064BB28
+
+lua/lmem.c:
+	.text       start:0x8016393C end:0x801639CC
+	.sdata      start:0x8064BB28 end:0x8064BB30
+
+lua/lobject.c:
+	.text       start:0x801639CC end:0x80163DA4
+	.sdata      start:0x8064BB50 end:0x8064BB58
 
 lua/lstate.c:
 	.text       start:0x801667BC end:0x80166AC4
 	.data       start:0x8024FA18 end:0x8024FA38
+
+lua/lstring.c:
+	.text       start:0x80166AC4 end:0x80167128
+	.data       start:0x8024FA38 end:0x8024FA48
+
+lua/ltable.c:
+	.text       start:0x80167128 end:0x80167C28
+	.data       start:0x8024FA48 end:0x8024FA90
+	.sdata2     start:0x80650660 end:0x80650668
+
+lua/ltm.c:
+	.text       start:0x80167C28 end:0x80167F48
+	.sdata      start:0x8064BBC4 end:0x8064BBC8

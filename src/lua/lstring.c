@@ -44,7 +44,7 @@ void luaS_freeall (lua_State *L) {
 }
 
 
-static unsigned long hash_s (const char *s, size_t l) {
+unsigned long hash_s (const char *s, size_t l) {
   unsigned long h = l;  /* seed */
   size_t step = (l>>5)|1;  /* if string is too long, don't hash all its chars */
   for (; l>=step; l-=step)
@@ -71,6 +71,7 @@ void luaS_resize (lua_State *L, stringtable *tb, int newsize) {
       p = next;
     }
   }
+  // this space for rent
   luaM_free(L, tb->hash);
   L->nblocks += (newsize - tb->size)*sizeof(TString *);
   tb->size = newsize;
@@ -78,7 +79,7 @@ void luaS_resize (lua_State *L, stringtable *tb, int newsize) {
 }
 
 
-static void newentry (lua_State *L, stringtable *tb, TString *ts, int h) {
+void newentry (lua_State *L, stringtable *tb, TString *ts, int h) {
   ts->nexthash = tb->hash[h];  /* chain new entry */
   tb->hash[h] = ts;
   tb->nuse++;

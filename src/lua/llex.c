@@ -83,14 +83,14 @@ void luaX_token2str (int token, char *s) {
 }
 
 
-static void luaX_invalidchar (LexState *ls, int c) {
+void luaX_invalidchar (LexState *ls, int c) {
   char buff[8];
   sprintf(buff, "0x%02X", c);
   luaX_syntaxerror(ls, "invalid control char", buff);
 }
 
 
-static void inclinenumber (LexState *LS) {
+void inclinenumber (LexState *LS) {
   next(LS);  /* skip '\n' */
   ++LS->linenumber;
   luaX_checklimit(LS, LS->linenumber, MAX_INT, "lines in a chunk");
@@ -132,7 +132,7 @@ void luaX_setinput (lua_State *L, LexState *LS, ZIO *z, TString *source) {
 #define save_and_next(L, LS, l)  (save(L, LS->current, l), next(LS))
 
 
-static const char *readname (LexState *LS) {
+const char *readname (LexState *LS) {
   lua_State *L = LS->L;
   size_t l = 0;
   checkbuffer(L, 10, l);
@@ -146,7 +146,7 @@ static const char *readname (LexState *LS) {
 
 
 /* LUA_NUMBER */
-static void read_number (LexState *LS, int comma, SemInfo *seminfo) {
+void read_number (LexState *LS, int comma, SemInfo *seminfo) {
   lua_State *L = LS->L;
   size_t l = 0;
   checkbuffer(L, 10, l);
@@ -183,7 +183,7 @@ static void read_number (LexState *LS, int comma, SemInfo *seminfo) {
 }
 
 
-static void read_long_string (LexState *LS, SemInfo *seminfo) {
+void read_long_string (LexState *LS, SemInfo *seminfo) {
   lua_State *L = LS->L;
   int cont = 0;
   size_t l = 0;
@@ -226,7 +226,7 @@ static void read_long_string (LexState *LS, SemInfo *seminfo) {
 }
 
 
-static void read_string (LexState *LS, int del, SemInfo *seminfo) {
+void read_string (LexState *LS, int del, SemInfo *seminfo) {
   lua_State *L = LS->L;
   size_t l = 0;
   checkbuffer(L, 10, l);
@@ -275,105 +275,4 @@ static void read_string (LexState *LS, int del, SemInfo *seminfo) {
   save_and_next(L, LS, l);  /* skip delimiter */
   save(L, '\0', l);
   seminfo->ts = luaS_newlstr(L, L->Mbuffer+1, l-3);
-}
-
-
-int luaX_lex (LexState *LS, SemInfo *seminfo) {
-  for (;;) {
-    switch (LS->current) {
-
-      case ' ': case '\t': case '\r':  /* `\r' to avoid problems with DOS */
-        next(LS);
-        continue;
-
-      case '\n':
-        inclinenumber(LS);
-        continue;
-
-      case '$':
-        luaX_error(LS, "unexpected `$' (pragmas are no longer supported)", '$');
-        break;
-
-      case '-':
-        next(LS);
-        if (LS->current != '-') return '-';
-        do { next(LS); } while (LS->current != '\n' && LS->current != EOZ);
-        continue;
-
-      case '[':
-        next(LS);
-        if (LS->current != '[') return '[';
-        else {
-          read_long_string(LS, seminfo);
-          return TK_STRING;
-        }
-
-      case '=':
-        next(LS);
-        if (LS->current != '=') return '=';
-        else { next(LS); return TK_EQ; }
-
-      case '<':
-        next(LS);
-        if (LS->current != '=') return '<';
-        else { next(LS); return TK_LE; }
-
-      case '>':
-        next(LS);
-        if (LS->current != '=') return '>';
-        else { next(LS); return TK_GE; }
-
-      case '~':
-        next(LS);
-        if (LS->current != '=') return '~';
-        else { next(LS); return TK_NE; }
-
-      case '"':
-      case '\'':
-        read_string(LS, LS->current, seminfo);
-        return TK_STRING;
-
-      case '.':
-        next(LS);
-        if (LS->current == '.') {
-          next(LS);
-          if (LS->current == '.') {
-            next(LS);
-            return TK_DOTS;   /* ... */
-          }
-          else return TK_CONCAT;   /* .. */
-        }
-        else if (!isdigit(LS->current)) return '.';
-        else {
-          read_number(LS, 1, seminfo);
-          return TK_NUMBER;
-        }
-
-      case '0': case '1': case '2': case '3': case '4':
-      case '5': case '6': case '7': case '8': case '9':
-        read_number(LS, 0, seminfo);
-        return TK_NUMBER;
-
-      case EOZ:
-        return TK_EOS;
-
-      case '_': goto tname;
-
-      default:
-        if (!isalpha(LS->current)) {
-          int c = LS->current;
-          if (iscntrl(c))
-            luaX_invalidchar(LS, c);
-          next(LS);
-          return c;
-        }
-        tname: {  /* identifier or reserved word */
-          TString *ts = luaS_new(LS->L, readname(LS));
-          if (ts->marked >= RESERVEDMARK)  /* reserved word? */
-            return ts->marked-RESERVEDMARK+FIRST_RESERVED;
-          seminfo->ts = ts;
-          return TK_NAME;
-        }
-    }
-  }
 }

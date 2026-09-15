@@ -13,13 +13,15 @@
 #include "llimits.h"
 #include "lua.h"
 
-void *luaM_realloc (lua_State *L, void *oldblock, lint32 size, const char *file, int line);
+#include "SKtest.h"
+
+// void *luaM_realloc (lua_State *L, void *oldblock, lint32 size);
 void *luaM_growaux (lua_State *L, void *block, size_t nelems,
                     int inc, size_t size, const char *errormsg,
                     size_t limit);
 
-#define luaM_free(L, b)         luaM_realloc(L, (b), 0, __FILE__, __LINE__)
-#define luaM_malloc(L, t)       luaM_realloc(L, NULL, (t), __FILE__, __LINE__)
+// #define luaM_free(L, b)         luaM_realloc(L, (b), 0)
+// #define luaM_malloc(L, t)       luaM_realloc(L, NULL, (t))
 #define luaM_new(L, t)          ((t *)luaM_malloc(L, sizeof(t)))
 #define luaM_newvector(L, n,t)  ((t *)luaM_malloc(L, (n)*(lint32)sizeof(t)))
 

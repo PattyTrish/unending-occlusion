@@ -27,6 +27,7 @@
 #include "ltable.h"
 
 
+
 #define gcsize(L, n)    (sizeof(Hash)+(n)*sizeof(Node))
 
 
@@ -66,7 +67,7 @@ Node *luaH_mainposition (const Hash *t, const TObject *key) {
 }
 
 
-static const TObject *luaH_getany (lua_State *L, const Hash *t,
+const TObject *luaH_getany (lua_State *L, const Hash *t,
                                    const TObject *key) {
   Node *n = luaH_mainposition(t, key);
   if (!n)
@@ -158,7 +159,7 @@ void luaH_remove (Hash *t, TObject *key) {
 }
 
 
-static void setnodevector (lua_State *L, Hash *t, lint32 size) {
+void setnodevector (lua_State *L, Hash *t, lint32 size) {
   int i;
   if (size > MAX_INT)
     lua_error(L, "table overflow");
@@ -194,7 +195,7 @@ void luaH_free (lua_State *L, Hash *t) {
 }
 
 
-static int numuse (const Hash *t) {
+int numuse (const Hash *t) {
   Node *v = t->node;
   int size = t->size;
   int realuse = 0;
@@ -207,7 +208,7 @@ static int numuse (const Hash *t) {
 }
 
 
-static void rehash (lua_State *L, Hash *t) {
+void rehash (lua_State *L, Hash *t) {
   int oldsize = t->size;
   Node *nold = t->node;
   int nelems = numuse(t);

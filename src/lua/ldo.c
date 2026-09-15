@@ -54,7 +54,7 @@ void luaD_checkstack (lua_State *L, int n) {
 }
 
 
-static void restore_stack_limit (lua_State *L) {
+void restore_stack_limit (lua_State *L) {
   if (L->top - L->stack < L->stacksize - 1)
     L->stack_last = L->stack + (L->stacksize-1);
 }
@@ -80,14 +80,14 @@ void luaD_adjusttop (lua_State *L, StkId base, int extra) {
 /*
 ** Open a hole inside the stack at `pos'
 */
-static void luaD_openstack (lua_State *L, StkId pos) {
+void luaD_openstack (lua_State *L, StkId pos) {
   int i = L->top-pos; 
   while (i--) pos[i+1] = pos[i];
   incr_top;
 }
 
 
-static void dohook (lua_State *L, lua_Debug *ar, lua_Hook hook) {
+void dohook (lua_State *L, lua_Debug *ar, lua_Hook hook) {
   StkId old_Cbase = L->Cbase;
   StkId old_top = L->Cbase = L->top;
   luaD_checkstack(L, LUA_MINSTACK);  /* ensure minimum stack size */
@@ -111,7 +111,7 @@ void luaD_lineHook (lua_State *L, StkId func, int line, lua_Hook linehook) {
 }
 
 
-static void luaD_callHook (lua_State *L, StkId func, lua_Hook callhook,
+void luaD_callHook (lua_State *L, StkId func, lua_Hook callhook,
                     const char *event) {
   if (L->allowhooks) {
     lua_Debug ar;
@@ -123,7 +123,7 @@ static void luaD_callHook (lua_State *L, StkId func, lua_Hook callhook,
 }
 
 
-static StkId callCclosure (lua_State *L, const struct Closure *cl, StkId base) {
+StkId callCclosure (lua_State *L, const struct Closure *cl, StkId base) {
   int nup = cl->nupvalues;  /* number of upvalues */
   StkId old_Cbase = L->Cbase;
   int n;
@@ -194,7 +194,7 @@ void luaD_call (lua_State *L, StkId func, int nResults) {
       incr_top;  /* must check stack space */
     }
   }
-  luaC_checkGC(L);
+  luaC_collectgarbage(L);
 }
 
 
@@ -206,7 +206,7 @@ struct CallS {  /* data to `f_call' */
   int nresults;
 };
 
-static void f_call (lua_State *L, void *ud) {
+void f_call (lua_State *L, void *ud) {
   struct CallS *c = (struct CallS *)ud;
   luaD_call(L, c->func, c->nresults);
 }
@@ -232,21 +232,20 @@ struct ParserS {  /* data to `f_parser' */
   int bin;
 };
 
-static void f_parser (lua_State *L, void *ud) {
+void f_parser (lua_State *L, void *ud) {
   struct ParserS *p = (struct ParserS *)ud;
   Proto *tf = p->bin ? luaU_undump(L, p->z) : luaY_parser(L, p->z);
   luaV_Lclosure(L, tf, 0);
 }
 
 
-static int protectedparser (lua_State *L, ZIO *z, int bin) {
+int protectedparser (lua_State *L, ZIO *z, int bin) {
   struct ParserS p;
   unsigned long old_blocks;
   int status;
   p.z = z; p.bin = bin;
   /* before parsing, give a (good) chance to GC */
-  if (L->nblocks/8 >= L->GCthreshold/10)
-    luaC_collectgarbage(L);
+  luaC_collectgarbage(L);
   old_blocks = L->nblocks;
   status = luaD_runprotected(L, f_parser, &p);
   if (status == 0) {
@@ -297,7 +296,7 @@ static int protectedparser (lua_State *L, ZIO *z, int bin) {
 // }
 
 
-static int parse_buffer (lua_State *L, const char *buff, size_t size,
+int parse_buffer (lua_State *L, const char *buff, size_t size,
                          const char *name) {
   ZIO z;
   if (!name) name = "?";
@@ -311,11 +310,6 @@ LUA_API int lua_dobuffer (lua_State *L, const char *buff, size_t size, const cha
   if (status == 0)  /* parse OK? */
     status = lua_call(L, 0, LUA_MULTRET);  /* call main */
   return status;
-}
-
-
-LUA_API int lua_dostring (lua_State *L, const char *str) {
-  return lua_dobuffer(L, str, strlen(str), str);
 }
 
 
@@ -333,7 +327,7 @@ struct lua_longjmp {
 };
 
 
-static void message (lua_State *L, const char *s) {
+void message (lua_State *L, const char *s) {
   const TObject *em = luaH_getglobal(L, LUA_ERRORMESSAGE);
   if (ttype(em) == LUA_TFUNCTION) {
     *L->top = *em;
@@ -353,18 +347,17 @@ LUA_API void lua_error (lua_State *L, const char *s) {
 }
 
 
-//WIP
 void luaD_breakrun (lua_State *L, int errcode) {
-//   if (L->errorJmp) {
-//     L->errorJmp->status = errcode;
-//     longjmp(L->errorJmp->b, 1);
-//   }
-//   else {
-//     if (errcode != LUA_ERRMEM)
-//       message(L, "unable to recover; exiting\n");
-//     exit(1);
-//     exit(EXIT_FAILURE);
-//   }
+  if (L->errorJmp) {
+    L->errorJmp->status = errcode;
+    longjmp(L->errorJmp->b, 1);
+  }
+  else {
+    if (errcode != LUA_ERRMEM)
+      message(L, "unable to recover; exiting\n");
+    exit(1);
+    // exit(EXIT_FAILURE);
+  }
 }
 
 

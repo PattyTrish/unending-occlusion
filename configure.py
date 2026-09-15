@@ -200,9 +200,10 @@ cflags_base = [
     "-fp hardware",
     "-Cpp_exceptions off",
     "-O4,p",
-    "-inline auto",
+    "-inline off",
     '-pragma "cats off"',
     '-pragma "warn_notinlined off"',
+    "-use_lmw_stmw on",
     "-maxerrors 1",
     "-nosyspath",
     "-RTTI off",
@@ -213,6 +214,7 @@ cflags_base = [
     f"-i build/{config.version}/include",
     "-i src/msl",
     "-i src/lua",
+    "-i src/sk",
     f"-DBUILD_VERSION={version_num}",
     f"-DVERSION_{config.version}",
 ]
@@ -239,7 +241,7 @@ cflags_runtime = [
     "-str reuse,pool,readonly",
     "-gccinc",
     "-common off",
-    "-inline auto",
+    "-inline off",
 ]
 
 # REL flags
@@ -320,8 +322,8 @@ config.libs = [
             Object(NonMatching, "lua/lmem.c"),      # anchor 0x8016393C
             Object(NonMatching, "lua/lobject.c"),   # anchor 0x80163A9C
             Object(NonMatching, "lua/lparser.c"),   # anchor 0x80164A64
-            Object(NonMatching, "lua/lstate.c"),    # anchor 0x80166894
-            Object(NonMatching, "lua/lstring.c"),   # anchor 0x80166AC4
+            Object(Matching, "lua/lstate.c"),       # anchor 0x80166894
+            Object(Matching, "lua/lstring.c"),   # anchor 0x80166AC4
             Object(NonMatching, "lua/ltable.c"),    # anchor 0x80167558
             Object(NonMatching, "lua/ltm.c"),    # anchor ?
             Object(NonMatching, "lua/lundump.c"),   # anchor 0x80168114
@@ -334,6 +336,13 @@ config.libs = [
             # lvm.c and lzio.c (after lundump).
         ],
     },
+    {
+        "lib": "sk",
+        "mw_version": config.linker_version,
+        "cflags": cflags_base,
+        "progress_category": "sk",
+        "objects": []
+    }
 ]
 
 
