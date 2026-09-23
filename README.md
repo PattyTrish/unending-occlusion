@@ -97,3 +97,12 @@ Download the latest release from [encounter/objdiff](https://github.com/encounte
 Select an object from the left sidebar to begin diffing. Changes to the project will rebuild automatically: changes to source files, headers, `configure.py`, `splits.txt` or `symbols.txt`.
 
 ![](assets/objdiff.png)
+
+AI Policy
+=========
+
+Generated or otherwise, you are responsible for the code you output!
+
+I've personally been using it to help understand this whole process, rather than have it go at it. Most changes and additions are my own manual additions with Claude helping me out where docs aren't clear.
+
+AI is not particularly banned or anything, it's just not an excuse to skimp on code quality. No slop allowed!
