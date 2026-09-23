@@ -13,6 +13,21 @@ Sections:
 	.sdata2     type:rodata align:8
 	.sbss2      type:bss align:32
 
+sk/SkEngine_FileRead.c:
+	.text       start:0x80024594 end:0x80024638
+
+ed/ED_Reset.c:
+	.text       start:0x80024794 end:0x8002487C
+
+ed/ED_AI.c:
+	.text       start:0x800374EC end:0x80037AF4
+
+ed/ED_Import.c:
+	.text       start:0x80042B54 end:0x80042C38
+
+ed/ED_PathFinding_AStar.c:
+	.text       start:0x800BC6D8 end:0x800BC74C
+
 Runtime.PPCEABI.H/global_destructor_chain.c:
 	.text       start:0x800F5C0C end:0x800F5C54
 	.dtors      start:0x80237F08 end:0x80237F0C
@@ -23,6 +38,27 @@ Runtime.PPCEABI.H/__init_cpp_exceptions.cpp:
 	.ctors      start:0x80237EE0 end:0x80237EE4
 	.dtors      start:0x80237F00 end:0x80237F08
 	.sdata      start:0x8064B838 end:0x8064B83C
+
+ed/hvqm4read.c:
+	.text       start:0x80108558 end:0x801086C4
+
+ed/ch_char.c:
+	.text       start:0x8011EA60 end:0x8011EAB4
+
+ed/ch_seq_mgr.c:
+	.text       start:0x80135510 end:0x80135748
+
+ed/EffectControl.c:
+	.text       start:0x80149EFC end:0x80149F9C
+
+ed/gos_database.c:
+	.text       start:0x801569A0 end:0x80156B1C
+
+ed/Inventory.c:
+	.text       start:0x80157504 end:0x8015761C
+
+ed/ld_loaddata.c:
+	.text       start:0x801599BC end:0x80159DD0
 
 lua/lcode.c:
 	.text       start:0x8015EA7C end:0x8015FE80
@@ -107,3 +143,63 @@ lua/lapi.c:
 	.text       start:0x8016A55C end:0x8016ACAC
 	.data       start:0x8024FE60 end:0x8024FEA8
 	.sdata2     start:0x80650688 end:0x80650690
+
+sk/SKtest.c:
+	.text       start:0x8016B29C end:0x8016B914
+
+sk/MemCard.c:
+	.text       start:0x8017AE20 end:0x8017AE90
+
+sk/particle.c:
+	.text       start:0x80180014 end:0x801800F8
+
+sk/scheduler.c:
+	.text       start:0x801A83A4 end:0x801A8408
+
+sk/sd_sound.c:
+	.text       start:0x801A9488 end:0x801A94B8
+
+sk/sd_debug.c:
+	.text       start:0x801AA6D0 end:0x801AA9F8
+
+sk/stream.c:
+	.text       start:0x801ADD5C end:0x801ADE0C
+
+sk/ut_BitOperations.c:
+	.text       start:0x801E78DC end:0x801E7944
+
+sk/ut_register.c:
+	.text       start:0x801E823C end:0x801E82B4
+
+sk/ut_Menu.c:
+	.text       start:0x801E8A0C end:0x801E8A50
+
+sk/SKEngine_Render.c:
+	.text       start:0x801EF400 end:0x801EF530
+
+sk/SkEngine_AnimTexture.c:
+	.text       start:0x801F58F8 end:0x801F5980
+
+sk/cineeffects.c:
+	.text       start:0x801FEB54 end:0x801FEC84
+
+sk/ai_message.c:
+	.text       start:0x802012A0 end:0x802012F8
+
+sk/ai_gameobject.c:
+	.text       start:0x802014F0 end:0x802015A4
+
+sk/ai_utils.c:
+	.text       start:0x802046C0 end:0x80204758
+
+sk/ai_inventory.c:
+	.text       start:0x80204A14 end:0x80204A8C
+
+sk/dvdfs.c:
+	.text       start:0x802121A0 end:0x80213B48
+
+sk/texPalette.c:
+	.text       start:0x8022C53C end:0x8022C668
+
+sk/info.c:
+	.text       start:0x80232078 end:0x80232430

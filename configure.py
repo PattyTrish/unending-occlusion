@@ -341,7 +341,48 @@ config.libs = [
         "mw_version": config.linker_version,
         "cflags": cflags_base,
         "progress_category": "sk",
-        "objects": []
+        "objects": [
+            Object(NonMatching, "sk/SkEngine_FileRead.c"),
+            Object(NonMatching, "sk/MemCard.c"),
+            Object(NonMatching, "sk/particle.c"),
+            Object(NonMatching, "sk/scheduler.c"),
+            Object(NonMatching, "sk/sd_sound.c"),
+            Object(NonMatching, "sk/sd_debug.c"),
+            Object(NonMatching, "sk/stream.c"),
+            Object(NonMatching, "sk/ut_BitOperations.c"),
+            Object(NonMatching, "sk/ut_register.c"),
+            Object(NonMatching, "sk/ut_Menu.c"),
+            Object(NonMatching, "sk/SKEngine_Render.c"),
+            Object(NonMatching, "sk/SkEngine_AnimTexture.c"),
+            Object(NonMatching, "sk/cineeffects.c"),
+            Object(NonMatching, "sk/ai_message.c"),
+            Object(NonMatching, "sk/ai_gameobject.c"),
+            Object(NonMatching, "sk/ai_utils.c"),
+            Object(NonMatching, "sk/ai_inventory.c"),
+            Object(NonMatching, "sk/dvdfs.c"),
+            Object(NonMatching, "sk/texPalette.c"),
+            Object(NonMatching, "sk/info.c"),
+        ]
+    },
+    {
+        "lib": "ed",
+        "mw_version": config.linker_version,
+        "cflags": cflags_base,
+        "progress_category": "game",
+        "objects": [
+            Object(NonMatching, "ed/ED_Reset.c"),
+            Object(NonMatching, "ed/ED_AI.c"),
+            Object(NonMatching, "ed/ED_Import.c"),
+            Object(NonMatching, "ed/ED_PathFinding_AStar.c"),
+            Object(NonMatching, "ed/ed_ai_Projectile.c"),
+            Object(NonMatching, "ed/hvqm4read.c"),
+            Object(NonMatching, "ed/ch_char.c"),
+            Object(NonMatching, "ed/ch_seq_mgr.c"),
+            Object(NonMatching, "ed/EffectControl.c"),
+            Object(NonMatching, "ed/gos_database.c"),
+            Object(NonMatching, "ed/Inventory.c"),
+            Object(NonMatching, "ed/ld_loaddata.c"),
+        ]
     }
 ]
 
@@ -370,6 +411,7 @@ config.progress_categories = [
     ProgressCategory("game", "Game Code"),
     ProgressCategory("sdk", "SDK Code"),
     ProgressCategory("lua", "Lua"),
+    ProgressCategory("sk", "SK"),
 ]
 config.progress_each_module = args.verbose
 # Optional extra arguments to `objdiff-cli report generate`
