@@ -10,6 +10,8 @@
 
 #include "lobject.h"
 
+#include "SKtest.h"
+
 
 void luaC_collect (lua_State *L, int all);
 void luaC_collectgarbage (lua_State *L);

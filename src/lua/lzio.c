@@ -17,7 +17,7 @@
 
 /* ----------------------------------------------------- memory buffers --- */
 
-static int zmfilbuf (ZIO* z) {
+int zmfilbuf (ZIO* z) {
   (void)z;  /* to avoid warnings */
   return EOZ;
 }
@@ -35,10 +35,11 @@ ZIO* zmopen (ZIO* z, const char* b, size_t size, const char *name) {
 
 /* ------------------------------------------------------------ strings --- */
 
-ZIO* zsopen (ZIO* z, const char* s, const char *name) {
-  if (s==NULL) return NULL;
-  return zmopen(z, s, strlen(s), name);
-}
+// may not be implemented
+// ZIO* zsopen (ZIO* z, const char* s, const char *name) {
+//   if (s==NULL) return NULL;
+//   return zmopen(z, s, strlen(s), name);
+// }
 
 /* -------------------------------------------------------------- FILEs --- */
 

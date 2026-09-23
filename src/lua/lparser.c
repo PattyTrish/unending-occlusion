@@ -45,15 +45,15 @@ typedef struct Breaklabel {
 /*
 ** prototypes for recursive non-terminal functions
 */
-static void body (LexState *ls, int needself, int line);
-static void chunk (LexState *ls);
-static void constructor (LexState *ls);
-static void expr (LexState *ls, expdesc *v);
-static void exp1 (LexState *ls);
+void body (LexState *ls, int needself, int line);
+void chunk (LexState *ls);
+void constructor (LexState *ls);
+void expr (LexState *ls, expdesc *v);
+void exp1 (LexState *ls);
 
 
 
-static void next (LexState *ls) {
+void next (LexState *ls) {
   ls->lastline = ls->linenumber;
   if (ls->lookahead.token != TK_EOS) {  /* is there a look-ahead token? */
     ls->t = ls->lookahead;  /* use this one */
@@ -64,13 +64,13 @@ static void next (LexState *ls) {
 }
 
 
-static void lookahead (LexState *ls) {
+void lookahead (LexState *ls) {
   LUA_ASSERT(ls->lookahead.token == TK_EOS, "two look-aheads");
   ls->lookahead.token = luaX_lex(ls, &ls->lookahead.seminfo);
 }
 
 
-static void error_expected (LexState *ls, int token) {
+void error_expected (LexState *ls, int token) {
   char buff[100], t[TOKEN_LEN];
   luaX_token2str(token, t);
   sprintf(buff, "`%.20s' expected", t);
@@ -78,19 +78,19 @@ static void error_expected (LexState *ls, int token) {
 }
 
 
-static void check (LexState *ls, int c) {
+void check (LexState *ls, int c) {
   if (ls->t.token != c)
     error_expected(ls, c);
   next(ls);
 }
 
 
-static void check_condition (LexState *ls, int c, const char *msg) {
+void check_condition (LexState *ls, int c, const char *msg) {
   if (!c) luaK_error(ls, msg);
 }
 
 
-static int optional (LexState *ls, int c) {
+int optional (LexState *ls, int c) {
   if (ls->t.token == c) {
     next(ls);
     return 1;
@@ -99,7 +99,7 @@ static int optional (LexState *ls, int c) {
 }
 
 
-static void check_match (LexState *ls, int what, int who, int where) {
+void check_match (LexState *ls, int what, int who, int where) {
   if (ls->t.token != what) {
     if (where == ls->linenumber)
       error_expected(ls, what);
@@ -117,7 +117,7 @@ static void check_match (LexState *ls, int what, int who, int where) {
 }
 
 
-static int string_constant (FuncState *fs, TString *s) {
+int string_constant (FuncState *fs, TString *s) {
   Proto *f = fs->f;
   int c = s->u.s.constindex;
   if (c >= f->nkstr || f->kstr[c] != s) {
@@ -131,12 +131,12 @@ static int string_constant (FuncState *fs, TString *s) {
 }
 
 
-static void code_string (LexState *ls, TString *s) {
+void code_string (LexState *ls, TString *s) {
   luaK_kstr(ls, string_constant(ls->fs, s));
 }
 
 
-static TString *str_checkname (LexState *ls) {
+TString *str_checkname (LexState *ls) {
   TString *ts;
   check_condition(ls, (ls->t.token == TK_NAME), "<name> expected");
   ts = ls->t.seminfo.ts;
@@ -145,12 +145,12 @@ static TString *str_checkname (LexState *ls) {
 }
 
 
-static int checkname (LexState *ls) {
+int checkname (LexState *ls) {
   return string_constant(ls->fs, str_checkname(ls));
 }
 
 
-static int luaI_registerlocalvar (LexState *ls, TString *varname) {
+int luaI_registerlocalvar (LexState *ls, TString *varname) {
   Proto *f = ls->fs->f;
   luaM_growvector(ls->L, f->locvars, f->nlocvars, 1, LocVar, "", MAX_INT);
   f->locvars[f->nlocvars].varname = varname;
@@ -158,33 +158,33 @@ static int luaI_registerlocalvar (LexState *ls, TString *varname) {
 }
 
 
-static void new_localvar (LexState *ls, TString *name, int n) {
+void new_localvar (LexState *ls, TString *name, int n) {
   FuncState *fs = ls->fs;
   luaX_checklimit(ls, fs->nactloc+n+1, MAXLOCALS, "local variables");
   fs->actloc[fs->nactloc+n] = luaI_registerlocalvar(ls, name);
 }
 
 
-static void adjustlocalvars (LexState *ls, int nvars) {
+void adjustlocalvars (LexState *ls, int nvars) {
   FuncState *fs = ls->fs;
   while (nvars--)
     fs->f->locvars[fs->actloc[fs->nactloc++]].startpc = fs->pc;
 }
 
 
-static void removelocalvars (LexState *ls, int nvars) {
+void removelocalvars (LexState *ls, int nvars) {
   FuncState *fs = ls->fs;
   while (nvars--)
     fs->f->locvars[fs->actloc[--fs->nactloc]].endpc = fs->pc;
 }
 
 
-static void new_localvarstr (LexState *ls, const char *name, int n) {
+void new_localvarstr (LexState *ls, const char *name, int n) {
   new_localvar(ls, luaS_newfixed(ls->L, name), n);
 }
 
 
-static int search_local (LexState *ls, TString *n, expdesc *var) {
+int search_local (LexState *ls, TString *n, expdesc *var) {
   FuncState *fs;
   int level = 0;
   for (fs=ls->fs; fs; fs=fs->prev) {
@@ -203,7 +203,7 @@ static int search_local (LexState *ls, TString *n, expdesc *var) {
 }
 
 
-static void singlevar (LexState *ls, TString *n, expdesc *var) {
+void singlevar (LexState *ls, TString *n, expdesc *var) {
   int level = search_local(ls, n, var);
   if (level >= 1)  /* neither local (0) nor global (-1)? */
     luaX_syntaxerror(ls, "cannot access a variable in outer scope", n->str);
@@ -212,7 +212,7 @@ static void singlevar (LexState *ls, TString *n, expdesc *var) {
 }
 
 
-static int indexupvalue (LexState *ls, expdesc *v) {
+int indexupvalue (LexState *ls, expdesc *v) {
   FuncState *fs = ls->fs;
   int i;
   for (i=0; i<fs->nupvalues; i++) {
@@ -226,7 +226,7 @@ static int indexupvalue (LexState *ls, expdesc *v) {
 }
 
 
-static void pushupvalue (LexState *ls, TString *n) {
+void pushupvalue (LexState *ls, TString *n) {
   FuncState *fs = ls->fs;
   expdesc v;
   int level = search_local(ls, n, &v);
@@ -242,7 +242,7 @@ static void pushupvalue (LexState *ls, TString *n) {
 }
 
 
-static void adjust_mult_assign (LexState *ls, int nvars, int nexps) {
+void adjust_mult_assign (LexState *ls, int nvars, int nexps) {
   FuncState *fs = ls->fs;
   int diff = nexps - nvars;
   if (nexps > 0 && luaK_lastisopen(fs)) { /* list ends in a function call */
@@ -259,7 +259,7 @@ static void adjust_mult_assign (LexState *ls, int nvars, int nexps) {
 }
 
 
-static void code_params (LexState *ls, int nparams, int dots) {
+void code_params (LexState *ls, int nparams, int dots) {
   FuncState *fs = ls->fs;
   adjustlocalvars(ls, nparams);
   luaX_checklimit(ls, fs->nactloc, MAXPARAMS, "parameters");
@@ -273,7 +273,7 @@ static void code_params (LexState *ls, int nparams, int dots) {
 }
 
 
-static void enterbreak (FuncState *fs, Breaklabel *bl) {
+void enterbreak (FuncState *fs, Breaklabel *bl) {
   bl->stacklevel = fs->stacklevel;
   bl->breaklist = NO_JUMP;
   bl->previous = fs->bl;
@@ -281,14 +281,14 @@ static void enterbreak (FuncState *fs, Breaklabel *bl) {
 }
 
 
-static void leavebreak (FuncState *fs, Breaklabel *bl) {
+void leavebreak (FuncState *fs, Breaklabel *bl) {
   fs->bl = bl->previous;
   LUA_ASSERT(bl->stacklevel == fs->stacklevel, "wrong levels");
   luaK_patchlist(fs, bl->breaklist, luaK_getlabel(fs));
 }
 
 
-static void pushclosure (LexState *ls, FuncState *func) {
+void pushclosure (LexState *ls, FuncState *func) {
   FuncState *fs = ls->fs;
   Proto *f = fs->f;
   int i;
@@ -301,7 +301,7 @@ static void pushclosure (LexState *ls, FuncState *func) {
 }
 
 
-static void open_func (LexState *ls, FuncState *fs) {
+void open_func (LexState *ls, FuncState *fs) {
   Proto *f = luaF_newproto(ls->L);
   fs->prev = ls->fs;  /* linked list of funcstates */
   fs->ls = ls;
@@ -324,7 +324,7 @@ static void open_func (LexState *ls, FuncState *fs) {
 }
 
 
-static void close_func (LexState *ls) {
+void close_func (LexState *ls) {
   lua_State *L = ls->L;
   FuncState *fs = ls->fs;
   Proto *f = fs->f;
@@ -365,7 +365,7 @@ Proto *luaY_parser (lua_State *L, ZIO *z) {
 /*============================================================*/
 
 
-static int explist1 (LexState *ls) {
+int explist1 (LexState *ls) {
   /* explist1 -> expr { ',' expr } */
   int n = 1;  /* at least one expression */
   expdesc v;
@@ -381,7 +381,7 @@ static int explist1 (LexState *ls) {
 }
 
 
-static void funcargs (LexState *ls, int slf) {
+void funcargs (LexState *ls, int slf) {
   FuncState *fs = ls->fs;
   int slevel = fs->stacklevel - slf - 1;  /* where is func in the stack */
   switch (ls->t.token) {
@@ -419,7 +419,7 @@ static void funcargs (LexState *ls, int slf) {
 }
 
 
-static void var_or_func_tail (LexState *ls, expdesc *v) {
+void var_or_func_tail (LexState *ls, expdesc *v) {
   for (;;) {
     switch (ls->t.token) {
       case '.': {  /* var_or_func_tail -> '.' NAME */
@@ -461,7 +461,7 @@ static void var_or_func_tail (LexState *ls, expdesc *v) {
 }
 
 
-static void var_or_func (LexState *ls, expdesc *v) {
+void var_or_func (LexState *ls, expdesc *v) {
   /* var_or_func -> ['%'] NAME var_or_func_tail */
   if (optional(ls, '%')) {  /* upvalue? */
     pushupvalue(ls, str_checkname(ls));
@@ -482,7 +482,7 @@ static void var_or_func (LexState *ls, expdesc *v) {
 */
 
 
-static void recfield (LexState *ls) {
+void recfield (LexState *ls) {
   /* recfield -> (NAME | '['exp1']') = exp1 */
   switch (ls->t.token) {
     case TK_NAME: {
@@ -502,7 +502,7 @@ static void recfield (LexState *ls) {
 }
 
 
-static int recfields (LexState *ls) {
+int recfields (LexState *ls) {
   /* recfields -> recfield { ',' recfield } [','] */
   FuncState *fs = ls->fs;
   int n = 1;  /* at least one element */
@@ -521,7 +521,7 @@ static int recfields (LexState *ls) {
 }
 
 
-static int listfields (LexState *ls) {
+int listfields (LexState *ls) {
   /* listfields -> exp1 { ',' exp1 } [','] */
   FuncState *fs = ls->fs;
   int n = 1;  /* at least one element */
@@ -543,7 +543,7 @@ static int listfields (LexState *ls) {
 
 
 
-static void constructor_part (LexState *ls, Constdesc *cd) {
+void constructor_part (LexState *ls, Constdesc *cd) {
   switch (ls->t.token) {
     case ';': case '}': {  /* constructor_part -> empty */
       cd->n = 0;
@@ -571,7 +571,7 @@ static void constructor_part (LexState *ls, Constdesc *cd) {
 }
 
 
-static void constructor (LexState *ls) {
+void constructor (LexState *ls) {
   /* constructor -> '{' constructor_part [';' constructor_part] '}' */
   FuncState *fs = ls->fs;
   int line = ls->linenumber;
@@ -604,7 +604,7 @@ static void constructor (LexState *ls) {
 */
 
 
-static void simpleexp (LexState *ls, expdesc *v) {
+void simpleexp (LexState *ls, expdesc *v) {
   FuncState *fs = ls->fs;
   switch (ls->t.token) {
     case TK_NUMBER: {  /* simpleexp -> NUMBER */
@@ -652,14 +652,14 @@ static void simpleexp (LexState *ls, expdesc *v) {
 }
 
 
-static void exp1 (LexState *ls) {
+void exp1 (LexState *ls) {
   expdesc v;
   expr(ls, &v);
   luaK_tostack(ls, &v, 1);
 }
 
 
-static UnOpr getunopr (int op) {
+UnOpr getunopr (int op) {
   switch (op) {
     case TK_NOT: return OPR_NOT;
     case '-': return OPR_MINUS;
@@ -668,7 +668,7 @@ static UnOpr getunopr (int op) {
 }
 
 
-static BinOpr getbinopr (int op) {
+BinOpr getbinopr (int op) {
   switch (op) {
     case '+': return OPR_ADD;
     case '-': return OPR_SUB;
@@ -707,7 +707,7 @@ static const struct {
 ** subexpr -> (simplexep | unop subexpr) { binop subexpr }
 ** where `binop' is any binary operator with a priority higher than `limit'
 */
-static BinOpr subexpr (LexState *ls, expdesc *v, int limit) {
+BinOpr subexpr (LexState *ls, expdesc *v, int limit) {
   BinOpr op;
   UnOpr uop = getunopr(ls->t.token);
   if (uop != OPR_NOUNOPR) {
@@ -732,7 +732,7 @@ static BinOpr subexpr (LexState *ls, expdesc *v, int limit) {
 }
 
 
-static void expr (LexState *ls, expdesc *v) {
+void expr (LexState *ls, expdesc *v) {
   subexpr(ls, v, -1);
 }
 
@@ -746,7 +746,7 @@ static void expr (LexState *ls, expdesc *v) {
 */
 
 
-static int block_follow (int token) {
+int block_follow (int token) {
   switch (token) {
     case TK_ELSE: case TK_ELSEIF: case TK_END:
     case TK_UNTIL: case TK_EOS:
@@ -756,7 +756,7 @@ static int block_follow (int token) {
 }
 
 
-static void block (LexState *ls) {
+void block (LexState *ls) {
   /* block -> chunk */
   FuncState *fs = ls->fs;
   int nactloc = fs->nactloc;
@@ -766,7 +766,7 @@ static void block (LexState *ls) {
 }
 
 
-static int assignment (LexState *ls, expdesc *v, int nvars) {
+int assignment (LexState *ls, expdesc *v, int nvars) {
   int left = 0;  /* number of values left in the stack after assignment */
   luaX_checklimit(ls, nvars, MAXVARSLH, "variables in a multiple assignment");
   if (ls->t.token == ',') {  /* assignment -> ',' NAME assignment */
@@ -792,14 +792,14 @@ static int assignment (LexState *ls, expdesc *v, int nvars) {
 }
 
 
-static void cond (LexState *ls, expdesc *v) {
+void cond (LexState *ls, expdesc *v) {
   /* cond -> exp */
   expr(ls, v);  /* read condition */
   luaK_goiftrue(ls->fs, v, 0);
 }
 
 
-static void whilestat (LexState *ls, int line) {
+void whilestat (LexState *ls, int line) {
   /* whilestat -> WHILE cond DO block END */
   FuncState *fs = ls->fs;
   int while_init = luaK_getlabel(fs);
@@ -817,7 +817,7 @@ static void whilestat (LexState *ls, int line) {
 }
 
 
-static void repeatstat (LexState *ls, int line) {
+void repeatstat (LexState *ls, int line) {
   /* repeatstat -> REPEAT block UNTIL cond */
   FuncState *fs = ls->fs;
   int repeat_init = luaK_getlabel(fs);
@@ -833,7 +833,7 @@ static void repeatstat (LexState *ls, int line) {
 }
 
 
-static void forbody (LexState *ls, int nvar, OpCode prepfor, OpCode loopfor) {
+void forbody (LexState *ls, int nvar, OpCode prepfor, OpCode loopfor) {
   /* forbody -> DO block END */
   FuncState *fs = ls->fs;
   int prep = luaK_code1(fs, prepfor, NO_JUMP);
@@ -847,7 +847,7 @@ static void forbody (LexState *ls, int nvar, OpCode prepfor, OpCode loopfor) {
 }
 
 
-static void fornum (LexState *ls, TString *varname) {
+void fornum (LexState *ls, TString *varname) {
   /* fornum -> NAME = exp1,exp1[,exp1] forbody */
   FuncState *fs = ls->fs;
   check(ls, '=');
@@ -865,7 +865,7 @@ static void fornum (LexState *ls, TString *varname) {
 }
 
 
-static void forlist (LexState *ls, TString *indexname) {
+void forlist (LexState *ls, TString *indexname) {
   /* forlist -> NAME,NAME IN exp1 forbody */
   TString *valname;
   check(ls, ',');
@@ -883,7 +883,7 @@ static void forlist (LexState *ls, TString *indexname) {
 }
 
 
-static void forstat (LexState *ls, int line) {
+void forstat (LexState *ls, int line) {
   /* forstat -> fornum | forlist */
   FuncState *fs = ls->fs;
   TString *varname;
@@ -901,7 +901,7 @@ static void forstat (LexState *ls, int line) {
 }
 
 
-static void test_then_block (LexState *ls, expdesc *v) {
+void test_then_block (LexState *ls, expdesc *v) {
   /* test_then_block -> [IF | ELSEIF] cond THEN block */
   next(ls);  /* skip IF or ELSEIF */
   cond(ls, v);
@@ -910,7 +910,7 @@ static void test_then_block (LexState *ls, expdesc *v) {
 }
 
 
-static void ifstat (LexState *ls, int line) {
+void ifstat (LexState *ls, int line) {
   /* ifstat -> IF cond THEN block {ELSEIF cond THEN block} [ELSE block] END */
   FuncState *fs = ls->fs;
   expdesc v;
@@ -934,7 +934,7 @@ static void ifstat (LexState *ls, int line) {
 }
 
 
-static void localstat (LexState *ls) {
+void localstat (LexState *ls) {
   /* stat -> LOCAL NAME {',' NAME} ['=' explist1] */
   int nvars = 0;
   int nexps;
@@ -951,7 +951,7 @@ static void localstat (LexState *ls) {
 }
 
 
-static int funcname (LexState *ls, expdesc *v) {
+int funcname (LexState *ls, expdesc *v) {
   /* funcname -> NAME [':' NAME | '.' NAME] */
   int needself = 0;
   singlevar(ls, str_checkname(ls), v);
@@ -966,7 +966,7 @@ static int funcname (LexState *ls, expdesc *v) {
 }
 
 
-static void funcstat (LexState *ls, int line) {
+void funcstat (LexState *ls, int line) {
   /* funcstat -> FUNCTION funcname body */
   int needself;
   expdesc v;
@@ -977,7 +977,7 @@ static void funcstat (LexState *ls, int line) {
 }
 
 
-static void namestat (LexState *ls) {
+void namestat (LexState *ls) {
   /* stat -> func | ['%'] NAME assignment */
   FuncState *fs = ls->fs;
   expdesc v;
@@ -993,7 +993,7 @@ static void namestat (LexState *ls) {
 }
 
 
-static void retstat (LexState *ls) {
+void retstat (LexState *ls) {
   /* stat -> RETURN explist */
   FuncState *fs = ls->fs;
   next(ls);  /* skip RETURN */
@@ -1004,7 +1004,7 @@ static void retstat (LexState *ls) {
 }
 
 
-static void breakstat (LexState *ls) {
+void breakstat (LexState *ls) {
   /* stat -> BREAK [NAME] */
   FuncState *fs = ls->fs;
   int currentlevel = fs->stacklevel;
@@ -1019,7 +1019,7 @@ static void breakstat (LexState *ls) {
 }
 
 
-static int stat (LexState *ls) {
+int stat (LexState *ls) {
   int line = ls->linenumber;  /* may be needed for error messages */
   switch (ls->t.token) {
     case TK_IF: {  /* stat -> ifstat */
@@ -1072,7 +1072,7 @@ static int stat (LexState *ls) {
 }
 
 
-static void parlist (LexState *ls) {
+void parlist (LexState *ls) {
   /* parlist -> [ param { ',' param } ] */
   int nparams = 0;
   int dots = 0;
@@ -1089,7 +1089,7 @@ static void parlist (LexState *ls) {
 }
 
 
-static void body (LexState *ls, int needself, int line) {
+void body (LexState *ls, int needself, int line) {
   /* body ->  '(' parlist ')' chunk END */
   FuncState new_fs;
   open_func(ls, &new_fs);
@@ -1111,7 +1111,7 @@ static void body (LexState *ls, int needself, int line) {
 /* }====================================================================== */
 
 
-static void chunk (LexState *ls) {
+void chunk (LexState *ls) {
   /* chunk -> { stat [';'] } */
   int islast = 0;
   while (!islast && !block_follow(ls->t.token)) {

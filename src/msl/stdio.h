@@ -14,31 +14,34 @@ typedef unsigned long __file_handle;
 typedef unsigned long fpos_t;
 
 #ifdef __MWERKS__
+#ifndef __wchar_t_defined
+#define __wchar_t_defined
 typedef unsigned short wchar_t;
+#endif
 #endif
 
 enum __io_modes {
     __read = 1,
     __write = 2,
     __read_write = 3,
-    __append = 4,
+    __append = 4
 };
 enum __file_kinds {
     __closed_file,
     __disk_file,
     __console_file,
-    __unavailable_file,
+    __unavailable_file
 };
 enum __file_orientation {
     __unoriented,
     __char_oriented,
-    __wide_oriented,
+    __wide_oriented
 };
 
 enum __io_results {
     __no_io_error,
     __io_error,
-    __io_EOF,
+    __io_EOF
 };
 
 typedef struct {
@@ -54,7 +57,7 @@ enum __io_states {
     __neutral,
     __writing,
     __reading,
-    __rereading,
+    __rereading
 };
 
 typedef struct {
@@ -110,7 +113,7 @@ typedef struct {
 enum __ReadProcActions {
     __GetAChar,
     __UngetAChar,
-    __TestForError,
+    __TestForError
 };
 
 int __StringRead(void* str, int ch, int behavior);

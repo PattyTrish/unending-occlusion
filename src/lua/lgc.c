@@ -16,12 +16,12 @@
 #include "ltable.h"
 #include "ltm.h"
 
+#include "SKtest.h"
 
 typedef struct GCState {
   Hash *tmark;  /* list of marked tables to be visited */
   Closure *cmark;  /* list of marked closures to be visited */
 } GCState;
-
 
 
 static void markobject (GCState *st, TObject *o);

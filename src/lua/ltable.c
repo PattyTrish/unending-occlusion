@@ -215,7 +215,7 @@ void rehash (lua_State *L, Hash *t) {
   int i;
   LUA_ASSERT(nelems<=oldsize, "wrong count");
   if (nelems >= oldsize-oldsize/4)  /* using more than 3/4? */
-    setnodevector(L, t, (lint32)oldsize*2);
+    setnodevector(L, t, (lint32)oldsize*4);
   else if (nelems <= oldsize/4 &&  /* less than 1/4? */
            oldsize > MINPOWER2)
     setnodevector(L, t, oldsize/2);

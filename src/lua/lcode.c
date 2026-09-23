@@ -28,7 +28,7 @@ void luaK_error (LexState *ls, const char *msg) {
 ** If there is a jump target between this and the current instruction,
 ** returns a dummy instruction to avoid wrong optimizations.
 */
-static Instruction previous_instruction (FuncState *fs) {
+Instruction previous_instruction (FuncState *fs) {
   if (fs->pc > fs->lasttarget)  /* no jumps to current position? */
     return fs->f->code[fs->pc-1];  /* returns previous instruction */
   else
@@ -46,7 +46,7 @@ int luaK_jump (FuncState *fs) {
 }
 
 
-static void luaK_fixjump (FuncState *fs, int pc, int dest) {
+void luaK_fixjump (FuncState *fs, int pc, int dest) {
   Instruction *jmp = &fs->f->code[pc];
   if (dest == NO_JUMP)
     SETARG_S(*jmp, NO_JUMP);  /* point to itself to represent end of list */
@@ -59,7 +59,7 @@ static void luaK_fixjump (FuncState *fs, int pc, int dest) {
 }
 
 
-static int luaK_getjump (FuncState *fs, int pc) {
+int luaK_getjump (FuncState *fs, int pc) {
   int offset = GETARG_S(fs->f->code[pc]);
   if (offset == NO_JUMP)  /* point to itself represents end of list */
     return NO_JUMP;  /* end of list */
@@ -99,7 +99,7 @@ void luaK_kstr (LexState *ls, int c) {
 }
 
 
-static int number_constant (FuncState *fs, Number r) {
+int number_constant (FuncState *fs, Number r) {
   /* check whether `r' has appeared within the last LOOKBACKNUMS entries */
   Proto *f = fs->f;
   int c = f->nknum;
@@ -148,7 +148,7 @@ void luaK_setcallreturns (FuncState *fs, int nresults) {
 }
 
 
-static int discharge (FuncState *fs, expdesc *var) {
+int discharge (FuncState *fs, expdesc *var) {
   switch (var->k) {
     case VLOCAL:
       luaK_code1(fs, OP_GETLOCAL, var->u.index);
@@ -168,7 +168,7 @@ static int discharge (FuncState *fs, expdesc *var) {
 }
 
 
-static void discharge1 (FuncState *fs, expdesc *var) {
+void discharge1 (FuncState *fs, expdesc *var) {
   discharge(fs, var);
  /* if it has jumps then it is already discharged */
   if (var->u.l.t == NO_JUMP && var->u.l.f  == NO_JUMP)
@@ -194,7 +194,7 @@ void luaK_storevar (LexState *ls, const expdesc *var) {
 }
 
 
-static OpCode invertjump (OpCode op) {
+OpCode invertjump (OpCode op) {
   switch (op) {
     case OP_JMPNE: return OP_JMPEQ;
     case OP_JMPEQ: return OP_JMPNE;
@@ -211,7 +211,7 @@ static OpCode invertjump (OpCode op) {
 }
 
 
-static void luaK_patchlistaux (FuncState *fs, int list, int target,
+void luaK_patchlistaux (FuncState *fs, int list, int target,
                                OpCode special, int special_target) {
   Instruction *code = fs->f->code;
   while (list != NO_JUMP) {
@@ -240,7 +240,7 @@ void luaK_patchlist (FuncState *fs, int list, int target) {
 }
 
 
-static int need_value (FuncState *fs, int list, OpCode hasvalue) {
+int need_value (FuncState *fs, int list, OpCode hasvalue) {
   /* check whether list has a jump without a value */
   for (; list != NO_JUMP; list = luaK_getjump(fs, list))
     if (GET_OPCODE(fs->f->code[list]) != hasvalue) return 1;
@@ -265,7 +265,7 @@ void luaK_concat (FuncState *fs, int *l1, int l2) {
 }
 
 
-static void luaK_testgo (FuncState *fs, expdesc *v, int invert, OpCode jump) {
+void luaK_testgo (FuncState *fs, expdesc *v, int invert, OpCode jump) {
   int prevpos;  /* position of last instruction */
   Instruction *previous;
   int *golist, *exitlist;
@@ -298,12 +298,12 @@ void luaK_goiftrue (FuncState *fs, expdesc *v, int keepvalue) {
 }
 
 
-static void luaK_goiffalse (FuncState *fs, expdesc *v, int keepvalue) {
+void luaK_goiffalse (FuncState *fs, expdesc *v, int keepvalue) {
   luaK_testgo(fs, v, 0, keepvalue ? OP_JMPONT : OP_JMPT);
 }
 
 
-static int code_label (FuncState *fs, OpCode op, int arg) {
+int code_label (FuncState *fs, OpCode op, int arg) {
   luaK_getlabel(fs);  /* those instructions may be jump targets */
   return luaK_code1(fs, op, arg);
 }
@@ -419,7 +419,7 @@ void luaK_posfix (LexState *ls, BinOpr op, expdesc *v1, expdesc *v2) {
 }
 
 
-static void codelineinfo (FuncState *fs) {
+void codelineinfo (FuncState *fs) {
   Proto *f = fs->f;
   LexState *ls = fs->ls;
   if (ls->lastline > fs->lastline) {

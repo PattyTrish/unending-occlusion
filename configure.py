@@ -313,22 +313,22 @@ config.libs = [
             # Confirmed present via __FILE__ strings, in link order.
             # Addresses are *interior anchors*, not split boundaries.
             Object(NonMatching, "lua/ldo.c"),       # anchor 0x801604F8
-            Object(NonMatching, "lua/lfunc.c"),     # anchor 0x801610E8
-            Object(NonMatching, "lua/lgc.c"),       # anchor 0x80161B58
-            Object(NonMatching, "lua/lapi.c"),       # anchor ?
-            Object(NonMatching, "lua/lcode.c"),       # anchor ?
-            Object(NonMatching, "lua/ldebug.c"),       # anchor ?
+            Object(Matching, "lua/lfunc.c"),     # anchor 0x801610E8
+            Object(Matching, "lua/lgc.c"),       # anchor 0x80161B58
+            Object(Matching, "lua/lapi.c"),       # anchor ?
+            Object(Matching, "lua/lcode.c"),       # anchor ?
+            Object(Matching, "lua/ldebug.c"),       # anchor ?
             Object(NonMatching, "lua/llex.c"),      # anchor ?
-            Object(NonMatching, "lua/lmem.c"),      # anchor 0x8016393C
+            Object(Matching, "lua/lmem.c"),      # anchor 0x8016393C
             Object(NonMatching, "lua/lobject.c"),   # anchor 0x80163A9C
             Object(NonMatching, "lua/lparser.c"),   # anchor 0x80164A64
             Object(Matching, "lua/lstate.c"),       # anchor 0x80166894
             Object(Matching, "lua/lstring.c"),   # anchor 0x80166AC4
-            Object(NonMatching, "lua/ltable.c"),    # anchor 0x80167558
+            Object(Matching, "lua/ltable.c"),    # anchor 0x80167558
             Object(NonMatching, "lua/ltm.c"),    # anchor ?
             Object(NonMatching, "lua/lundump.c"),   # anchor 0x80168114
-            Object(NonMatching, "lua/lvm.c"),    # anchor ?
-            Object(NonMatching, "lua/lzio.c"),    # anchor ?
+            Object(Matching, "lua/lvm.c"),    # anchor ?
+            Object(Matching, "lua/lzio.c"),    # anchor ?
             # Expected from the alphabetical ordering but not yet located (no
             # __FILE__ string survives for them): lapi.c, lcode.c, ldebug.c,
             # llex.c (sits in the 0x80161ED8..0x8016393C gap between lgc and

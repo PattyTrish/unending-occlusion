@@ -24,10 +24,29 @@ Runtime.PPCEABI.H/__init_cpp_exceptions.cpp:
 	.dtors      start:0x80237F00 end:0x80237F08
 	.sdata      start:0x8064B838 end:0x8064B83C
 
+lua/lcode.c:
+	.text       start:0x8015EA7C end:0x8015FE80
+	.rodata     start:0x8023A798 end:0x8023A7F8
+	.data       start:0x8024F240 end:0x8024F440
+	.sdata2     start:0x80650650 end:0x80650660
+
+lua/ldebug.c:
+	.text       start:0x8015FE80 end:0x801604F8
+	.data       start:0x8024F440 end:0x8024F5A0
+	.sdata      start:0x8064BA40 end:0x8064BA58
+
 lua/ldo.c:
 	.text       start:0x801604F8 end:0x801610E8
 	.data       start:0x8024F5A0 end:0x8024F5E0
 	.sdata      start:0x8064BA58 end:0x8064BA80
+
+lua/lfunc.c:
+	.text       start:0x801610E8 end:0x80161428
+	.sdata      start:0x8064BA80 end:0x8064BA88
+
+lua/lgc.c:
+	.text       start:0x80161428 end:0x80161FD0
+	.sdata      start:0x8064BA88 end:0x8064BA90
 
 lua/llex.c:
 	.text       start:0x80161FD0 end:0x80163224
@@ -41,7 +60,15 @@ lua/lmem.c:
 
 lua/lobject.c:
 	.text       start:0x801639CC end:0x80163DA4
+	.rodata     start:0x8023A868 end:0x8023A890
+	.data       start:0x8024F750 end:0x8024F798
 	.sdata      start:0x8064BB50 end:0x8064BB58
+
+lua/lparser.c:
+	.text       start:0x80163DA4 end:0x801667BC
+	.rodata     start:0x8023A890 end:0x8023A8B0
+	.data       start:0x8024F798 end:0x8024FA18
+	.sdata      start:0x8064BB70 end:0x8064BB88
 
 lua/lstate.c:
 	.text       start:0x801667BC end:0x80166AC4
@@ -57,5 +84,26 @@ lua/ltable.c:
 	.sdata2     start:0x80650660 end:0x80650668
 
 lua/ltm.c:
-	.text       start:0x80167C28 end:0x80167F48
+	.text       start:0x80167C28 end:0x80167D68
+	.rodata     start:0x8023A8B0 end:0x8023A900
 	.sdata      start:0x8064BBC4 end:0x8064BBC8
+
+lua/lundump.c:
+	.text       start:0x80167D68 end:0x80168A08
+	.data       start:0x8024FAD0 end:0x8024FCB8
+	.sdata      start:0x8064BBC8 end:0x8064BBE0
+	.sdata2     start:0x80650668 end:0x80650670
+
+lua/lvm.c:
+	.text       start:0x80168A08 end:0x8016A444
+	.data       start:0x8024FCB8 end:0x8024FE60
+	.sdata      start:0x8064BBE0 end:0x8064BC00
+	.sdata2     start:0x80650670 end:0x80650688
+
+lua/lzio.c:
+	.text       start:0x8016A444 end:0x8016A55C
+
+lua/lapi.c:
+	.text       start:0x8016A55C end:0x8016ACAC
+	.data       start:0x8024FE60 end:0x8024FEA8
+	.sdata2     start:0x80650688 end:0x80650690
