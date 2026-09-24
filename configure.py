@@ -200,7 +200,6 @@ cflags_base = [
     "-fp hardware",
     "-Cpp_exceptions off",
     "-O4,p",
-    "-inline off",
     '-pragma "cats off"',
     '-pragma "warn_notinlined off"',
     "-use_lmw_stmw on",
@@ -213,10 +212,20 @@ cflags_base = [
     "-i include",
     f"-i build/{config.version}/include",
     "-i src/msl",
-    "-i src/lua",
     "-i src/sk",
     f"-DBUILD_VERSION={version_num}",
     f"-DVERSION_{config.version}",
+]
+
+cflags_dolphin = [
+    "-inline auto",
+    "-i libs/dolphin/include",
+    "-ir libs/dolphin/src",
+]
+
+cflags_lua = [
+    "-inline off",
+    "-i src/lua",
 ]
 
 # Debug flags
@@ -259,7 +268,8 @@ def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": lib_name,
         "mw_version": "GC/1.2.5n",
-        "cflags": cflags_base,
+        "cflags": cflags_base + cflags_dolphin,
+        "src_dir": "libs/dolphin/src",
         "progress_category": "sdk",
         "objects": objects,
     }
@@ -281,14 +291,56 @@ NonMatching = False               # Object does not match and should not be link
 Equivalent = config.non_matching  # Object should be linked when configured with --non-matching
 
 
+def DolphinLibObject(matching: bool, path: str) -> Object:
+    return Object(matching, path, source=path.removeprefix("dolphin/"))
+
+
 # Object is only matching for specific versions
 def MatchingFor(*versions):
     return config.version in versions
 
 
 config.warn_missing_config = True
-config.warn_missing_source = False
+config.warn_missing_source = True
 config.libs = [
+    DolphinLib("base", [
+        DolphinLibObject(NonMatching, "dolphin/base/PPCArch.c"),
+    ]),
+    DolphinLib("db", [
+        DolphinLibObject(Matching, "dolphin/db/db.c"),
+    ]),
+    DolphinLib("dvd", [
+        DolphinLibObject(NonMatching, "dolphin/dvd/dvd.c"),
+        DolphinLibObject(NonMatching, "dolphin/dvd/dvdfs.c"),
+        DolphinLibObject(NonMatching, "dolphin/dvd/dvdlow.c"),
+        DolphinLibObject(NonMatching, "dolphin/dvd/dvdqueue.c"),
+        DolphinLibObject(NonMatching, "dolphin/dvd/fstload.c"),
+    ]),
+    DolphinLib("os", [
+        DolphinLibObject(NonMatching, "dolphin/os/OS.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSAlarm.c"),
+        DolphinLibObject(Matching, "dolphin/os/OSArena.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSAudioSystem.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSCache.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSContext.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSError.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSExi.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSInterrupt.c"),
+        DolphinLibObject(Matching, "dolphin/os/OSLink.c"),
+        DolphinLibObject(Matching, "dolphin/os/OSMutex.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSRtc.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSReset.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSResetSW.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSSerial.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSThread.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/OSTime.c"),
+        DolphinLibObject(Matching, "dolphin/os/__ppc_eabi_init.c"),
+        DolphinLibObject(NonMatching, "dolphin/os/__start.c"),
+        # DolphinLibObject(NonMatching, "dolphin/os/OSSync.c"), need to figure this one out
+    ]),
+    DolphinLib("vi", [
+        DolphinLibObject(NonMatching, "dolphin/vi/vi.c"),
+    ]),
     {
         "lib": "Runtime.PPCEABI.H",
         "mw_version": config.linker_version,
@@ -307,7 +359,7 @@ config.libs = [
         # the luaM_* macros in lmem.h were rewritten. Expect local modifications.
         "lib": "lua",
         "mw_version": config.linker_version,
-        "cflags": cflags_base,
+        "cflags": cflags_base + cflags_lua,
         "progress_category": "lua",
         "objects": [
             # Confirmed present via __FILE__ strings, in link order.
