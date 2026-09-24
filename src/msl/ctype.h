@@ -23,26 +23,14 @@ extern const unsigned char __upper_map[];
 #define __control (__motion_char | __control_char)
 #define __zero_fill(c) ((int) (unsigned char) (c))
 
-static inline int isalpha(int c)
-{
-    return (int) (__ctype_map[(unsigned char) c] & __letter);
-}
-static inline int isdigit(int c)
-{
-    return (int) (__ctype_map[(unsigned char) c] & __digit);
-}
-static inline int isspace(int c)
-{
-    return (int) (__ctype_map[(unsigned char) c] & __whitespace);
-}
-static inline int isupper(int c)
-{
-    return (int) (__ctype_map[(unsigned char) c] & __upper_case);
-}
-static inline int isxdigit(int c)
-{
-    return (int) (__ctype_map[(unsigned char) c] & __hex_digit);
-}
+/* Out-of-line: isspace (0x800F8D14) .. isalnum (0x800F8D74), called from llex.c/lobject.c */
+int isalnum(int c);
+int isalpha(int c);
+int iscntrl(int c);
+int isdigit(int c);
+int isspace(int c);
+int isupper(int c);
+int isxdigit(int c);
 
 int toupper(int c);
 int tolower(int c);

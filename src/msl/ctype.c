@@ -76,6 +76,41 @@ const unsigned char __upper_map[256] = {
     0xFC, 0xFD, 0xFE, 0xFF
 };
 
+int isalnum(int c)
+{
+    return (int) (__ctype_map[(unsigned char) c] & __alphanumeric);
+}
+
+int isalpha(int c)
+{
+    return (int) (__ctype_map[(unsigned char) c] & __letter);
+}
+
+int iscntrl(int c)
+{
+    return (int) (__ctype_map[(unsigned char) c] & __control);
+}
+
+int isdigit(int c)
+{
+    return (int) (__ctype_map[(unsigned char) c] & __digit);
+}
+
+int isspace(int c)
+{
+    return (int) (__ctype_map[(unsigned char) c] & __whitespace);
+}
+
+int isupper(int c)
+{
+    return (int) (__ctype_map[(unsigned char) c] & __upper_case);
+}
+
+int isxdigit(int c)
+{
+    return (int) (__ctype_map[(unsigned char) c] & __hex_digit);
+}
+
 int tolower(int c)
 {
     if (c == -1) {

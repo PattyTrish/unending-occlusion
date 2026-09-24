@@ -352,8 +352,9 @@ config.libs = [
         ],
     },
     {
-        # Embedded Lua 4.0 core. Linked alphabetically, which is confirmed by the
-        # ten __FILE__ anchors below being in strict alphabetical address order.
+        # Embedded Lua 4.0 core (4.0, not 4.0.1: see ldo.c protectedparser, lparser.c
+        # retstat, lvm.c traceexec; lstring.c carries the 4.0.1 udata fix). Linked
+        # alphabetically lcode..lzio, then lapi.c and lauxlib.c after lzio.c.
         # Note the allocator is *not* stock: every Lua TU passes its own
         # __FILE__/__LINE__ into the Silicon Knights allocator at 0x8016B5CC, so
         # the luaM_* macros in lmem.h were rewritten. Expect local modifications.
@@ -368,24 +369,22 @@ config.libs = [
             Object(Matching, "lua/lfunc.c"),     # anchor 0x801610E8
             Object(Matching, "lua/lgc.c"),       # anchor 0x80161B58
             Object(Matching, "lua/lapi.c"),       # anchor ?
+            Object(Matching, "lua/lauxlib.c"),   # luaL_openlib only; follows lapi.c
             Object(Matching, "lua/lcode.c"),       # anchor ?
             Object(Matching, "lua/ldebug.c"),       # anchor ?
-            Object(NonMatching, "lua/llex.c"),      # anchor ?
+            Object(Matching, "lua/llex.c"),      # anchor ?
             Object(Matching, "lua/lmem.c"),      # anchor 0x8016393C
-            Object(NonMatching, "lua/lobject.c"),   # anchor 0x80163A9C
-            Object(NonMatching, "lua/lparser.c"),   # anchor 0x80164A64
+            Object(Matching, "lua/lobject.c"),   # anchor 0x80163A9C
+            Object(Matching, "lua/lparser.c"),   # anchor 0x80164A64
             Object(Matching, "lua/lstate.c"),       # anchor 0x80166894
             Object(Matching, "lua/lstring.c"),   # anchor 0x80166AC4
             Object(Matching, "lua/ltable.c"),    # anchor 0x80167558
-            Object(NonMatching, "lua/ltm.c"),    # anchor ?
-            Object(NonMatching, "lua/lundump.c"),   # anchor 0x80168114
+            Object(Matching, "lua/ltm.c"),    # anchor ?
+            Object(Matching, "lua/lundump.c"),   # anchor 0x80168114
             Object(Matching, "lua/lvm.c"),    # anchor ?
             Object(Matching, "lua/lzio.c"),    # anchor ?
-            # Expected from the alphabetical ordering but not yet located (no
-            # __FILE__ string survives for them): lapi.c, lcode.c, ldebug.c,
-            # llex.c (sits in the 0x80161ED8..0x8016393C gap between lgc and
-            # lmem), ltm.c (0x801679F8..0x80168114, between ltable and lundump),
-            # lvm.c and lzio.c (after lundump).
+            # No stdlib (lbaselib, lstrlib, ...) is linked. SK replacements live
+            # outside this lib: luaM_realloc (sk/SKtest.c, 0x8016B5CC), strtod (0x8016BA4C).
         ],
     },
     {

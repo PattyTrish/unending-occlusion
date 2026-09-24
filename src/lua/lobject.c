@@ -109,7 +109,7 @@ void luaO_chunkid (char *out, const char *source, int bufflen) {
         sprintf(out, "file `%.99s'", source);
     }
     else {
-      int len = strcspn(source, "\n");  /* stop at first newline */
+      size_t len = strcspn(source, "\n");  /* stop at first newline */
       bufflen -= sizeof("string \"%.*s...\"");
       if (len > bufflen) len = bufflen;
       if (source[len] != '\0') {  /* must truncate? */

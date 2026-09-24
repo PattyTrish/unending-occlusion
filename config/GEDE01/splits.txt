@@ -88,10 +88,10 @@ lua/lgc.c:
 	.sdata      start:0x8064BA88 end:0x8064BA90
 
 lua/llex.c:
-	.text       start:0x80161FD0 end:0x80163224
+	.text       start:0x80161FD0 end:0x8016393C
 	.rodata     start:0x8023A7F8 end:0x8023A868
-	.data       start:0x8024F5EC end:0x8024F700
-	.sdata      start:0x8064BB1C end:0x8064BB28
+	.data       start:0x8024F5E0 end:0x8024F738
+	.sdata      start:0x8064BA90 end:0x8064BB28
 
 lua/lmem.c:
 	.text       start:0x8016393C end:0x801639CC
@@ -100,14 +100,14 @@ lua/lmem.c:
 lua/lobject.c:
 	.text       start:0x801639CC end:0x80163DA4
 	.rodata     start:0x8023A868 end:0x8023A890
-	.data       start:0x8024F750 end:0x8024F798
-	.sdata      start:0x8064BB50 end:0x8064BB58
+	.data       start:0x8024F738 end:0x8024F798
+	.sdata      start:0x8064BB30 end:0x8064BB58
 
 lua/lparser.c:
 	.text       start:0x80163DA4 end:0x801667BC
 	.rodata     start:0x8023A890 end:0x8023A8B0
 	.data       start:0x8024F798 end:0x8024FA18
-	.sdata      start:0x8064BB70 end:0x8064BB88
+	.sdata      start:0x8064BB58 end:0x8064BB88
 
 lua/lstate.c:
 	.text       start:0x801667BC end:0x80166AC4
@@ -125,7 +125,8 @@ lua/ltable.c:
 lua/ltm.c:
 	.text       start:0x80167C28 end:0x80167D68
 	.rodata     start:0x8023A8B0 end:0x8023A900
-	.sdata      start:0x8064BBC4 end:0x8064BBC8
+	.data       start:0x8024FA90 end:0x8024FAD0
+	.sdata      start:0x8064BB88 end:0x8064BBC8
 
 lua/lundump.c:
 	.text       start:0x80167D68 end:0x80168A08
@@ -146,6 +147,9 @@ lua/lapi.c:
 	.text       start:0x8016A55C end:0x8016ACAC
 	.data       start:0x8024FE60 end:0x8024FEA8
 	.sdata2     start:0x80650688 end:0x80650690
+
+lua/lauxlib.c:
+	.text       start:0x8016ACAC end:0x8016AD28
 
 sk/SKtest.c:
 	.text       start:0x8016B29C end:0x8016B914
