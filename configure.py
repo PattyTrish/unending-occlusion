@@ -364,7 +364,7 @@ config.libs = [
         "objects": [
             # Confirmed present via __FILE__ strings, in link order.
             # Addresses are *interior anchors*, not split boundaries.
-            Object(NonMatching, "lua/ldo.c"),       # anchor 0x801604F8
+            Object(Matching, "lua/ldo.c"),       # anchor 0x801604F8
             Object(Matching, "lua/lfunc.c"),     # anchor 0x801610E8
             Object(Matching, "lua/lgc.c"),       # anchor 0x80161B58
             Object(Matching, "lua/lapi.c"),       # anchor ?
