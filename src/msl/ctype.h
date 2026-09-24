@@ -23,7 +23,7 @@ extern const unsigned char __upper_map[];
 #define __control (__motion_char | __control_char)
 #define __zero_fill(c) ((int) (unsigned char) (c))
 
-/* Out-of-line: isspace (0x800F8D14) .. isalnum (0x800F8D74), called from llex.c/lobject.c */
+/* not inline: callers bl to 0x800F8D14..0x800F8D74 */
 int isalnum(int c);
 int isalpha(int c);
 int iscntrl(int c);

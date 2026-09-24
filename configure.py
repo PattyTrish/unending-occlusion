@@ -15,7 +15,7 @@
 import argparse
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from tools.project import (
     Object,
@@ -190,9 +190,11 @@ config.reconfig_deps = []
 # Can be overridden in libraries or objects
 config.scratch_preset_id = None
 
-# Base flags, common to most GC/Wii games.
-# Generally leave untouched, with overrides added below.
-cflags_base = [
+# Compiler flags: one profile per toolchain that produced code in the DOL.
+# Each profile lists every flag once; no profile overrides another's flags.
+
+# Shared by every profile.
+cflags_common = [
     "-nodefaults",
     "-proc gekko",
     "-align powerpc",
@@ -206,69 +208,88 @@ cflags_base = [
     "-maxerrors 1",
     "-nosyspath",
     "-RTTI off",
-    "-fp_contract on",
-    "-str reuse",
     "-multibyte",  # For Wii compilers, replace with `-enc SJIS`
-    "-i include",
-    f"-i build/{config.version}/include",
-    "-i src/msl",
-    "-i src/sk",
     f"-DBUILD_VERSION={version_num}",
     f"-DVERSION_{config.version}",
-]
-
-cflags_dolphin = [
-    "-inline auto",
-    "-i libs/dolphin/include",
-    "-ir libs/dolphin/src",
-]
-
-cflags_lua = [
-    "-inline off",
-    "-i src/lua",
 ]
 
 # Debug flags
 if args.debug:
     # Or -sym dwarf-2 for Wii compilers
-    cflags_base.extend(["-sym on", "-DDEBUG=1"])
+    cflags_common.extend(["-sym on", "-DDEBUG=1"])
 else:
-    cflags_base.append("-DNDEBUG=1")
+    cflags_common.append("-DNDEBUG=1")
 
 # Warning flags
 if args.warn == "all":
-    cflags_base.append("-W all")
+    cflags_common.append("-W all")
 elif args.warn == "off":
-    cflags_base.append("-W off")
+    cflags_common.append("-W off")
 elif args.warn == "error":
-    cflags_base.append("-W error")
+    cflags_common.append("-W error")
 
-# Metrowerks library flags
-cflags_runtime = [
-    *cflags_base,
-    "-use_lmw_stmw on",
-    "-str reuse,pool,readonly",
-    "-gccinc",
-    "-common off",
-    "-inline off",
-]
-
-# REL flags
-cflags_rel = [
-    *cflags_base,
-    "-sdata 0",
-    "-sdata2 0",
+includes_game = [
+    "-i include",
+    f"-i build/{config.version}/include",
+    "-i src/msl",
+    "-i src/sk",
 ]
 
 config.linker_version = "GC/1.3.2"
 
+# Silicon Knights' build of the game
+mw_version_game = config.linker_version
+cflags_game = [
+    *cflags_common,
+    "-fp_contract on",
+    "-str reuse",
+    *includes_game,
+]
 
-# Helper function for Dolphin libraries
-def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
+cflags_lua = [
+    *cflags_game,
+    "-inline off",
+    "-i src/lua",
+]
+
+# REL flags
+cflags_rel = [
+    *cflags_game,
+    "-sdata 0",
+    "-sdata2 0",
+]
+
+# Metrowerks runtime library
+cflags_runtime = [
+    *cflags_common,
+    "-fp_contract on",
+    "-str reuse,pool,readonly",
+    "-gccinc",
+    "-common off",
+    "-inline off",
+    *includes_game,
+]
+
+# Nintendo's Dolphin SDK build (libs/dolphin/Makefile, release)
+mw_version_sdk = "GC/1.2.5n"
+cflags_sdk = [
+    *cflags_common,
+    "-fp_contract off",  # SDK float code has no fused multiply-adds
+    "-str reuse",
+    "-inline auto",
+    "-i libs/dolphin/include",
+    "-i libs/dolphin/include/libc",
+    "-ir libs/dolphin/src",
+]
+
+
+# Helper function for Dolphin libraries.
+# char: the SDK Makefile builds most libraries -char unsigned, some -char signed.
+def DolphinLib(lib_name: str, objects: List[Object], char: str = "unsigned") -> Dict[str, Any]:
     return {
         "lib": lib_name,
-        "mw_version": "GC/1.2.5n",
-        "cflags": cflags_base + cflags_dolphin,
+        "mw_version": mw_version_sdk,
+        "cflags": [*cflags_sdk, f"-char {char}"],
         "src_dir": "libs/dolphin/src",
         "progress_category": "sdk",
         "objects": objects,
@@ -279,7 +300,7 @@ def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
 def Rel(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": lib_name,
-        "mw_version": "GC/1.3.2",
+        "mw_version": mw_version_game,
         "cflags": cflags_rel,
         "progress_category": "game",
         "objects": objects,
@@ -291,8 +312,11 @@ NonMatching = False               # Object does not match and should not be link
 Equivalent = config.non_matching  # Object should be linked when configured with --non-matching
 
 
-def DolphinLibObject(matching: bool, path: str) -> Object:
-    return Object(matching, path, source=path.removeprefix("dolphin/"))
+def DolphinLibObject(matching: bool, path: str, char: Optional[str] = None) -> Object:
+    options: Dict[str, Any] = {"source": path.removeprefix("dolphin/")}
+    if char is not None:
+        options["cflags"] = [*cflags_sdk, f"-char {char}"]
+    return Object(matching, path, **options)
 
 
 # Object is only matching for specific versions
@@ -315,7 +339,7 @@ config.libs = [
         DolphinLibObject(NonMatching, "dolphin/dvd/dvdlow.c"),
         DolphinLibObject(NonMatching, "dolphin/dvd/dvdqueue.c"),
         DolphinLibObject(NonMatching, "dolphin/dvd/fstload.c"),
-    ]),
+    ], char="signed"),
     DolphinLib("os", [
         DolphinLibObject(NonMatching, "dolphin/os/OS.c"),
         DolphinLibObject(NonMatching, "dolphin/os/OSAlarm.c"),
@@ -343,7 +367,7 @@ config.libs = [
     ]),
     {
         "lib": "Runtime.PPCEABI.H",
-        "mw_version": config.linker_version,
+        "mw_version": mw_version_game,
         "cflags": cflags_runtime,
         "progress_category": "sdk",  # str | List[str]
         "objects": [
@@ -359,8 +383,8 @@ config.libs = [
         # __FILE__/__LINE__ into the Silicon Knights allocator at 0x8016B5CC, so
         # the luaM_* macros in lmem.h were rewritten. Expect local modifications.
         "lib": "lua",
-        "mw_version": config.linker_version,
-        "cflags": cflags_base + cflags_lua,
+        "mw_version": mw_version_game,
+        "cflags": cflags_lua,
         "progress_category": "lua",
         "objects": [
             # Confirmed present via __FILE__ strings, in link order.
@@ -389,8 +413,8 @@ config.libs = [
     },
     {
         "lib": "sk",
-        "mw_version": config.linker_version,
-        "cflags": cflags_base,
+        "mw_version": mw_version_game,
+        "cflags": cflags_game,
         "progress_category": "sk",
         "objects": [
             Object(NonMatching, "sk/SkEngine_FileRead.c"),
@@ -417,8 +441,8 @@ config.libs = [
     },
     {
         "lib": "ed",
-        "mw_version": config.linker_version,
-        "cflags": cflags_base,
+        "mw_version": mw_version_game,
+        "cflags": cflags_game,
         "progress_category": "game",
         "objects": [
             Object(NonMatching, "ed/ED_Reset.c"),
