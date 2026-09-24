@@ -346,7 +346,7 @@ config.libs = [
         DolphinLibObject(Matching, "dolphin/os/OSArena.c"),
         DolphinLibObject(NonMatching, "dolphin/os/OSAudioSystem.c"),
         DolphinLibObject(NonMatching, "dolphin/os/OSCache.c"),
-        DolphinLibObject(NonMatching, "dolphin/os/OSContext.c"),
+        DolphinLibObject(Matching, "dolphin/os/OSContext.c"),
         DolphinLibObject(NonMatching, "dolphin/os/OSError.c"),
         DolphinLibObject(NonMatching, "dolphin/os/OSExi.c"),
         DolphinLibObject(NonMatching, "dolphin/os/OSInterrupt.c"),
