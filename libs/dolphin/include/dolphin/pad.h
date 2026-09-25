@@ -70,6 +70,7 @@ void PADSetAnalogMode(u32 mode);
 
 typedef void (*PADSamplingCallback)(void);
 PADSamplingCallback PADSetSamplingCallback(PADSamplingCallback callback);
+BOOL __PADDisableRecalibration(BOOL disable);
 
 // Padclamp.c
 void PADClamp(PADStatus * status);
