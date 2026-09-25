@@ -219,11 +219,13 @@ dolphin/db/db.c:
 	.sbss       start:0x8064D8E8 end:0x8064D8F0
 
 dolphin/os/OS.c:
-	.text       start:0x80209C78 end:0x8020A59C
-	.sbss       start:0x8064D8F0 end:0x8064D904
+	.text       start:0x80209C78 end:0x8020A5B0
+	.data       start:0x802FCBA0 end:0x802FCD60
+	.bss        start:0x80640D80 end:0x80640DD0
+	.sbss       start:0x8064D8F0 end:0x8064D918
 
 dolphin/os/OSAlarm.c:
-	.text       start:0x8020A59C end:0x8020ACD4
+	.text       start:0x8020A5B0 end:0x8020ACD4
 	.sbss       start:0x8064D918 end:0x8064D920
 
 dolphin/os/OSArena.c:
@@ -245,13 +247,14 @@ dolphin/os/OSContext.c:
 
 dolphin/os/OSError.c:
 	.text       start:0x8020C550 end:0x8020C918
-	.data       start:0x802FD580 end:0x802FD85C
+	.data       start:0x802FD580 end:0x802FD8A0
 	.bss        start:0x80640DD0 end:0x80640E20
+	.sdata      start:0x8064C3D8 end:0x8064C3E0
 
 dolphin/os/OSInterrupt.c:
 	.text       start:0x8020C970 end:0x8020D1D8
 	.data       start:0x802FD8A0 end:0x802FD8D0
-	.sbss       start:0x8064D938 end:0x8064D93C
+	.sbss       start:0x8064D938 end:0x8064D950
 
 dolphin/os/OSLink.c:
 	.text       start:0x8020D1D8 end:0x8020D1F0
@@ -272,7 +275,9 @@ dolphin/os/OSRtc.c:
 
 dolphin/os/OSThread.c:
 	.text       start:0x8020F1A4 end:0x80210AA0
+	.data       start:0x802FD8E0 end:0x802FE0F0
 	.bss        start:0x80640E98 end:0x80641880
+	.sdata      start:0x8064C3E8 end:0x8064C3F0
 	.sbss       start:0x8064D988 end:0x8064D998
 
 dolphin/os/OSTime.c:
@@ -280,7 +285,7 @@ dolphin/os/OSTime.c:
 	.data       start:0x802FE0F0 end:0x802FE150
 
 dolphin/os/__start.c:
-	.init       start:0x80005308 end:0x800054F8
+	.init       start:0x800052C8 end:0x800054F8
 
 dolphin/os/__ppc_eabi_init.c:
 	.init       start:0x800054F8 end:0x8000554C
@@ -311,7 +316,7 @@ dolphin/dvd/fstload.c:
 	.text       start:0x80216778 end:0x802169B8
 	.data       start:0x802FE6A0 end:0x802FE710
 	.bss        start:0x80641A58 end:0x80641AC8
-	.sdata      start:0x8064C410 end:0x8064C414
+	.sdata      start:0x8064C410 end:0x8064C420
 	.sbss       start:0x8064DA50 end:0x8064DA60
 
 dolphin/vi/vi.c:

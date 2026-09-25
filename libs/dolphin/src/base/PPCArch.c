@@ -234,7 +234,7 @@ asm void PPCDisableSpeculation() {
 
 asm void PPCSetFpNonIEEEMode() {
     nofralloc
-    // mtfsb1 cr7gt
+    mtfsb1 29
     blr
 }
 

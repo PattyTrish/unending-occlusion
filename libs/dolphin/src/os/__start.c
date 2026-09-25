@@ -10,6 +10,9 @@
 #define ARENAHI_ADDR 0x80000034
 #define DEBUGFLAG_ADDR 0x800030E8
 #define DVD_DEVICECODE_ADDR 0x800030E6
+#define PAD3_BUTTON_ADDR 0x800030E4
+
+u16 Pad3Button AT_ADDRESS(PAD3_BUTTON_ADDR);
 
 extern void InitMetroTRK();
 
@@ -39,6 +42,13 @@ __declspec(section ".init") extern void __flush_cache(void* address, unsigned in
 
 static void __init_registers(void);
 static void __init_data(void);
+__declspec(section ".init") static void __check_pad3(void);
+
+static void __check_pad3(void) {
+    if ((Pad3Button & 0xEEF) == 0xEEF) {
+        OSResetSystem(0, 0, FALSE);
+    }
+}
 
 __declspec(section ".init")
 __declspec(weak) asm void __start(void) {
@@ -113,6 +123,17 @@ _no_args:
 _end_of_parseargs:
 	bl DBInit
 	bl OSInit
+	lis r4, DVD_DEVICECODE_ADDR@ha
+	addi r4, r4, DVD_DEVICECODE_ADDR@l
+	lhz r3, 0(r4)
+	andi. r5, r3, 0x8000
+	beq _check_pad3
+	andi. r3, r3, 0x7fff
+	cmplwi r3, 1
+	bne _goto_skip_init_bba
+
+_check_pad3:
+	bl __check_pad3
 
 _goto_skip_init_bba:
 	bl __init_user

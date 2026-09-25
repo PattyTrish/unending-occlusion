@@ -48,6 +48,19 @@ asm unsigned long OSGetTick(void){
 //     // clang-format on
 // }
 
+// void __OSSetTime(long long time) {
+//     int enabled;
+//     long long * timeAdjustAddr;
+
+//     timeAdjustAddr = (long long *)0x800030D8;
+//     enabled = OSDisableInterrupts();
+
+//     *timeAdjustAddr += OSGetTime() - time;
+//     __SetTime(time);
+//     EXIProbeReset();
+//     OSRestoreInterrupts(enabled);
+// }
+
 long long __OSGetSystemTime() {
     int enabled;
     long long * timeAdjustAddr;
@@ -61,17 +74,17 @@ long long __OSGetSystemTime() {
     return result;
 }
 
-void __OSSetTime(long long time) {
+long long __OSTimeToSystemTime(long long time) {
     int enabled;
     long long * timeAdjustAddr;
+    long long result;
 
     timeAdjustAddr = (long long *)0x800030D8;
     enabled = OSDisableInterrupts();
 
-    *timeAdjustAddr += OSGetTime() - time;
-    // __SetTime(time);
-    // EXIProbeReset();
+    result = *timeAdjustAddr + time;
     OSRestoreInterrupts(enabled);
+    return result;
 }
 
 // asm void __OSSetTick(register unsigned long newTicks) {

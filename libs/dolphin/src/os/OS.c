@@ -47,11 +47,18 @@ void __OSDBJUMPEND(void);
 
 #define NOP 0x60000000
 
+u64 __OSStartTime;
+BOOL __OSInIPL;
+void * __OSSavedRegionStart;
+void * __OSSavedRegionEnd;
 static struct OSBootInfo_s * BootInfo;
 static unsigned long * BI2DebugFlag;
+static u32 BI2DebugFlagHolder;
 static double ZeroF;
 static int AreWeInitialized;
 static void (* * OSExceptionTable)(unsigned char, struct OSContext *);
+static DVDDriveInfo DriveInfo;
+static DVDCommandBlock DriveBlock;
 
 // functions
 static asm void __OSInitFPRs(void);
@@ -108,22 +115,81 @@ unsigned long OSGetConsoleType() {
     return BootInfo->consoleType;
 }
 
+static void ClearArena(void) {
+    if (OSGetResetCode() != 0x80000000) {
+        __OSSavedRegionStart = NULL;
+        __OSSavedRegionEnd = NULL;
+        memset(OSGetArenaLo(), 0, (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
+        return;
+    }
+
+    {
+        u32 end;
+        u32 start;
+
+        start = *(u32 *)0x812FDFF0;
+        end = *(u32 *)0x812FDFEC;
+
+        __OSSavedRegionStart = (void *)start;
+        __OSSavedRegionEnd = (void *)end;
+        if (start == 0) {
+            memset(OSGetArenaLo(), 0, (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
+            return;
+        }
+    }
+
+    if ((u32)OSGetArenaLo() < (u32)__OSSavedRegionStart) {
+        if ((u32)OSGetArenaHi() <= (u32)__OSSavedRegionStart) {
+            memset(OSGetArenaLo(), 0, (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
+            return;
+        }
+
+        memset(OSGetArenaLo(), 0, (u32)__OSSavedRegionStart - (u32)OSGetArenaLo());
+        if ((u32)OSGetArenaHi() > (u32)__OSSavedRegionEnd) {
+            memset(__OSSavedRegionEnd, 0, (u32)OSGetArenaHi() - (u32)__OSSavedRegionEnd);
+        }
+    }
+}
+
+static void InquiryCallback(long result, DVDCommandBlock * block) {
+    switch (block->state) {
+    case 0:
+        *(u16 *)OS_DVD_DEVICECODE = (u16)(0x8000 | DriveInfo.deviceCode);
+        break;
+    default:
+        *(u16 *)OS_DVD_DEVICECODE = 1;
+        break;
+    }
+}
+
 void OSInit() {
     unsigned long consoleType;
-    void * bi2StartAddr;
+    u32 bi2StartAddr;
 
     if (AreWeInitialized == 0) {
         AreWeInitialized = 1;
+        __OSStartTime = __OSGetSystemTime();
         OSDisableInterrupts();
+        PPCDisableSpeculation();
+        PPCSetFpNonIEEEMode();
         BootInfo = (struct OSBootInfo_s *)OSPhysicalToCached(0);
         BI2DebugFlag = NULL;
         __DVDLongFileNameFlag = 0;
-        bi2StartAddr = (void*)(*(u32*)OSPhysicalToCached(0xF4));
+        bi2StartAddr = *(u32*)OSPhysicalToCached(0xF4);
         if (bi2StartAddr) {
             BI2DebugFlag = (void*)((char*)bi2StartAddr + 0xC);
-            __DVDLongFileNameFlag = ((u32*)bi2StartAddr)[8];
             __PADSpec = ((u32*)bi2StartAddr)[9];
+            *(u8*)OSPhysicalToCached(0x30E8) = *BI2DebugFlag;
+            *(u8*)OSPhysicalToCached(0x30E9) = __PADSpec;
+        } else if ((void*)(*(u32*)OSPhysicalToCached(0x34)) != NULL) {
+            bi2StartAddr = *(u8*)OSPhysicalToCached(0x30E8);
+            BI2DebugFlagHolder = bi2StartAddr;
+            BI2DebugFlag = &BI2DebugFlagHolder;
+            __PADSpec = *(u8*)OSPhysicalToCached(0x30E9);
         }
+
+        __DVDLongFileNameFlag = 1;
+
         OSSetArenaLo((!BootInfo->arenaLo) ? &__ArenaLo : BootInfo->arenaLo);
         if ((!BootInfo->arenaLo) && (BI2DebugFlag) && (*(u32*)BI2DebugFlag < 2)) {
             OSSetArenaLo((void*)(((u32)(char*)&_stack_addr + 0x1F) & 0xFFFFFFE0));
@@ -131,6 +197,7 @@ void OSInit() {
         OSSetArenaHi((!BootInfo->arenaHi) ? &__ArenaHi : BootInfo->arenaHi);
         OSExceptionInit();
         __OSInitSystemCall();
+        OSInitAlarm();
         __OSModuleInit();
         __OSInterruptInit();
         __OSSetInterruptHandler(0x16, &__OSResetSWInterruptHandler);
@@ -141,6 +208,7 @@ void OSInit() {
         __OSInitSram();
         __OSThreadInit();
         __OSInitAudioSystem();
+        PPCMthid2(PPCMfhid2() & 0xBFFFFFFF);
         ASSERTLINE(0x252, BootInfo); // oh sure, assert NOW, you've already dereferenced it a bunch of times.
         if ((BootInfo->consoleType & OS_CONSOLE_DEVELOPMENT) != 0) {
             BootInfo->consoleType = OS_CONSOLE_DEVHW1;
@@ -148,11 +216,14 @@ void OSInit() {
             BootInfo->consoleType = OS_CONSOLE_RETAIL1;
         }
         BootInfo->consoleType += (__PIRegs[11] & 0xF0000000) >> 28;
-        OSReport("\nDolphin OS $Revision: 36 $.\n");
+        if (!__OSInIPL) {
+            __OSInitMemoryProtection();
+        }
+        OSReport("\nDolphin OS $Revision: 52 $.\n");
 #if DEBUG
         OSReport("Kernel built : %s %s\n", "May 22 2001", "01:47:06");
 #else
-        OSReport("Kernel built : %s %s\n", "May 22 2001", "02:04:48");
+        OSReport("Kernel built : %s %s\n", "Apr 16 2002", "02:09:06");
 #endif
         OSReport("Console Type : ");
 
@@ -189,7 +260,15 @@ void OSInit() {
         if (BI2DebugFlag && ((*BI2DebugFlag) >= 2)) {
           EnableMetroTRKInterrupts();
         }
+
+        ClearArena();
         OSEnableInterrupts();
+
+        if (!__OSInIPL) {
+            DVDInit();
+            DCInvalidateRange(&DriveInfo, sizeof(DriveInfo));
+            DVDInquiryAsync(&DriveBlock, &DriveInfo, InquiryCallback);
+        }
     }
 }
 
@@ -449,4 +528,9 @@ void __OSPSInit(void)
         mtspr   GQR0, r3
     }
   // clang-format on
+}
+
+u32 __OSGetDIConfig(void)
+{
+	return (__DIRegs[9] & 0xFF);
 }

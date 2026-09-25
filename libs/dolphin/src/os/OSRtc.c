@@ -137,35 +137,13 @@ static int WriteSram(void * buffer, unsigned long offset, unsigned long size) {
 }
 
 void __OSInitSram() {
-    int err;
-    unsigned long cmd;
     Scb.locked = Scb.enabled = 0;
-
-    DCInvalidateRange(&Scb, 0x40);
-    if (!EXILock(0, 1, NULL) ) {
-        return;
-    }
-    if (!EXISelect(0, 1, 3)) {
-        EXIUnlock(0);
-        return;
-    }
-    cmd = 0x20000100;
-    err = 0;
-    err |= !EXIImm(0, &cmd, 4, 1, 0);
-    err |= !EXISync(0);
-    err |= !EXIDma(0, &Scb, 0x40, 0, NULL);
-    err |= !EXISync(0);
-    err |= !EXIDeselect(0);
-    EXIUnlock(0);
-    if (err) {
-        return;
-    }
-
+    Scb.sync = ReadSram(&Scb);
     ASSERTLINE(0x12C, Scb.sync);
     Scb.offset = 0x40;
 }
 
-struct OSSram * __OSLockSram() {
+static void * LockSram(unsigned long offset) {
     int enabled;
 
     enabled = OSDisableInterrupts();
@@ -176,21 +154,15 @@ struct OSSram * __OSLockSram() {
     }
     Scb.enabled = enabled;
     Scb.locked = 1;
-    return (struct OSSram *)&Scb.sram[0];
+    return &Scb.sram[offset];
+}
+
+struct OSSram * __OSLockSram() {
+    return LockSram(0);
 }
 
 struct OSSramEx * __OSLockSramEx(void) {
-    int enabled;
-
-    enabled = OSDisableInterrupts();
-    ASSERTLINE(0x140, !Scb.locked);
-    if (Scb.locked) {
-        OSRestoreInterrupts(enabled);
-        return NULL;
-    }
-    Scb.enabled = enabled;
-    Scb.locked = 1;
-    return (struct OSSramEx *)&Scb.sram[0x14];
+    return LockSram(0x14);
 }
 
 static int UnlockSram(int commit, unsigned long offset) {
@@ -200,6 +172,11 @@ static int UnlockSram(int commit, unsigned long offset) {
     if (commit != 0) {
         if (offset == 0) {
             struct OSSram * sram  = (struct OSSram *)&Scb.sram[0];
+
+            if ((sram->flags & 3) > 2U) {
+                sram->flags &= ~3;
+            }
+
             sram->checkSum = sram->checkSumInv = 0;
             for(p = (unsigned short*)&sram->counterBias; p < ((u16*)&Scb.sram[sizeof (struct OSSram)]); p++) {
                 sram->checkSum += *p;
@@ -336,50 +313,74 @@ void OSSetSoundMode(unsigned long mode) {
     __OSUnlockSram(1);
 }
 
-unsigned long OSGetVideoMode() {
+unsigned long OSGetProgressiveMode() {
     struct OSSram * sram = __OSLockSram();
-    unsigned long mode = sram->flags & 3;
+    unsigned long on = (sram->flags & 0x80) >> 7;
 
     __OSUnlockSram(0);
-    return mode;
+    return on;
 }
 
-void OSSetVideoMode(unsigned long mode) {
+void OSSetProgressiveMode(unsigned long on) {
     struct OSSram * sram;
     int unused;
 
-    ASSERTLINE(0x249, OS_VIDEO_MODE_NTSC <= mode && mode <= OS_VIDEO_MODE_MPAL);
-
-    mode &= 3;
+    on <<= 7;
+    on &= 0x80;
     sram = __OSLockSram();
-    if (mode == (sram->flags & 3)) {
+    if (on == (sram->flags & 0x80)) {
         __OSUnlockSram(0);
         return;
     }
-    sram->flags &= 0xFFFFFFFC;
-    sram->flags |= mode;
+    sram->flags &= ~0x80;
+    sram->flags |= on;
     __OSUnlockSram(1);
 }
 
-unsigned char OSGetLanguage() {
-    struct OSSram * sram = __OSLockSram();
-    unsigned char language = sram->language;
+// unsigned long OSGetVideoMode() {
+//     struct OSSram * sram = __OSLockSram();
+//     unsigned long mode = sram->flags & 3;
 
-    __OSUnlockSram(0);
-    return language;
-}
+//     __OSUnlockSram(0);
+//     return mode;
+// }
 
-void OSSetLanguage(unsigned char language) {
-    struct OSSram * sram = __OSLockSram();
-    int unused;
+// void OSSetVideoMode(unsigned long mode) {
+//     struct OSSram * sram;
+//     int unused;
 
-    if (language == sram->language) {
-        __OSUnlockSram(0);
-        return;
-    }
-    sram->language = language;
-    __OSUnlockSram(1);
-}
+//     ASSERTLINE(0x249, OS_VIDEO_MODE_NTSC <= mode && mode <= OS_VIDEO_MODE_MPAL);
+
+//     mode &= 3;
+//     sram = __OSLockSram();
+//     if (mode == (sram->flags & 3)) {
+//         __OSUnlockSram(0);
+//         return;
+//     }
+//     sram->flags &= 0xFFFFFFFC;
+//     sram->flags |= mode;
+//     __OSUnlockSram(1);
+// }
+
+// unsigned char OSGetLanguage() {
+//     struct OSSram * sram = __OSLockSram();
+//     unsigned char language = sram->language;
+
+//     __OSUnlockSram(0);
+//     return language;
+// }
+
+// void OSSetLanguage(unsigned char language) {
+//     struct OSSram * sram = __OSLockSram();
+//     int unused;
+
+//     if (language == sram->language) {
+//         __OSUnlockSram(0);
+//         return;
+//     }
+//     sram->language = language;
+//     __OSUnlockSram(1);
+// }
 
 // unsigned char __OSGetBootMode() {
 //     struct OSSram * sram = __OSLockSram();
@@ -402,3 +403,25 @@ void OSSetLanguage(unsigned char language) {
 //     sram->ntd |= ntd;
 //     __OSUnlockSram(1);
 // }
+
+unsigned short OSGetWirelessID(long chan) {
+    struct OSSramEx * sram;
+    unsigned short id;
+
+    sram = __OSLockSramEx();
+    id = sram->wirelessPadID[chan];
+    __OSUnlockSramEx(0);
+    return id;
+}
+
+void OSSetWirelessID(long chan, unsigned short id) {
+    struct OSSramEx * sram;
+
+    sram = __OSLockSramEx();
+    if (sram->wirelessPadID[chan] != id) {
+        sram->wirelessPadID[chan] = id;
+        __OSUnlockSramEx(1);
+        return;
+    }
+    __OSUnlockSramEx(0);
+}

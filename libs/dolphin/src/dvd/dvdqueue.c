@@ -59,6 +59,7 @@ struct DVDCommandBlock * __DVDPopWaitingQueue(void) {
     for(i = 0; i < 4; i++) {
         q = (struct DVDCommandBlock *)&WaitingQueue[i];
         if (q->next != q) {
+            OSRestoreInterrupts(enabled);
             return PopWaitingQueuePrio(i);
         }
     }
@@ -75,6 +76,7 @@ int __DVDCheckWaitingQueue(void) {
     for(i = 0; i < 4; i++) {
         q = (struct DVDCommandBlock *)&WaitingQueue[i];
         if (q->next != q) {
+            OSRestoreInterrupts(enabled);
             return 1;
         }
     }
@@ -100,65 +102,65 @@ int __DVDDequeueWaitingQueue(struct DVDCommandBlock * block) {
     return 1;
 }
 
-int __DVDIsBlockInWaitingQueue(struct DVDCommandBlock * block) {
-    unsigned long i;
-    struct DVDCommandBlock * start;
-    struct DVDCommandBlock * q;
+// int __DVDIsBlockInWaitingQueue(struct DVDCommandBlock * block) {
+//     unsigned long i;
+//     struct DVDCommandBlock * start;
+//     struct DVDCommandBlock * q;
 
-    for(i = 0; i < 4; i++) {
-        start = (struct DVDCommandBlock *)&WaitingQueue[i];
-        if (start->next == start) {
-            continue;
-        }
-        for(q = start->next; q != start; q = q->next) {
-            if (q == block) {
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
+//     for(i = 0; i < 4; i++) {
+//         start = (struct DVDCommandBlock *)&WaitingQueue[i];
+//         if (start->next == start) {
+//             continue;
+//         }
+//         for(q = start->next; q != start; q = q->next) {
+//             if (q == block) {
+//                 return 1;
+//             }
+//         }
+//     }
+//     return 0;
+// }
 
-static char * CommandNames[16] = {
-    "",
-    "READ",
-    "SEEK",
-    "CHANGE_DISK",
-    "BSREAD",
-    "READID",
-    "INITSTREAM",
-    "CANCELSTREAM",
-    "STOP_STREAM_AT_END",
-    "REQUEST_AUDIO_ERROR",
-    "REQUEST_PLAY_ADDR",
-    "REQUEST_START_ADDR",
-    "REQUEST_LENGTH",
-    "AUDIO_BUFFER_CONFIG",
-    "INQUIRY",
-    "BS_CHANGE_DISK",
-};
+// static char * CommandNames[16] = {
+//     "",
+//     "READ",
+//     "SEEK",
+//     "CHANGE_DISK",
+//     "BSREAD",
+//     "READID",
+//     "INITSTREAM",
+//     "CANCELSTREAM",
+//     "STOP_STREAM_AT_END",
+//     "REQUEST_AUDIO_ERROR",
+//     "REQUEST_PLAY_ADDR",
+//     "REQUEST_START_ADDR",
+//     "REQUEST_LENGTH",
+//     "AUDIO_BUFFER_CONFIG",
+//     "INQUIRY",
+//     "BS_CHANGE_DISK",
+// };
 
-void DVDDumpWaitingQueue(void) {
-    unsigned long i;
-    struct DVDCommandBlock * start;
-    struct DVDCommandBlock * q;
+// void DVDDumpWaitingQueue(void) {
+//     unsigned long i;
+//     struct DVDCommandBlock * start;
+//     struct DVDCommandBlock * q;
 
-    OSReport("==== DVD Waiting Queue Status ====\n");
-    for(i = 0; i < 4; i++) {
-        OSReport("< Queue #%d > ", i);
-        start = (struct DVDCommandBlock *)&WaitingQueue[i];
-        if (start->next == start) {
-            OSReport("None\n");
-        } else {
-            OSReport("\n");
-            for(q = start->next; q != start; q = q->next) {
-                OSReport("0x%08x: Command: %s ", q, CommandNames[q->command]);
-                if (q->command == 1) {
-                    OSReport("Disk offset: %d, Length: %d, Addr: 0x%08x\n", q->offset, q->length, q->addr);
-                } else {
-                    OSReport("\n");
-                }
-            }
-        }
-    }
-}
+//     OSReport("==== DVD Waiting Queue Status ====\n");
+//     for(i = 0; i < 4; i++) {
+//         OSReport("< Queue #%d > ", i);
+//         start = (struct DVDCommandBlock *)&WaitingQueue[i];
+//         if (start->next == start) {
+//             OSReport("None\n");
+//         } else {
+//             OSReport("\n");
+//             for(q = start->next; q != start; q = q->next) {
+//                 OSReport("0x%08x: Command: %s ", q, CommandNames[q->command]);
+//                 if (q->command == 1) {
+//                     OSReport("Disk offset: %d, Length: %d, Addr: 0x%08x\n", q->offset, q->length, q->addr);
+//                 } else {
+//                     OSReport("\n");
+//                 }
+//             }
+//         }
+//     }
+// }

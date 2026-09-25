@@ -169,11 +169,11 @@ struct OSThread * OSGetCurrentThread() {
     return __gCurrentThread;
 }
 
-// static void __OSSwitchThread(struct OSThread * nextThread) {
-//     __gCurrentThread = nextThread;
-//     OSSetCurrentContext(&nextThread->context);
-//     OSLoadContext(&nextThread->context);
-// }
+static void __OSSwitchThread(struct OSThread * nextThread) {
+    __gCurrentThread = nextThread;
+    OSSetCurrentContext(&nextThread->context);
+    OSLoadContext(&nextThread->context);
+}
 
 // int OSIsThreadSuspended(struct OSThread * thread) {
 //     if (thread->suspend > 0) {
@@ -388,9 +388,7 @@ static struct OSThread * SelectThread(int yield) {
     }
     nextThread->queue = 0;
     nextThread->state = 2;
-    __gCurrentThread = nextThread;
-    OSSetCurrentContext(&nextThread->context);
-    OSLoadContext(&nextThread->context);
+    __OSSwitchThread(nextThread);
     return nextThread;
 }
 
@@ -400,12 +398,12 @@ void __OSReschedule(void) {
     }
 }
 
-void OSYieldThread(void) {
-    int enabled = OSDisableInterrupts();
+// void OSYieldThread(void) {
+//     int enabled = OSDisableInterrupts();
 
-    SelectThread(1);
-    OSRestoreInterrupts(enabled);
-}
+//     SelectThread(1);
+//     OSRestoreInterrupts(enabled);
+// }
 
 int OSCreateThread(struct OSThread * thread, void * (* func)(void *), void * param, void * stack, unsigned long stackSize, long priority, unsigned short attr) {
     int enabled;
@@ -524,44 +522,44 @@ void OSCancelThread(struct OSThread * thread) {
     OSRestoreInterrupts(enabled);
 }
 
-int OSJoinThread(struct OSThread * thread, void * val) {
-    int enabled = OSDisableInterrupts();
+// int OSJoinThread(struct OSThread * thread, void * val) {
+//     int enabled = OSDisableInterrupts();
 
-    ASSERTMSG1LINE(0x3CA, __OSIsThreadActive(thread) != 0, "OSJoinThread(): thread %p is not active.", thread);
+//     ASSERTMSG1LINE(0x3CA, __OSIsThreadActive(thread) != 0, "OSJoinThread(): thread %p is not active.", thread);
 
-    if (!(thread->attr & 1) && (thread->state != 8) && (thread->queueJoin.head == NULL)) {
-        OSSleepThread(&thread->queueJoin);
-        if (__OSIsThreadActive(thread) == 0) {
-            OSRestoreInterrupts(enabled);
-            return 0;
-        }
-    }
-    if (thread->state == 8) {
-        if (val) {
-            *(s32*)val = (s32)thread->val;
-        }
-        DEQUEUE_THREAD(thread, &__OSActiveThreadQueue, linkActive);
-        thread->state = 0;
-        OSRestoreInterrupts(enabled);
-        return 1;
-    }
-    OSRestoreInterrupts(enabled);
-    return 0;
-}
+//     if (!(thread->attr & 1) && (thread->state != 8) && (thread->queueJoin.head == NULL)) {
+//         OSSleepThread(&thread->queueJoin);
+//         if (__OSIsThreadActive(thread) == 0) {
+//             OSRestoreInterrupts(enabled);
+//             return 0;
+//         }
+//     }
+//     if (thread->state == 8) {
+//         if (val) {
+//             *(s32*)val = (s32)thread->val;
+//         }
+//         DEQUEUE_THREAD(thread, &__OSActiveThreadQueue, linkActive);
+//         thread->state = 0;
+//         OSRestoreInterrupts(enabled);
+//         return 1;
+//     }
+//     OSRestoreInterrupts(enabled);
+//     return 0;
+// }
 
-void OSDetachThread(struct OSThread * thread) {
-    int enabled = OSDisableInterrupts();
+// void OSDetachThread(struct OSThread * thread) {
+//     int enabled = OSDisableInterrupts();
 
-    ASSERTMSG1LINE(0x3FC, __OSIsThreadActive(thread) != 0, "OSDetachThread(): thread %p is not active.", thread);
+//     ASSERTMSG1LINE(0x3FC, __OSIsThreadActive(thread) != 0, "OSDetachThread(): thread %p is not active.", thread);
     
-    thread->attr |= 1;
-    if (thread->state == 8) {
-        DEQUEUE_THREAD(thread, &__OSActiveThreadQueue, linkActive);
-        thread->state = 0;
-    }
-    OSWakeupThread(&thread->queueJoin);
-    OSRestoreInterrupts(enabled);
-}
+//     thread->attr |= 1;
+//     if (thread->state == 8) {
+//         DEQUEUE_THREAD(thread, &__OSActiveThreadQueue, linkActive);
+//         thread->state = 0;
+//     }
+//     OSWakeupThread(&thread->queueJoin);
+//     OSRestoreInterrupts(enabled);
+// }
 
 long OSResumeThread(struct OSThread * thread) {
     int enabled = OSDisableInterrupts();
@@ -686,29 +684,29 @@ int OSSetThreadPriority(struct OSThread * thread, long priority) {
     return 1;
 }
 
-long OSGetThreadPriority(struct OSThread * thread) {
-    return thread->base;
-}
+// long OSGetThreadPriority(struct OSThread * thread) {
+//     return thread->base;
+// }
 
-struct OSThread * OSSetIdleFunction(void (* idleFunction)(void *), void * param, void * stack, unsigned long stackSize) {
-    if(idleFunction) {
-        if (IdleThread.state == 0) {
-            OSCreateThread(&IdleThread, (void*)idleFunction, param, stack, stackSize, 0x1F, 1);
-            OSResumeThread(&IdleThread);
-            return &IdleThread;
-        }
-    } else if (IdleThread.state != 0) {
-        OSCancelThread(&IdleThread);
-    }
-    return NULL;
-}
+// struct OSThread * OSSetIdleFunction(void (* idleFunction)(void *), void * param, void * stack, unsigned long stackSize) {
+//     if(idleFunction) {
+//         if (IdleThread.state == 0) {
+//             OSCreateThread(&IdleThread, (void*)idleFunction, param, stack, stackSize, 0x1F, 1);
+//             OSResumeThread(&IdleThread);
+//             return &IdleThread;
+//         }
+//     } else if (IdleThread.state != 0) {
+//         OSCancelThread(&IdleThread);
+//     }
+//     return NULL;
+// }
 
-struct OSThread * OSGetIdleFunction() {
-    if (IdleThread.state != 0) {
-        return &IdleThread;
-    }
-    return NULL;
-}
+// struct OSThread * OSGetIdleFunction() {
+//     if (IdleThread.state != 0) {
+//         return &IdleThread;
+//     }
+//     return NULL;
+// }
 
 static int CheckThreadQueue(struct OSThreadQueue * queue) {
     struct OSThread * thread;

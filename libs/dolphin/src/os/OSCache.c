@@ -561,27 +561,27 @@ asm void LCQueueWait(register u32 len) {
 //     PPCSync();
 // }
 
-// static void L2Init(void) {
-//   u32 oldMSR;
-//   oldMSR = PPCMfmsr();
-//   __sync();
-//   PPCMtmsr(MSR_IR | MSR_DR);
-//   __sync();
-//   L2Disable();
-//   L2GlobalInvalidate();
-//   PPCMtmsr(oldMSR);
-// }
+static void L2Init(void) {
+  u32 oldMSR;
+  oldMSR = PPCMfmsr();
+  __sync();
+  PPCMtmsr(MSR_IR | MSR_DR);
+  __sync();
+  L2Disable();
+  L2GlobalInvalidate();
+  PPCMtmsr(oldMSR);
+}
 
-// void L2Enable(void) { 
-//     PPCMtl2cr((PPCMfl2cr() | L2CR_L2E) & ~L2CR_L2I);
-// }
+void L2Enable(void) {
+    PPCMtl2cr((PPCMfl2cr() | L2CR_L2E) & ~L2CR_L2I);
+}
 
-// /* clang-format on */
-// void L2Disable(void) {
-//   __sync();
-//   PPCMtl2cr(PPCMfl2cr() & ~0x80000000);
-//   __sync();
-// }
+/* clang-format on */
+void L2Disable(void) {
+  __sync();
+  PPCMtl2cr(PPCMfl2cr() & ~0x80000000);
+  __sync();
+}
 
 void L2GlobalInvalidate(void) {
   __sync();
@@ -658,15 +658,8 @@ void __OSCacheInit() {
   }
 
   if (!(PPCMfl2cr() & L2CR_L2E)) {
-    u32 oldMSR = PPCMfmsr();
-    __sync();
-    PPCMtmsr(MSR_IR | MSR_DR);
-    __sync();
-    __sync();
-    PPCMtl2cr((PPCMfl2cr() | L2CR_L2E) & ~L2CR_L2I);
-    // L2GlobalInvalidate();
-    // PPCMtmsr(oldMSR);
-    PPCMtl2cr((PPCMfl2cr() | L2CR_L2E) & ~L2CR_L2I);
+    L2Init();
+    L2Enable();
     DBPrintf("L2 cache initialized\n");
   }
 
