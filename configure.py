@@ -285,10 +285,10 @@ cflags_sdk = [
 
 # Helper function for Dolphin libraries.
 # char: the SDK Makefile builds most libraries -char unsigned, some -char signed.
-def DolphinLib(lib_name: str, objects: List[Object], char: str = "unsigned") -> Dict[str, Any]:
+def DolphinLib(lib_name: str, objects: List[Object], char: str = "unsigned", mw_version: str = mw_version_sdk) -> Dict[str, Any]:
     return {
         "lib": lib_name,
-        "mw_version": mw_version_sdk,
+        "mw_version": mw_version,
         "cflags": [*cflags_sdk, f"-char {char}"],
         "src_dir": "libs/dolphin/src",
         "progress_category": "sdk",
@@ -327,6 +327,13 @@ def MatchingFor(*versions):
 config.warn_missing_config = True
 config.warn_missing_source = True
 config.libs = [
+    DolphinLib("amcExi2", [
+        DolphinLibObject(Matching, "dolphin/amcExi2/AmcExi.c"),
+        DolphinLibObject(Matching, "dolphin/amcExi2/AmcExi2Comm.c"),
+    ], mw_version="GC/1.2.5"),  # 1.2.5n schedules mtlr last in epilogues; Pikmin uses 1.2.5 too
+    DolphinLib("amcnotstub", [
+        DolphinLibObject(Matching, "dolphin/amcnotstub/amcnotstub.c"),
+    ]),
     DolphinLib("base", [
         DolphinLibObject(Matching, "dolphin/base/PPCArch.c"),
     ]),
@@ -340,6 +347,9 @@ config.libs = [
         DolphinLibObject(Matching, "dolphin/dvd/dvdqueue.c"),
         DolphinLibObject(Matching, "dolphin/dvd/fstload.c"),
     ], char="signed"),
+    DolphinLib("odemustubs", [
+        DolphinLibObject(Matching, "dolphin/odemustubs/odemustubs.c"),
+    ]),
     DolphinLib("os", [
         DolphinLibObject(Matching, "dolphin/os/OS.c"),
         DolphinLibObject(Matching, "dolphin/os/OSAlarm.c"),

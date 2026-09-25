@@ -327,5 +327,22 @@ dolphin/vi/vi.c:
 sk/texPalette.c:
 	.text       start:0x8022C53C end:0x8022C668
 
+dolphin/amcExi2/AmcExi.c:
+	.text       start:0x8022DAE0 end:0x8022E120
+	.bss        start:0x80642BF8 end:0x80642C10
+	.sdata      start:0x8064C4B8 end:0x8064C4C0
+
+dolphin/amcExi2/AmcExi2Comm.c:
+	.text       start:0x8022E120 end:0x8022E7C4
+	.data       start:0x802FF820 end:0x802FF840
+	.sdata      start:0x8064C4C0 end:0x8064C4C8
+	.sbss       start:0x8064DBF8 end:0x8064DC08
+
+dolphin/odemustubs/odemustubs.c:
+	.text       start:0x8022E7C4 end:0x8022E7F4
+
+dolphin/amcnotstub/amcnotstub.c:
+	.text       start:0x8022E7F4 end:0x8022E7FC
+
 sk/info.c:
 	.text       start:0x80232078 end:0x80232430
