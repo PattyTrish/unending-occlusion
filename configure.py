@@ -327,6 +327,9 @@ def MatchingFor(*versions):
 config.warn_missing_config = True
 config.warn_missing_source = True
 config.libs = [
+    DolphinLib("ai", [
+        DolphinLibObject(Matching, "dolphin/ai/ai.c"),
+    ]),
     DolphinLib("amcExi2", [
         DolphinLibObject(Matching, "dolphin/amcExi2/AmcExi.c"),
         DolphinLibObject(Matching, "dolphin/amcExi2/AmcExi2Comm.c"),

@@ -354,6 +354,10 @@ dolphin/pad/Pad.c:
 	.sdata      start:0x8064C428 end:0x8064C448
 	.sbss       start:0x8064DAB0 end:0x8064DAD8
 
+dolphin/ai/ai.c:
+	.text       start:0x8021A044 end:0x8021A96C
+	.sbss       start:0x8064DAD8 end:0x8064DB18
+
 sk/texPalette.c:
 	.text       start:0x8022C53C end:0x8022C668
 
