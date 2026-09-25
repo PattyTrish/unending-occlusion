@@ -116,6 +116,9 @@ typedef struct OSBootInfo_s {
     unsigned long FSTMaxLength; // offset 0x3C, size 0x4
 } OSBootInfo;
 
+#define OS_BOOTINFO_MAGIC 0x0D15EA5E
+#define OS_BOOTINFO_MAGIC_JTAG 0xE5207C22
+
 OSTick OSGetTick(void);
 OSTime OSGetTime(void);
 void OSTicksToCalendarTime(OSTime ticks, OSCalendarTime *td);

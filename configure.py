@@ -284,8 +284,8 @@ cflags_sdk = [
 
 
 # Helper function for Dolphin libraries.
-# char: the SDK Makefile builds most libraries -char unsigned, some -char signed.
-def DolphinLib(lib_name: str, objects: List[Object], char: str = "unsigned", mw_version: str = mw_version_sdk) -> Dict[str, Any]:
+# char: MWCC's default (signed), as every reference decomp builds the SDK; OSUartExi.c proves it.
+def DolphinLib(lib_name: str, objects: List[Object], char: str = "signed", mw_version: str = mw_version_sdk) -> Dict[str, Any]:
     return {
         "lib": lib_name,
         "mw_version": mw_version,
@@ -341,12 +341,13 @@ config.libs = [
         DolphinLibObject(Matching, "dolphin/db/db.c"),
     ]),
     DolphinLib("dvd", [
-        DolphinLibObject(NonMatching, "dolphin/dvd/dvd.c"),
+        DolphinLibObject(Matching, "dolphin/dvd/dvd.c"),
+        DolphinLibObject(Matching, "dolphin/dvd/dvderror.c"),
         DolphinLibObject(Matching, "dolphin/dvd/dvdfs.c"),
-        DolphinLibObject(NonMatching, "dolphin/dvd/dvdlow.c"),
+        DolphinLibObject(Matching, "dolphin/dvd/dvdlow.c"),
         DolphinLibObject(Matching, "dolphin/dvd/dvdqueue.c"),
         DolphinLibObject(Matching, "dolphin/dvd/fstload.c"),
-    ], char="signed"),
+    ]),
     DolphinLib("odemustubs", [
         DolphinLibObject(Matching, "dolphin/odemustubs/odemustubs.c"),
     ]),
@@ -358,14 +359,16 @@ config.libs = [
         DolphinLibObject(Matching, "dolphin/os/OSCache.c"),
         DolphinLibObject(Matching, "dolphin/os/OSContext.c"),
         DolphinLibObject(Matching, "dolphin/os/OSError.c"),
-        DolphinLibObject(NonMatching, "dolphin/os/OSExi.c"),
+        DolphinLibObject(Matching, "dolphin/os/OSExi.c"),
         DolphinLibObject(Matching, "dolphin/os/OSInterrupt.c"),
         DolphinLibObject(Matching, "dolphin/os/OSLink.c"),
         DolphinLibObject(Matching, "dolphin/os/OSMutex.c"),
         DolphinLibObject(Matching, "dolphin/os/OSRtc.c"),
-        DolphinLibObject(NonMatching, "dolphin/os/OSReset.c"),
-        DolphinLibObject(NonMatching, "dolphin/os/OSResetSW.c"),
-        DolphinLibObject(NonMatching, "dolphin/os/OSSerial.c"),
+        DolphinLibObject(Matching, "dolphin/os/OSReset.c"),
+        DolphinLibObject(Matching, "dolphin/os/OSResetSW.c"),
+        DolphinLibObject(Matching, "dolphin/os/OSSerial.c"),
+        DolphinLibObject(Matching, "dolphin/os/SISamplingRate.c"),
+        DolphinLibObject(Matching, "dolphin/os/OSUartExi.c"),
         DolphinLibObject(Matching, "dolphin/os/OSThread.c"),
         DolphinLibObject(Matching, "dolphin/os/OSTime.c"),
         DolphinLibObject(Matching, "dolphin/os/__ppc_eabi_init.c"),
@@ -373,7 +376,7 @@ config.libs = [
         # DolphinLibObject(NonMatching, "dolphin/os/OSSync.c"), need to figure this one out
     ]),
     DolphinLib("vi", [
-        DolphinLibObject(NonMatching, "dolphin/vi/vi.c"),
+        DolphinLibObject(Matching, "dolphin/vi/vi.c"),
     ]),
     {
         "lib": "Runtime.PPCEABI.H",

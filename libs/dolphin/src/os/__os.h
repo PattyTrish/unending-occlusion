@@ -4,6 +4,7 @@
 #include <dolphin/os.h>
 
 // OS.c
+extern OSTime __OSStartTime;
 extern char * __OSExceptionNames[15]; // D ONLY
 
 unsigned long __OSIsDebuggerPresent(void);

@@ -47,7 +47,7 @@ void __OSDBJUMPEND(void);
 
 #define NOP 0x60000000
 
-u64 __OSStartTime;
+OSTime __OSStartTime;
 BOOL __OSInIPL;
 void * __OSSavedRegionStart;
 void * __OSSavedRegionEnd;
@@ -57,7 +57,7 @@ static u32 BI2DebugFlagHolder;
 static double ZeroF;
 static int AreWeInitialized;
 static void (* * OSExceptionTable)(unsigned char, struct OSContext *);
-static DVDDriveInfo DriveInfo;
+static DVDDriveInfo DriveInfo ATTRIBUTE_ALIGN(32);
 static DVDCommandBlock DriveBlock;
 
 // functions

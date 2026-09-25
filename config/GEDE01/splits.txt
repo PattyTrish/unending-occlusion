@@ -203,12 +203,23 @@ sk/ai_inventory.c:
 	.text       start:0x80204A14 end:0x80204A8C
 
 dolphin/os/OSExi.c:
-	.text       start:0x80206778 end:0x80207CC8
+	.text       start:0x80206778 end:0x80208044
 	.bss        start:0x80640AA8 end:0x80640B68
 
+dolphin/os/OSUartExi.c:
+	.text       start:0x80208044 end:0x802082B4
+	.sbss       start:0x8064D8C0 end:0x8064D8D0
+
 dolphin/os/OSSerial.c:
-	.text       start:0x802082D4 end:0x80209A9C
-	.bss        start:0x80640B68 end:0x80640C88
+	.text       start:0x802082B4 end:0x80209994
+	.data       start:0x802FCA20 end:0x802FCAF0
+	.bss        start:0x80640B68 end:0x80640D80
+	.sbss       start:0x8064D8D0 end:0x8064D8E0
+
+dolphin/os/SISamplingRate.c:
+	.text       start:0x80209994 end:0x80209A9C
+	.data       start:0x802FCAF0 end:0x802FCB88
+	.sbss       start:0x8064D8E0 end:0x8064D8E8
 
 dolphin/base/PPCArch.c:
 	.text       start:0x80209A9C end:0x80209B8C
@@ -267,7 +278,8 @@ dolphin/os/OSReset.c:
 	.sbss       start:0x8064D960 end:0x8064D968
 
 dolphin/os/OSResetSW.c:
-	.text       start:0x8020E19C end:0x8020E290
+	.text       start:0x8020E19C end:0x8020E528
+	.sbss       start:0x8064D968 end:0x8064D988
 
 dolphin/os/OSRtc.c:
 	.text       start:0x8020E528 end:0x8020EF54
@@ -292,8 +304,10 @@ dolphin/os/__ppc_eabi_init.c:
 	.text       start:0x80210F1C end:0x80210FB0
 
 dolphin/dvd/dvdlow.c:
-	.text       start:0x802121E0 end:0x80212FF4
-	.sbss       start:0x8064D9A0 end:0x8064D9BC
+	.text       start:0x802121A0 end:0x80212FF4
+	.bss        start:0x80641880 end:0x80641960
+	.sdata      start:0x8064C3F8 end:0x8064C400
+	.sbss       start:0x8064D998 end:0x8064D9E0
 
 dolphin/dvd/dvdfs.c:
 	.text       start:0x80212FF4 end:0x80213A4C
@@ -302,15 +316,19 @@ dolphin/dvd/dvdfs.c:
 	.sbss       start:0x8064D9E0 end:0x8064DA00
 
 dolphin/dvd/dvd.c:
-	.text       start:0x80213A4C end:0x802161E8
-	.data       start:0x802FE540 end:0x802FE5EC
-	.bss        start:0x80641960 end:0x806419E0
+	.text       start:0x80213A4C end:0x802163E8
+	.data       start:0x802FE540 end:0x802FE658
+	.bss        start:0x80641960 end:0x80641A38
 	.sdata      start:0x8064C408 end:0x8064C410
 	.sbss       start:0x8064DA00 end:0x8064DA50
 
 dolphin/dvd/dvdqueue.c:
 	.text       start:0x802163E8 end:0x802165E0
 	.bss        start:0x80641A38 end:0x80641A58
+
+dolphin/dvd/dvderror.c:
+	.text       start:0x802165E0 end:0x80216778
+	.data       start:0x802FE658 end:0x802FE6A0
 
 dolphin/dvd/fstload.c:
 	.text       start:0x80216778 end:0x802169B8
@@ -320,9 +338,10 @@ dolphin/dvd/fstload.c:
 	.sbss       start:0x8064DA50 end:0x8064DA60
 
 dolphin/vi/vi.c:
-	.text       start:0x802169B8 end:0x80218474
-	.bss        start:0x80641AC8 end:0x80641B40
-	.sbss       start:0x8064DA60 end:0x8064DA8C
+	.text       start:0x802169B8 end:0x80218344
+	.data       start:0x802FE710 end:0x802FE9D8
+	.bss        start:0x80641AC8 end:0x80641C10
+	.sbss       start:0x8064DA60 end:0x8064DAB0
 
 sk/texPalette.c:
 	.text       start:0x8022C53C end:0x8022C668

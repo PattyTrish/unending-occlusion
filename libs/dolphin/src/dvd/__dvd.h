@@ -3,8 +3,16 @@
 
 #include <dolphin/dvd.h>
 
+typedef void (*DVDLowCallback)(u32 intType);
+typedef void (*DVDOptionalCommandChecker)(DVDCommandBlock *block, DVDLowCallback cb);
+
 // dvd.c
 void __DVDAudioBufferConfig(struct DVDCommandBlock * block, unsigned long enable, unsigned long size, void (* callback)(long, struct DVDCommandBlock *));
+
+void __DVDPrepareResetAsync(DVDCBCallback callback);
+
+// dvderror.c
+void __DVDStoreErrorCode(u32 error);
 
 // dvdfs.c
 extern struct OSThreadQueue __DVDThreadQueue;
@@ -13,6 +21,8 @@ extern unsigned long __DVDLongFileNameFlag;
 void __DVDFSInit();
 
 // dvdlow.c
+void __DVDInitWA(void);
+void __DVDLowSetWAType(u32 type, u32 location);
 void __DVDInterruptHandler(short unused, struct OSContext * context);
 
 // dvdqueue.c

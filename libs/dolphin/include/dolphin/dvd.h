@@ -117,7 +117,7 @@ int DVDInquiryAsync(struct DVDCommandBlock * block, struct DVDDriveInfo * info, 
 long DVDInquiry(struct DVDCommandBlock * block, struct DVDDriveInfo * info);
 void DVDReset();
 int DVDResetRequired();
-long DVDGetCommandBlockStatus(struct DVDCommandBlock * block);
+long DVDGetCommandBlockStatus(const struct DVDCommandBlock * block);
 long DVDGetDriveStatus();
 int DVDSetAutoInvalidation(int autoInval);
 void DVDPause();

@@ -27,5 +27,6 @@
 #endif
     
 #define ASSERT(cond) ASSERTLINE(__LINE__, cond)
+#define ASSERTMSG(cond, msg) ASSERTMSGLINE(__LINE__, cond, msg)
 
 #endif // _H_MACROS_

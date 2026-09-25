@@ -7,3 +7,6 @@ splits: config/GEDE01/splits.txt
 # Change this to match the linker version.
 # See config.example.yml for a list.
 mw_comment_version: 10
+block_relocations:
+# texture index bits in lbl_802662C0 that look like SIInterruptHandler+0x294
+- source: 0x8028AF8C

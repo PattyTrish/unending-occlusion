@@ -47,6 +47,18 @@
 #define SI_GC_STEERING (SI_TYPE_GC | 0x00000000)
 
 #define SI_MAX_CHAN 4
+#define SI_MAX_COMCSR_INLNGTH 128
+#define SI_MAX_COMCSR_OUTLNGTH 128
+
+#define SI_CHAN0 0
+#define SI_CHAN1 1
+#define SI_CHAN2 2
+#define SI_CHAN3 3
+#define SI_CHAN0_BIT 0x80000000
+#define SI_CHAN1_BIT 0x40000000
+#define SI_CHAN2_BIT 0x20000000
+#define SI_CHAN3_BIT 0x10000000
+#define SI_CHAN_BIT(chan) (SI_CHAN0_BIT >> (chan))
 
 typedef void (*SICallback)(s32 chan, u32 sr, OSContext *context);
 typedef void (*SITypeAndStatusCallback)(s32 chan, u32 type);

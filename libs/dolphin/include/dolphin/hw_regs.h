@@ -87,6 +87,18 @@ volatile u32 __AIRegs[8]      : 0xCC006C00;
 
 #define VI_WIDTH (56)
 
+// offsets for __DIRegs[i]
+#define DI_STATUS       (0)
+#define DI_COVER_STATUS (1)
+#define DI_CMD_BUF_0    (2)
+#define DI_CMD_BUF_1    (3)
+#define DI_CMD_BUF_2    (4)
+#define DI_DMA_MEM_ADDR (5)
+#define DI_DMA_LENGTH   (6)
+#define DI_CONTROL      (7)
+#define DI_MM_BUF       (8)
+#define DI_CONFIG       (9)
+
 // offsets for __DSPRegs[i]
 #define DSP_MAILBOX_IN_HI  (0)
 #define DSP_MAILBOX_IN_LO  (1)
