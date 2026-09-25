@@ -239,6 +239,12 @@ dolphin/os/OSAlarm.c:
 	.text       start:0x8020A5B0 end:0x8020ACD4
 	.sbss       start:0x8064D918 end:0x8064D920
 
+dolphin/os/OSAlloc.c:
+	.text       start:0x8020ACD4 end:0x8020B448
+	.data       start:0x802FCD60 end:0x802FD0F8
+	.sdata      start:0x8064C3C8 end:0x8064C3D0
+	.sbss       start:0x8064D920 end:0x8064D930
+
 dolphin/os/OSArena.c:
 	.text       start:0x8020B448 end:0x8020B468
 	.sdata      start:0x8064C3D0 end:0x8064C3D8
@@ -262,6 +268,10 @@ dolphin/os/OSError.c:
 	.bss        start:0x80640DD0 end:0x80640E20
 	.sdata      start:0x8064C3D8 end:0x8064C3E0
 
+dolphin/os/OSFont.c:
+	.text       start:0x8020C918 end:0x8020C970
+	.sdata      start:0x8064C3E0 end:0x8064C3E8
+
 dolphin/os/OSInterrupt.c:
 	.text       start:0x8020C970 end:0x8020D1D8
 	.data       start:0x802FD8A0 end:0x802FD8D0
@@ -270,8 +280,20 @@ dolphin/os/OSInterrupt.c:
 dolphin/os/OSLink.c:
 	.text       start:0x8020D1D8 end:0x8020D1F0
 
+dolphin/os/OSMessage.c:
+	.text       start:0x8020D1F0 end:0x8020D4C8
+
+dolphin/os/OSMemory.c:
+	.text       start:0x8020D4C8 end:0x8020D7A8
+	.data       start:0x802FD8D0 end:0x802FD8E0
+
 dolphin/os/OSMutex.c:
 	.text       start:0x8020D7A8 end:0x8020DBA0
+
+dolphin/os/OSReboot.c:
+	.text       start:0x8020DBA0 end:0x8020DDB8
+	.bss        start:0x80640E20 end:0x80640E40
+	.sbss       start:0x8064D950 end:0x8064D960
 
 dolphin/os/OSReset.c:
 	.text       start:0x8020DDB8 end:0x8020E19C
@@ -284,6 +306,12 @@ dolphin/os/OSResetSW.c:
 dolphin/os/OSRtc.c:
 	.text       start:0x8020E528 end:0x8020EF54
 	.bss        start:0x80640E40 end:0x80640E98
+
+dolphin/os/OSStopwatch.c:
+	.text       start:0x8020EF54 end:0x8020F120
+
+dolphin/os/OSSync.c:
+	.text       start:0x8020F120 end:0x8020F1A4
 
 dolphin/os/OSThread.c:
 	.text       start:0x8020F1A4 end:0x80210AA0

@@ -39,6 +39,13 @@ typedef u32 OSTick;
 u32 OSGetPhysicalMemSize(void);
 u32 OSGetConsoleSimulatedMemSize(void);
 
+#define OS_PROTECT_CONTROL_NONE  0x00
+#define OS_PROTECT_CONTROL_READ  0x01
+#define OS_PROTECT_CONTROL_WRITE 0x02
+#define OS_PROTECT_CONTROL_RDWR  (OS_PROTECT_CONTROL_READ | OS_PROTECT_CONTROL_WRITE)
+
+void OSProtectRange(u32 chan, void *addr, u32 nBytes, u32 control);
+
 // Upper words of the masks, since UIMM is only 16 bits
 #define OS_CACHED_REGION_PREFIX 0x8000
 #define OS_UNCACHED_REGION_PREFIX 0xC000

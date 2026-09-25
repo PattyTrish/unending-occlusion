@@ -211,6 +211,7 @@ void * OSAllocFromHeap(int heap, unsigned long size) {
     return (u8*)cell + 0x20;
 }
 
+/*
 void * OSAllocFixed(void * rstart, void * rend) {
     int i;
     struct Cell * cell;
@@ -318,6 +319,7 @@ void * OSAllocFixed(void * rstart, void * rend) {
     *(u32*)rend = (u32)end;
     return (void*)*(u32*)rstart;
 }
+*/
 
 void OSFreeToHeap(int heap, void * ptr) {
     struct HeapDesc * hd;
@@ -430,6 +432,7 @@ int OSCreateHeap(void * start, void * end) {
     return -1;
 }
 
+/*
 void OSDestroyHeap(int heap) {
     struct HeapDesc * hd;
     long size;
@@ -455,7 +458,9 @@ void OSDestroyHeap(int heap) {
     }
 #endif
 }
+*/
 
+// stripped, but as DLInsert's second caller it keeps DLInsert out of line
 void OSAddToHeap(int heap, void * start, void * end) {
     struct HeapDesc * hd;
     struct Cell * cell;
@@ -545,6 +550,7 @@ long OSCheckHeap(int heap) {
     return free;
 }
 
+/*
 unsigned long OSReferentSize(void * ptr) {
     struct Cell * cell;
 
@@ -559,6 +565,7 @@ unsigned long OSReferentSize(void * ptr) {
     ASSERTMSGLINE(0x3C9, DLLookup(cell->hd->allocated, cell), "OSReferentSize(): invalid pointer.");
     return (long)((u32)cell->size-HEADERSIZE);
 }
+*/
 
 void OSDumpHeap(int heap) {
     struct HeapDesc * hd;
@@ -592,6 +599,7 @@ void OSDumpHeap(int heap) {
     }
 }
 
+/*
 void OSVisitAllocated(void (* visitor)(void *, unsigned long)) {
     unsigned long heap;
     struct Cell * cell;
@@ -604,3 +612,4 @@ void OSVisitAllocated(void (* visitor)(void *, unsigned long)) {
         }
     }
 }
+*/

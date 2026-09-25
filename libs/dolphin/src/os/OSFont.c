@@ -194,6 +194,7 @@ static u16 Zenkaku2Code[]
         0x317, 0x318, 0x319, 0x31A, 0x31B, 0x000 
     };
 
+/*
 static int GetFontCode(unsigned short code) {
     if (OSGetFontEncode() == OS_FONT_ENCODE_SJIS) {
         if (code >= 0x20 && code <= 0xDF) {
@@ -228,7 +229,9 @@ static int GetFontCode(unsigned short code) {
     }
     return 0;
 }
+*/
 
+/*
 static void Decode(unsigned char * s, unsigned char * d) {
     int i;
     int j;
@@ -288,7 +291,9 @@ static void Decode(unsigned char * s, unsigned char * d) {
         flag--;
     } while (q < os);
 }
+*/
 
+/*
 static u32 GetFontSize(u8* buf)
 {
     if (buf[0] == 'Y' && buf[1] == 'a' && buf[2] == 'y') {
@@ -297,6 +302,7 @@ static u32 GetFontSize(u8* buf)
 
     return 0;
 }
+*/
 
 unsigned short OSGetFontEncode(void) {
     static u16 fontEncode = 0xFFFF;
@@ -320,6 +326,7 @@ unsigned short OSGetFontEncode(void) {
     return fontEncode;
 }
 
+/*
 static void ReadROM(void* buf, int length, int offset)
 {
     int len;
@@ -335,7 +342,9 @@ static void ReadROM(void* buf, int length, int offset)
         (u8*)buf += len;
     }
 }
+*/
 
+/*
 static u32 ReadFont(void* img)
 {
     if (OSGetFontEncode() == OS_FONT_ENCODE_SJIS) {
@@ -346,7 +355,9 @@ static u32 ReadFont(void* img)
 
     return GetFontSize(img);
 }
+*/
 
+/*
 u32 OSLoadFont(OSFontHeader* fontData, void* temp)
 {
     u32 size;
@@ -362,7 +373,9 @@ u32 OSLoadFont(OSFontHeader* fontData, void* temp)
 
     return size;
 }
+*/
 
+/*
 char * OSGetFontTexel(char * string, void * image, long pos, long stride , long * width) {
     unsigned short code;
     unsigned char * src;
@@ -430,7 +443,9 @@ char * OSGetFontTexel(char * string, void * image, long pos, long stride , long 
 
     return string;
 }
+*/
 
+/*
 static void ExpandFontSheet(u8* src, u8* dst) { 
     int i;
     u8* colorIndex = &FontData->c0;
@@ -453,7 +468,9 @@ static void ExpandFontSheet(u8* src, u8* dst) {
 
     DCStoreRange(dst, FontData->sheetFullSize);
 }
+*/
 
+/*
 int OSInitFont(OSFontHeader * fontData) {
     unsigned long size;
     void * temp; 
@@ -473,7 +490,9 @@ int OSInitFont(OSFontHeader * fontData) {
     ExpandFontSheet((u8*)FontData + FontData->sheetImage, SheetImage);
     return 1;
 }
+*/
 
+/*
 char * OSGetFontTexture(char * string, void ** image, long * x, long * y, long * width) {
     unsigned short code;
     int fontCode;
@@ -513,7 +532,9 @@ char * OSGetFontTexture(char * string, void ** image, long * x, long * y, long *
     }
     return string;
 }
+*/
 
+/*
 char * OSGetFontWidth(char * string, long * width) {
     unsigned short code;
 
@@ -533,3 +554,4 @@ char * OSGetFontWidth(char * string, long * width) {
     *width = WidthTable[GetFontCode(code)];
     return string;
 }
+*/
