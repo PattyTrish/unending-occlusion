@@ -1,14 +1,59 @@
-#define GX_WRITE_U8(ub)     \
-    GXWGFifo.u8 = (u8)(ub)
+#ifndef _DOLPHIN_GXPRIV
+#define _DOLPHIN_GXPRIV
 
-#define GX_WRITE_U16(us)   \
-   GXWGFifo.u16 = (u16)(us)
+#include <dolphin/gx.h>
 
-#define GX_WRITE_U32(ui)   \
-   GXWGFifo.u32 = (u32)(ui)
+#ifdef DEBUG
+#define ASSERTLINE(line, cond) \
+    ((cond) || (OSPanic(__FILE__, line, "Failed assertion " #cond), 0))
 
-#define GX_WRITE_F32(f)     \
-   GXWGFifo.f32 = (f32)(f);
+#define ASSERTMSGLINE(line, cond, msg) \
+    ((cond) || (OSPanic(__FILE__, line, msg), 0))
+
+// This is dumb but we dont have a Metrowerks way to do variadic macros in the macro to make this done in a not scrubby way.
+#define ASSERTMSG1LINE(line, cond, msg, arg1) \
+    ((cond) || (OSPanic(__FILE__, line, msg, arg1), 0))
+    
+#define ASSERTMSG2LINE(line, cond, msg, arg1, arg2) \
+    ((cond) || (OSPanic(__FILE__, line, msg, arg1, arg2), 0))
+
+#define ASSERTMSGLINEV(line, cond, ...) \
+    ((cond) || (OSPanic(__FILE__, line, __VA_ARGS__), 0))
+
+#else
+#define ASSERTLINE(line, cond) (void)0
+#define ASSERTMSGLINE(line, cond, msg) (void)0
+#define ASSERTMSG1LINE(line, cond, msg, arg1) (void)0
+#define ASSERTMSG2LINE(line, cond, msg, arg1, arg2) (void)0
+#define ASSERTMSGLINEV(line, cond, ...) (void)0
+#endif
+
+typedef struct GXLightObjInt {
+  u32 padding[3];
+  u32 color;
+  float a0;
+  float a1;
+  float a2;
+  float k0;
+  float k1;
+  float k2;
+  float px;
+  float py;
+  float pz;
+  float nx;
+  float ny;
+  float nz;
+} GXLightObjInt;
+
+#define XF_LIGHT_BASE 0x0600
+#define XF_LIGHT_SIZE 0x10
+
+#define GX_FIFO_ADDR 0xCC008000
+
+#define GX_WRITE_U8(v) (GXWGFifo.u8 = v)
+#define GX_WRITE_U16(us) (GXWGFifo.u16 = (u16)(us))
+#define GX_WRITE_U32(v) (GXWGFifo.u32 = v)
+#define GX_WRITE_F32(f) (GXWGFifo.f32 = (f32)(f))
 
 #if DEBUG
 #define VERIF_XF_REG(addr, value) \
@@ -138,6 +183,261 @@ do { \
     (reg) = ((u32)(reg) & ~(((1 << (size)) - 1) << (shift))) | ((u32)(val) << (shift)); \
 } while (0)
 
+#define GX_REG_ASSERT(c) ASSERTMSG(c, "GX Internal: Register field out of range")
+
+#define GX_FLAG_SET(regOrg, newFlag, regName)                                                      \
+  do {                                                                                             \
+    GX_REG_ASSERT(!((newFlag) & ~((1 << (regName##_SIZE)) - 1)));                                  \
+    (regOrg) = (((u32)(regOrg) & ~(regName##_MASK)) |                                              \
+                (((u32)(newFlag) << (regName##_SHIFT)) & (regName##_MASK)));                       \
+  } while (0)
+
+#define GX_GENMODE_ID 0
+#define GX_GENMODE_REG_ID_SIZE 8
+#define GX_GENMODE_REG_ID_SHIFT 24
+#define GX_GENMODE_REG_ID_MASK 0xff000000
+#define GX_GENMODE_GET_REG_ID(genMode)                                                               \
+  ((((u32)(genMode)) & GX_GENMODE_REG_ID_MASK) >> GX_GENMODE_REG_ID_SHIFT)
+
+#define GX_BPMASK_ID 15
+#define GX_BPMASK_REG_ID_SIZE 8
+#define GX_BPMASK_REG_ID_SHIFT 24
+#define GX_BPMASK_REG_ID_MASK 0xff000000
+
+#define GX_LPSIZE_ID 34
+#define GX_LPSIZE_REG_ID_SIZE 8
+#define GX_LPSIZE_REG_ID_SHIFT 24
+#define GX_LPSIZE_REG_ID_MASK 0xff000000
+
+#define TEV_COLOR_ENV_REG_ID_SIZE 8
+#define TEV_COLOR_ENV_REG_ID_SHIFT 24
+#define TEV_COLOR_ENV_REG_ID_MASK 0xff000000
+
+#define TEV_ALPHA_ENV_REG_ID_SIZE 8
+#define TEV_ALPHA_ENV_REG_ID_SHIFT 24
+#define TEV_ALPHA_ENV_REG_ID_MASK 0xff000000
+
+#define TEV_COLOR_ENV_0_ID 0x000000c0
+#define TEV_ALPHA_ENV_0_ID 0x000000c1
+#define TEV_COLOR_ENV_1_ID 0x000000c2
+#define TEV_ALPHA_ENV_1_ID 0x000000c3
+#define TEV_COLOR_ENV_2_ID 0x000000c4
+#define TEV_ALPHA_ENV_2_ID 0x000000c5
+#define TEV_COLOR_ENV_3_ID 0x000000c6
+#define TEV_ALPHA_ENV_3_ID 0x000000c7
+#define TEV_COLOR_ENV_4_ID 0x000000c8
+#define TEV_ALPHA_ENV_4_ID 0x000000c9
+#define TEV_COLOR_ENV_5_ID 0x000000ca
+#define TEV_ALPHA_ENV_5_ID 0x000000cb
+#define TEV_COLOR_ENV_6_ID 0x000000cc
+#define TEV_ALPHA_ENV_6_ID 0x000000cd
+#define TEV_COLOR_ENV_7_ID 0x000000ce
+#define TEV_ALPHA_ENV_7_ID 0x000000cf
+#define TEV_COLOR_ENV_8_ID 0x000000d0
+#define TEV_ALPHA_ENV_8_ID 0x000000d1
+#define TEV_COLOR_ENV_9_ID 0x000000d2
+#define TEV_ALPHA_ENV_9_ID 0x000000d3
+#define TEV_COLOR_ENV_A_ID 0x000000d4
+#define TEV_ALPHA_ENV_A_ID 0x000000d5
+#define TEV_COLOR_ENV_B_ID 0x000000d6
+#define TEV_ALPHA_ENV_B_ID 0x000000d7
+#define TEV_COLOR_ENV_C_ID 0x000000d8
+#define TEV_ALPHA_ENV_C_ID 0x000000d9
+#define TEV_COLOR_ENV_D_ID 0x000000da
+#define TEV_ALPHA_ENV_D_ID 0x000000db
+#define TEV_COLOR_ENV_E_ID 0x000000dc
+#define TEV_ALPHA_ENV_E_ID 0x000000dd
+#define TEV_COLOR_ENV_F_ID 0x000000de
+#define TEV_ALPHA_ENV_F_ID 0x000000df
+
+#define TEV_KSEL_REG_ID_SIZE 8
+#define TEV_KSEL_REG_ID_SHIFT 24
+#define TEV_KSEL_REG_ID_MASK 0xff000000
+
+#define TEV_KSEL_0_ID 0x000000f6
+#define TEV_KSEL_1_ID 0x000000f7
+#define TEV_KSEL_2_ID 0x000000f8
+#define TEV_KSEL_3_ID 0x000000f9
+#define TEV_KSEL_4_ID 0x000000fa
+#define TEV_KSEL_5_ID 0x000000fb
+#define TEV_KSEL_6_ID 0x000000fc
+#define TEV_KSEL_7_ID 0x000000fd
+
+#define RAS_IREF_ID 39
+#define RAS_IREF_REG_ID_SIZE 8
+#define RAS_IREF_REG_ID_SHIFT 24
+#define RAS_IREF_REG_ID_MASK 0xff000000
+
+#define RAS_TREF0_ID 40
+#define RAS_TREF_REG_ID_SIZE 8
+#define RAS_TREF_REG_ID_SHIFT 24
+#define RAS_TREF_REG_ID_MASK 0xff000000
+
+#define SU_TS0_REG_ID_SIZE 8
+#define SU_TS0_REG_ID_SHIFT 24
+#define SU_TS0_REG_ID_MASK 0xff000000
+
+#define SU_TS1_REG_ID_SIZE 8
+#define SU_TS1_REG_ID_SHIFT 24
+#define SU_TS1_REG_ID_MASK 0xff000000
+
+#define SU_SCIS0_ID 0x00000020
+#define SU_SCIS1_ID 0x00000021
+
+#define SU_SCIS0_REG_ID_SIZE 8
+#define SU_SCIS0_REG_ID_SHIFT 24
+#define SU_SCIS0_REG_ID_MASK 0xff000000
+
+#define SU_SCIS1_REG_ID_SIZE 8
+#define SU_SCIS1_REG_ID_SHIFT 24
+#define SU_SCIS1_REG_ID_MASK 0xff000000
+
+#define SU_SSIZE0_ID 0x00000030
+#define SU_TSIZE0_ID 0x00000031
+#define SU_SSIZE1_ID 0x00000032
+#define SU_TSIZE1_ID 0x00000033
+#define SU_SSIZE2_ID 0x00000034
+#define SU_TSIZE2_ID 0x00000035
+#define SU_SSIZE3_ID 0x00000036
+#define SU_TSIZE3_ID 0x00000037
+#define SU_SSIZE4_ID 0x00000038
+#define SU_TSIZE4_ID 0x00000039
+#define SU_SSIZE5_ID 0x0000003a
+#define SU_TSIZE5_ID 0x0000003b
+#define SU_SSIZE6_ID 0x0000003c
+#define SU_TSIZE6_ID 0x0000003d
+#define SU_SSIZE7_ID 0x0000003e
+#define SU_TSIZE7_ID 0x0000003f
+
+#define GX_ZMODE_ID 64
+#define GX_ZMODE_REG_ID_SIZE 8
+#define GX_ZMODE_REG_ID_SHIFT 24
+#define GX_ZMODE_REG_ID_MASK 0xff000000
+
+#define GX_CMODE0_ID 65
+#define GX_CMODE0_REG_ID_SIZE 8
+#define GX_CMODE0_REG_ID_SHIFT 24
+#define GX_CMODE0_REG_ID_MASK 0xff000000
+
+#define GX_CMODE1_ID 66
+#define GX_CMODE1_REG_ID_SIZE 8
+#define GX_CMODE1_REG_ID_SHIFT 24
+#define GX_CMODE1_REG_ID_MASK 0xff000000
+
+#define PE_CONTROL_ID 67
+#define PE_CONTROL_REG_ID_SIZE 8
+#define PE_CONTROL_REG_ID_SHIFT 24
+#define PE_CONTROL_REG_ID_MASK 0xff000000
+
+#define PE_COPY_CMD_GAMMA_SIZE 2
+#define PE_COPY_CMD_GAMMA_SHIFT 7
+#define PE_COPY_CMD_GAMMA_MASK 0x00000180
+
+#define GEN_MODE_REG_ID_SIZE 8
+#define GEN_MODE_REG_ID_SHIFT 24
+#define GEN_MODE_REG_ID_MASK 0xff000000
+
+#define GX_OPCODE_INDEX_SIZE 3
+#define GX_OPCODE_INDEX_SHIFT 0
+#define GX_OPCODE_INDEX_MASK 0x00000007
+
+#define GX_OPCODE_CMD_SHIFT 3
+
+#define GX_OPCODE(index, cmd)                                                                      \
+  ((((u32)(index)) << GX_OPCODE_INDEX_SHIFT) | (((u32)(cmd)) << GX_OPCODE_CMD_SHIFT))
+
+#ifdef _DEBUG
+#define GX_WRITE_RA_REG(reg)                                                                       \
+  {                                                                                                \
+    GX_WRITE_U8(GX_OPCODE(1, 12));                                                                 \
+    GX_WRITE_U32((reg));                                                                           \
+    __gxVerif->rasRegs[GX_GENMODE_GET_REG_ID(reg)] = reg;                                             \
+  }
+#else
+#define GX_WRITE_RA_REG(reg)                                                                       \
+  {                                                                                                \
+    GX_WRITE_U8(GX_OPCODE(1, 12));                                                                 \
+    GX_WRITE_U32((reg));                                                                           \
+  }
+#endif
+
+#define CP_STREAM_REG_INDEX_SIZE 4
+#define CP_STREAM_REG_INDEX_SHIFT 0
+#define CP_STREAM_REG_INDEX_MASK 0x0000000f
+
+#define CP_STREAM_REG_ADDR_SIZE 4
+#define CP_STREAM_REG_ADDR_SHIFT    4
+#define CP_STREAM_REG_ADDR_MASK 0x000000f0
+
+#define CP_STREAM_REG(index, addr)                                                                 \
+  ((((unsigned long)(index)) << CP_STREAM_REG_INDEX_SHIFT) |                                       \
+   (((unsigned long)(addr)) << CP_STREAM_REG_ADDR_SHIFT))
+
+#ifdef _DEBUG
+#define GX_WRITE_CP_STRM_REG(addr, vtxfmt, data)                                                   \
+  {                                                                                                \
+    s32 regAddr;                                                                                   \
+    GX_WRITE_U8(GX_OPCODE(0, 1));                                                                  \
+    GX_WRITE_U8(CP_STREAM_REG((vtxfmt), (addr)));                                                  \
+    GX_WRITE_U32((data));                                                                          \
+    regAddr = (vtxfmt)-GX_POS_MTX_ARRAY + GX_VA_POS;                                               \
+    if ((addr) == 10) {                                                                            \
+      if (regAddr >= 0 && regAddr < 4)                                                             \
+        gx->indexBase[regAddr] = (data);                                                           \
+    } else if ((addr) == 11) {                                                                     \
+      if (regAddr >= 0 && regAddr < 4)                                                             \
+        gx->indexStride[regAddr] = (data);                                                         \
+    }                                                                                              \
+  }
+#else
+#define GX_WRITE_CP_STRM_REG(addr, vtxfmt, data)                                                   \
+  {                                                                                                \
+    GX_WRITE_U8(GX_OPCODE(0, 1));                                                                  \
+    GX_WRITE_U8(CP_STREAM_REG((vtxfmt), (addr)));                                                  \
+    GX_WRITE_U32((data));                                                                          \
+  }
+#endif
+
+#define PE_REFRESH_REG_ID_SIZE 8
+#define PE_REFRESH_REG_ID_SHIFT 24
+#define PE_REFRESH_REG_ID_MASK 0xff000000
+
+#define PE_REFRESH_INTERVAL_SHIFT 0
+#define PE_REFRESH_ENABLE_SHIFT 9
+#define PE_REFRESH_TOTAL_SIZE 32
+#define PE_REFRESH(interval, enable, rid)                                                          \
+  ((((u32)(interval)) << PE_REFRESH_INTERVAL_SHIFT) |                                              \
+   (((u32)(enable)) << PE_REFRESH_ENABLE_SHIFT) | (((u32)(rid)) << PE_REFRESH_REG_ID_SHIFT))
+
+#define TX_REFRESH_REG_ID_SIZE 8
+#define TX_REFRESH_REG_ID_SHIFT 24
+#define TX_REFRESH_REG_ID_MASK 0xff000000
+
+#define TX_REFRESH_INTERVAL_SHIFT 0
+#define TX_REFRESH_ENABLE_SHIFT 10
+#define TX_REFRESH_TOTAL_SIZE 32
+#define TX_REFRESH(interval, enable, rid)                                                          \
+  ((((u32)(interval)) << TX_REFRESH_INTERVAL_SHIFT) |                                              \
+   (((u32)(enable)) << TX_REFRESH_ENABLE_SHIFT) | (((u32)(rid)) << TX_REFRESH_REG_ID_SHIFT))
+
+#define GX_VAT_REG_A_UNK_SIZE 1
+#define GX_VAT_REG_A_UNK_SHIFT 30
+#define GX_VAT_REG_A_UNK_MASK 0x40000000
+
+#define GX_VAT_REG_B_UNK_SIZE 1
+#define GX_VAT_REG_B_UNK_SHIFT 31
+#define GX_VAT_REG_B_UNK_MASK 0x80000000
+
+#define GX_GET_MEM_REG(offset) (*(volatile u16*)((volatile u16*)(__memReg) + (offset)))
+#define GX_GET_CP_REG(offset)  (*(volatile u16*)((volatile u16*)(__cpReg) + (offset)))
+#define GX_GET_PE_REG(offset)  (*(volatile u16*)((volatile u16*)(__peReg) + (offset)))
+#define GX_GET_PI_REG(offset)  (*(volatile u32*)((volatile u32*)(__piReg) + (offset)))
+
+#define GX_SET_MEM_REG(offset, val) (*(volatile u16*)((volatile u16*)(__memReg) + (offset)) = val)
+#define GX_SET_CP_REG(offset, val)  (*(volatile u16*)((volatile u16*)(__cpReg) + (offset)) = val)
+#define GX_SET_PE_REG(offset, val)  (*(volatile u16*)((volatile u16*)(__peReg) + (offset)) = val)
+#define GX_SET_PI_REG(offset, val)  (*(volatile u32*)((volatile u32*)(__piReg) + (offset)) = val)
+
 #define CHECK_GXBEGIN(line, name) ASSERTMSGLINE(line, !__GXinBegin, "'" name "' is not allowed between GXBegin/GXEnd")
 
 /* GXAttr.c */
@@ -178,100 +478,153 @@ void __GXSendFlushPrim(void);
 void __GXSetGenMode(void);
 
 /* GXInit.c */
+void __GXInitGX();
+void __GXInitRevisionBits(void);
 
-struct __GXData_struct {
-    // total size: 0x4F4
-    unsigned short vNum; // offset 0x0, size 0x2
-    unsigned short bpSent; // offset 0x2, size 0x2
-    unsigned long vLim; // offset 0x4, size 0x4
-    unsigned long cpEnable; // offset 0x8, size 0x4
-    unsigned long cpStatus; // offset 0xC, size 0x4
-    unsigned long cpClr; // offset 0x10, size 0x4
-    unsigned long vcdLo; // offset 0x14, size 0x4
-    unsigned long vcdHi; // offset 0x18, size 0x4
-    unsigned long vatA[8]; // offset 0x1C, size 0x20
-    unsigned long vatB[8]; // offset 0x3C, size 0x20
-    unsigned long vatC[8]; // offset 0x5C, size 0x20
-    unsigned long lpSize; // offset 0x7C, size 0x4
-    unsigned long matIdxA; // offset 0x80, size 0x4
-    unsigned long matIdxB; // offset 0x84, size 0x4
-    unsigned long indexBase[4]; // offset 0x88, size 0x10
-    unsigned long indexStride[4]; // offset 0x98, size 0x10
-    unsigned long ambColor[2]; // offset 0xA8, size 0x8
-    unsigned long matColor[2]; // offset 0xB0, size 0x8
-    unsigned long suTs0[8]; // offset 0xB8, size 0x20
-    unsigned long suTs1[8]; // offset 0xD8, size 0x20
-    unsigned long suScis0; // offset 0xF8, size 0x4
-    unsigned long suScis1; // offset 0xFC, size 0x4
-    unsigned long tref[8]; // offset 0x100, size 0x20
-    unsigned long iref; // offset 0x120, size 0x4
-    unsigned long bpMask; // offset 0x124, size 0x4
-    unsigned long IndTexScale0; // offset 0x128, size 0x4
-    unsigned long IndTexScale1; // offset 0x12C, size 0x4
-    unsigned long tevc[16]; // offset 0x130, size 0x40
-    unsigned long teva[16]; // offset 0x170, size 0x40
-    unsigned long tevKsel[8]; // offset 0x1B0, size 0x20
-    unsigned long cmode0; // offset 0x1D0, size 0x4
-    unsigned long cmode1; // offset 0x1D4, size 0x4
-    unsigned long zmode; // offset 0x1D8, size 0x4
-    unsigned long peCtrl; // offset 0x1DC, size 0x4
-    unsigned long cpDispSrc; // offset 0x1E0, size 0x4
-    unsigned long cpDispSize; // offset 0x1E4, size 0x4
-    unsigned long cpDispStride; // offset 0x1E8, size 0x4
-    unsigned long cpDisp; // offset 0x1EC, size 0x4
-    unsigned long cpTexSrc; // offset 0x1F0, size 0x4
-    unsigned long cpTexSize; // offset 0x1F4, size 0x4
-    unsigned long cpTexStride; // offset 0x1F8, size 0x4
-    unsigned long cpTex; // offset 0x1FC, size 0x4
-    unsigned char cpTexZ; // offset 0x200, size 0x1
-    unsigned long genMode; // offset 0x204, size 0x4
-    GXTexRegion TexRegions[8]; // offset 0x208, size 0x80
-    GXTexRegion TexRegionsCI[4]; // offset 0x288, size 0x40
-    unsigned long nextTexRgn; // offset 0x2C8, size 0x4
-    unsigned long nextTexRgnCI; // offset 0x2CC, size 0x4
-    GXTlutRegion TlutRegions[20]; // offset 0x2D0, size 0x140
-    GXTexRegion * (* texRegionCallback)(GXTexObj *, GXTexMapID); // offset 0x410, size 0x4
-    GXTlutRegion * (* tlutRegionCallback)(unsigned long); // offset 0x414, size 0x4
-    GXAttrType nrmType; // offset 0x418, size 0x4
-    unsigned char hasNrms; // offset 0x41C, size 0x1
-    unsigned char hasBiNrms; // offset 0x41D, size 0x1
-    unsigned long projType; // offset 0x420, size 0x4
-    float projMtx[6]; // offset 0x424, size 0x18
-    float vpLeft; // offset 0x43C, size 0x4
-    float vpTop; // offset 0x440, size 0x4
-    float vpWd; // offset 0x444, size 0x4
-    float vpHt; // offset 0x448, size 0x4
-    float vpNearz; // offset 0x44C, size 0x4
-    float vpFarz; // offset 0x450, size 0x4
-    unsigned char fgRange; // offset 0x454, size 0x1
-    float fgSideX; // offset 0x458, size 0x4
-    unsigned long tImage0[8]; // offset 0x45C, size 0x20
-    unsigned long tMode0[8]; // offset 0x47C, size 0x20
-    unsigned long texmapId[16]; // offset 0x49C, size 0x40
-    unsigned long tcsManEnab; // offset 0x4DC, size 0x4
-    GXPerf0 perf0; // offset 0x4E0, size 0x4
-    GXPerf1 perf1; // offset 0x4E4, size 0x4
-    unsigned long perfSel; // offset 0x4E8, size 0x4
-    unsigned char inDispList; // offset 0x4EC, size 0x1
-    unsigned char dlSaveContext; // offset 0x4ED, size 0x1
-    unsigned char dirtyVAT; // offset 0x4EE, size 0x1
-    unsigned long dirtyState; // offset 0x4F0, size 0x4
-}; // size = 0x4F4
+typedef struct __GXData_struct {
+  u16 vNumNot;
+  u16 bpSentNot;
+  u16 vNum;
+  u16 vLim;
+  u32 cpEnable;
+  u32 cpStatus;
+  u32 cpClr;
+  u32 vcdLo;
+  u32 vcdHi;
+  u32 vatA[8];
+  u32 vatB[8];
+  u32 vatC[8];
+  u32 lpSize;
+  u32 matIdxA;
+  u32 matIdxB;
+  u32 indexBase[4];
+  u32 indexStride[4];
+  u32 ambColor[2];
+  u32 matColor[2];
+  u32 suTs0[8];
+  u32 suTs1[8];
+  u32 suScis0;
+  u32 suScis1;
+  u32 tref[8];
+  u32 iref;
+  u32 bpMask;
+  u32 IndTexScale0;
+  u32 IndTexScale1;
+  u32 tevc[16];
+  u32 teva[16];
+  u32 tevKsel[8];
+  u32 cmode0;
+  u32 cmode1;
+  u32 zmode;
+  u32 peCtrl;
+  u32 cpDispSrc;
+  u32 cpDispSize;
+  u32 cpDispStride;
+  u32 cpDisp;
+  u32 cpTexSrc;
+  u32 cpTexSize;
+  u32 cpTexStride;
+  u32 cpTex;
+  GXBool cpTexZ;
+  u32 genMode;
+  GXTexRegion TexRegions[8];
+  GXTexRegion TexRegionsCI[4];
+  u32 nextTexRgn;
+  u32 nextTexRgnCI;
+  GXTlutRegion TlutRegions[20];
+  GXTexRegion* (*texRegionCallback)(GXTexObj*, GXTexMapID);
+  GXTlutRegion* (*tlutRegionCallback)(u32);
+  GXAttrType nrmType;
+  GXBool hasNrms;
+  GXBool hasBiNrms;
+  u32 projType;
+  f32 projMtx[6];
+  f32 vpLeft;
+  f32 vpTop;
+  f32 vpWd;
+  f32 vpHt;
+  f32 vpNearz;
+  f32 vpFarz;
+  u8 fgRange;
+  f32 fgSideX;
+  u32 tImage0[8];
+  u32 tMode0[8];
+  u32 texmapId[16];
+  u32 tcsManEnab;
+  u32 tevTcEnab;
+  GXPerf0 perf0;
+  GXPerf1 perf1;
+  u32 perfSel;
+  GXBool inDispList;
+  GXBool dlSaveContext;
+  u8 dirtyVAT;
+  u32 dirtyState;
+} GXData;
 
-extern struct __GXData_struct *gx;
+extern GXData* gx;
 extern u16 *__memReg;
 extern u16 *__peReg;
 extern u16 *__cpReg;
 extern u32 *__piReg;
-#if DEBUG
-extern GXBool __GXinBegin;
-#endif
+// #define gx __GXData
 
 /* GXMisc.c */
 
 void __GXBypass(u32 reg);
 u16 __GXReadPEReg(u32 reg);
 void __GXPEInit(void);
+void __GXAbort();
+
+/* GXPerf.c */
+void __GXSetBWDials(u16 cpDial, u16 tcDial, u16 peDial, u16 cpuRdDial, u16 cpuWrDial);
+
+static inline u32 __GXReadCPCounterU32(u32 regAddrL, u32 regAddrH) {
+    u32 ctrH0;
+    u32 ctrH1;
+    u32 ctrL;
+
+    ctrH0 = GX_GET_CP_REG(regAddrH);
+
+    do {
+        ctrH1 = ctrH0;
+        ctrL = GX_GET_CP_REG(regAddrL);
+        ctrH0 = GX_GET_CP_REG(regAddrH);
+    } while (ctrH0 != ctrH1);
+
+    return (ctrH0 << 0x10) | ctrL;
+}
+
+static inline u32 __GXReadMEMCounterU32(u32 regAddrL, u32 regAddrH) {
+    u32 ctrH0;
+    u32 ctrH1;
+    u32 ctrL;
+
+    ctrH0 = GX_GET_MEM_REG(regAddrH);
+
+    do {
+        ctrH1 = ctrH0;
+        ctrL = GX_GET_MEM_REG(regAddrL);
+        ctrH0 = GX_GET_MEM_REG(regAddrH);
+    } while (ctrH0 != ctrH1);
+
+    return (ctrH0 << 0x10) | ctrL;
+}
+
+static inline u32 __GXReadPECounterU32(u32 regAddrL, u32 regAddrH) {
+    u32 ctrH0;
+    u32 ctrH1;
+    u32 ctrL;
+
+    ctrH0 = GX_GET_PE_REG(regAddrH);
+
+    do {
+        ctrH1 = ctrH0;
+        ctrL = GX_GET_PE_REG(regAddrL);
+        ctrH0 = GX_GET_PE_REG(regAddrH);
+    } while (ctrH0 != ctrH1);
+
+    return (ctrH0 << 0x10) | ctrL;
+}
 
 /* GXSave.c */
 
@@ -288,177 +641,12 @@ void __GXSetRange(float nearz, float fgSideX);
 void __GetImageTileCount(GXTexFmt fmt, u16 wd, u16 ht, u32 *rowTiles, u32 *colTiles, u32 *cmpTiles);
 void __GXSetSUTexRegs(void);
 void __GXGetSUTexSize(GXTexCoordID coord, u16 *width, u16 *height);
+void __GXSetTmemConfig(u32 config);
 
 /* GXTransform.c */
 
 void __GXSetMatrixIndex(GXAttr matIdxAttr);
 
-/* GXVerifRAS.c */
+void __GXCalculateVLim(void);
 
-void __GXVerifySU(void);
-void __GXVerifyBUMP(void);
-void __GXVerifyTEX(void);
-void __GXVerifyTEV(void);
-void __GXVerifyPE(void);
-
-/* GXVerif.c */
-
-typedef enum {
-    GXWARN_INVALID_VTX_FMT = 0,
-    GXWARN_TEX_SIZE_INIT = 1,
-    GXWARN_SCISSOR_RECT_LEFT = 2,
-    GXWARN_SCISSOR_RECT_TOP = 3,
-    GXWARN_SCISSOR_RECT_RIGHT = 4,
-    GXWARN_SCISSOR_RECT_BOT = 5,
-    GXWARN_SAMPLE_VALUE = 6,
-    GXWARN_BUMP_CMD = 7,
-    GXWARN_INVALID_INDIRECT = 8,
-    GXWARN_INDIRECT_MTX = 9,
-    GXWARN_IND_TEX_NO_INIT = 10,
-    GXWARN_IND_TEX_NO_SCALE = 11,
-    GXWARN_IND_TEX_BUMP = 12,
-    GXWARN_BUMP_ACCUMULATION = 13,
-    GXWARN_BUMP_ALPHA_EN = 14,
-    GXWARN_IND_DIR_MASK = 15,
-    GXWARN_TEV_TEX_REF = 16,
-    GXWARN_TEV_INV_TEX_COORD = 17,
-    GXWARN_IND_DIR_BOTH = 18,
-    GXWARN_TEX_CONFIG = 19,
-    GXWARN_TEX_BASE = 20,
-    GXWARN_TLUT_CONFIG = 21,
-    GXWARN_TEX_POW2 = 22,
-    GXWARN_TEX_CLAMP = 23,
-    GXWARN_TEX_MIN_FILT = 24,
-    GXWARN_MIN_LOD = 25,
-    GXWARN_MAX_LOD = 26,
-    GXWARN_DIAG_LOD = 27,
-    GXWARN_TEX_ANISO = 28,
-    GXWARN_TEX_FIELD = 29,
-    GXWARN_TEX_MPEG = 30,
-    GXWARN_RND_CLR_INDX = 31,
-    GXWARN_TEV_ENV = 32,
-    GXWARN_TEV_INV_CHAN = 33,
-    GXWARN_TEV_NULL_TEX = 34,
-    GXWARN_TEV_NULL_TEX_A = 35,
-    GXWARN_TEV_DIRTY_REG = 36,
-    GXWARN_TEV_DIRTY_REG_A = 37,
-    GXWARN_TEV_CLR_CLAMP = 38,
-    GXWARN_TEV_A_CLAMP = 39,
-    GXWARN_ZTEX_OFFSET = 40,
-    GXWARN_ZTEX_INVALID = 41,
-    GXWARN_TEV_LAST_CLR = 42,
-    GXWARN_TEV_LAST_A = 43,
-    GXWARN_TEV_LAST_CLR_WRAP = 44,
-    GXWARN_TEV_LAST_A_WRAP = 45,
-    GXWARN_Z_BEFORE_T_A = 46,
-    GXWARN_BLEND_LOGICOP = 47,
-    GXWARN_DITHER_MODE = 48,
-    GXWARN_MULTISAMP0 = 49,
-    GXWARN_MULTISAMP1 = 50,
-    GXWARN_SAMP_ORDER = 51,
-    GXWARN_INVALID_TG_TYPE = 52,
-    GXWARN_XF_CTRL_UNINIT = 53,
-    GXWARN_XF_CTRL_INIT = 54,
-    GXWARN_INV_COLOR_TG_COMB = 55,
-    GXWARN_INV_NUM_COLORS = 56,
-    GXWARN_VTX_NO_GEOM = 57,
-    GXWARN_CLR_XF0_CP1 = 58,
-    GXWARN_CLR_XF1_CP0 = 59,
-    GXWARN_CLR_XF1_CP2 = 60,
-    GXWARN_CLR_XF2_CPN1 = 61,
-    GXWARN_CLR_XF2_CPN2 = 62,
-    GXWARN_INV_IVS_CLR = 63,
-    GXWARN_NRM_XF0_CP1 = 64,
-    GXWARN_NRM_XF0_CP3 = 65,
-    GXWARN_NRM_XF1_CP0 = 66,
-    GXWARN_NRM_XF1_CP3 = 67,
-    GXWARN_NRM_XF3_CP1 = 68,
-    GXWARN_NRM_XF3_CP0 = 69,
-    GXWARN_INV_IVS_NRM = 70,
-    GXWARN_TEX_XFN_CPM = 71,
-    GXWARN_TEX_SRC_NPOS = 72,
-    GXWARN_TEX_SRC_NNRM = 73,
-    GXWARN_TEX_SRC_NCLR0 = 74,
-    GXWARN_TEX_SRC_NCLR1 = 75,
-    GXWARN_TEX_SRC_NNBT = 76,
-    GXWARN_TEX_SRC_NTEX = 77,
-    GXWARN_INV_TEX_SRC = 78,
-    GXWARN_INV_TG_ORDER = 79,
-    GXWARN_BM_INV_MTX_NDX = 80,
-    GXWARN_BM_INV_TEX = 81,
-    GXWARN_BM_INV_LIT_POS = 82,
-    GXWARN_BM_NO_NBT = 83,
-    GXWARN_INV_TEX_NUM = 84,
-    GXWARN_INV_TG_SRC = 85,
-    GXWARN_CLR_ADDR_UNINIT = 86,
-    GXWARN_CLR_MAT_UNINIT = 87,
-    GXWARN_CLR_AMB_UNINIT = 88,
-    GXWARN_CLR_INV_SPEC = 89,
-    GXWARN_CLR_NO_NRM = 90,
-    GXWARN_CLR_INV_MTX_NDX = 91,
-    GXWARN_VAL_INFINITY = 92,
-    GXWARN_VAL_NAN = 93,
-    GXWARN_VAL_SMALL = 94,
-    GXWARN_VAL_LARGE = 95,
-    GXWARN_MTX1_UNINIT = 96,
-    GXWARN_GM_UNINIT = 97,
-    GXWARN_TEX_XFN_SUM = 98,
-    GXWARN_CLR_XFN_SUM = 99,
-    GXWARN_INV_NUM_ANY_TEX = 100,
-    GXWARN_INV_NUM_REG_TEX = 101,
-    GXWARN_INV_NUM_BM_TEX = 102,
-    GXWARN_INV_NUM_CLR_TEX = 103,
-    GXWARN_INV_CLR_TEX = 104,
-    GXWARN_DUP_CLR_TEX = 105,
-    GXWARN_BM_INV_MTX_VAL = 106,
-    GXWARN_TEX_INV_MTX_VAL = 107,
-    GXWARN_LIT_INV_REG = 108,
-    GXWARN_CLR_INV_MTX_VAL = 109,
-    GXWARN_INV_MTX_VAL = 110,
-    GXWARN_ADDR_UNINIT = 111,
-    GXWARN_REG_UNINIT = 112,
-    GXWARN_MAX = 113,
-} GXWarnID;
-
-#define __GX_WARN(id) (__gxVerif->cb(GX_WARN_SEVERE, (id), __gxvWarnings[(id)]))
-#define __GX_WARNF(id, ...) \
-do { \
-    sprintf(__gxvDummyStr, __gxvWarnings[(id)], __VA_ARGS__); \
-    __gxVerif->cb(GX_WARN_SEVERE, (id), __gxvDummyStr); \
-} while (0)
-
-#define __GX_WARN2(level, id) (__gxVerif->cb(level, (id), __gxvWarnings[(id)]))
-#define __GX_WARN2F(level, id, ...) \
-do { \
-    sprintf(__gxvDummyStr, __gxvWarnings[(id)], __VA_ARGS__); \
-    __gxVerif->cb(level, (id), __gxvDummyStr); \
-} while (0)
-
-struct __GXVerifyData {
-    // total size: 0x13F8
-    GXVerifyCallback cb; // offset 0x0, size 0x4
-    GXWarningLevel verifyLevel; // offset 0x4, size 0x4
-    u32 xfRegs[80]; // offset 0x8, size 0x140
-    u32 xfMtx[256]; // offset 0x148, size 0x400
-    u32 xfNrm[96]; // offset 0x548, size 0x180
-    u32 xfDMtx[256]; // offset 0x6C8, size 0x400
-    u32 xfLight[128]; // offset 0xAC8, size 0x200
-    u32 rasRegs[256]; // offset 0xCC8, size 0x400
-    u8 xfRegsDirty[80]; // offset 0x10C8, size 0x50
-    u8 xfMtxDirty[256]; // offset 0x1118, size 0x100
-    u8 xfNrmDirty[96]; // offset 0x1218, size 0x60
-    u8 xfDMtxDirty[256]; // offset 0x1278, size 0x100
-    u8 xfLightDirty[128]; // offset 0x1378, size 0x80
-};
-
-extern struct __GXVerifyData *__gxVerif;
-extern char *__gxvWarnings[113];
-extern char __gxvDummyStr[256];
-
-void __GXVerifyGlobal(void);
-void __GXVerifyCP(GXVtxFmt fmt);
-void __GXVerifyState(GXVtxFmt vtxfmt);
-
-/* GXVerifXF.c */
-
-void __GXVerifyXF(void);
+#endif // _DOLPHIN_GXPRIV

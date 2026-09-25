@@ -1,8 +1,9 @@
-#include <stddef.h>
+#include <dolphin.h>
 #include <dolphin/base/PPCArch.h>
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
-#include <macros.h>
+#include <stddef.h>
+
 
 #include "__gx.h"
 
@@ -14,44 +15,47 @@ static OSThreadQueue FinishQueue;
 void GXSetMisc(GXMiscToken token, u32 val)
 {
     switch (token) {
-    case GX_MT_XF_FLUSH:
-        gx->vNum = val;
-        if (gx->vNum != 0) {
-            gx->dirtyState |= 8;
-        }
-        break;
-    case GX_MT_DL_SAVE_CONTEXT:
-        ASSERTMSGLINE(0xC4, !gx->inDispList, "GXSetMisc: Cannot change DL context setting while making a display list");
-        gx->dlSaveContext = (val > 0);
-        break;
-    case GX_MT_NULL:
-        break;
-    default:
-#if DEBUG
-        OSReport("GXSetMisc: bad token %d (val %d)\n", token, val);
-#endif
-        break;
+        case GX_MT_XF_FLUSH:
+            gx->vNum = val;
+            gx->vNumNot = !gx->vNum;
+            gx->bpSentNot = 1;
+            if (gx->vNum != 0) {
+                gx->dirtyState |= 8;
+            }
+            break;
+        case GX_MT_DL_SAVE_CONTEXT:
+            ASSERTMSGLINE(0xC4, !gx->inDispList, "GXSetMisc: Cannot change DL context setting while making a display list");
+            gx->dlSaveContext = (val > 0);
+            break;
+        case GX_MT_NULL:
+            break;
+        default:
+            break;
     }
 }
 
 void GXFlush(void)
 {
-    u32 i;
-
-    CHECK_GXBEGIN(0xF0, "GXFlush");
+    CHECK_GXBEGIN(0x10E, "GXFlush");
     if (gx->dirtyState) {
         __GXSetDirtyState();
     }
-    for (i = 32; i > 0; i--) {
-        GX_WRITE_U8(0);
-    }
+    
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+
     PPCSync();
 }
 
 void GXResetWriteGatherPipe(void)
 {
-    while (PPCMfwpar() & 1) {
-    }
+    while (PPCMfwpar() & 1) { }
     PPCMtwpar(OSUncachedToPhysical((void *)GXFIFO_ADDR));
 }
 
@@ -66,7 +70,7 @@ static inline void __GXAbortWait(u32 clocks)
     } while (time1 - time0 <= (clocks / 4));
 }
 
-void GXAbortFrame(void)
+void __GXAbortWaitPECopyDone(void)
 {
     __piReg[6] = 1;
     __GXAbortWait(0xC8U);
@@ -90,7 +94,7 @@ void GXSetDrawSync(u16 token)
     GX_WRITE_RAS_REG(reg);
     GXFlush();
     OSRestoreInterrupts(enabled);
-    gx->bpSent = 1;
+    gx->bpSentNot = 0;
 }
 
 u16 GXReadDrawSync(void)
@@ -137,9 +141,10 @@ void GXPixModeSync(void)
 {
     CHECK_GXBEGIN(0x20D, "GXPixModeSync");
     GX_WRITE_RAS_REG(gx->peCtrl);
-    gx->bpSent = 1;
+    gx->bpSentNot = 0;
 }
 
+/*
 void GXTexModeSync(void)
 {
     u32 reg;
@@ -147,22 +152,9 @@ void GXTexModeSync(void)
     CHECK_GXBEGIN(0x225, "GXTexModeSync");
     reg = 0x63000000;
     GX_WRITE_RAS_REG(reg);
-    gx->bpSent = 1;
+    gx->bpSentNot = 0;
 }
-
-#if DEBUG
-void __GXBypass(u32 reg)
-{
-    CHECK_GXBEGIN(0x23B, "__GXBypass");
-    GX_WRITE_RAS_REG(reg);
-    gx->bpSent = 1;
-}
-
-u16 __GXReadPEReg(u32 reg)
-{
-    return __peReg[reg];
-}
-#endif
+*/
 
 void GXPokeAlphaMode(GXCompare func, u8 threshold)
 {
@@ -252,6 +244,7 @@ void GXPokeZMode(GXBool compare_enable, GXCompare func, GXBool update_enable)
     __peReg[0] = reg;
 }
 
+/*
 void GXPeekARGB(u16 x, u16 y, u32 *color)
 {
     u32 addr = (u32)OSPhysicalToUncached(0x08000000);
@@ -261,7 +254,9 @@ void GXPeekARGB(u16 x, u16 y, u32 *color)
     SET_REG_FIELD(0x2DE, addr, 2, 22, 0);
     *color = *(u32 *)addr;
 }
+*/
 
+/*
 void GXPokeARGB(u16 x, u16 y, u32 color)
 {
     u32 addr = (u32)OSPhysicalToUncached(0x08000000);
@@ -271,7 +266,9 @@ void GXPokeARGB(u16 x, u16 y, u32 color)
     SET_REG_FIELD(0x2E8, addr, 2, 22, 0);
     *(u32 *)addr = color;
 }
+*/
 
+/*
 void GXPeekZ(u16 x, u16 y, u32 *z)
 {
     u32 addr = (u32)OSPhysicalToUncached(0x08000000);
@@ -281,7 +278,9 @@ void GXPeekZ(u16 x, u16 y, u32 *z)
     SET_REG_FIELD(0x2F2, addr, 2, 22, 1);
     *z = *(u32 *)addr;
 }
+*/
 
+/*
 void GXPokeZ(u16 x, u16 y, u32 z)
 {
     u32 addr = (u32)OSPhysicalToUncached(0x08000000);
@@ -291,6 +290,7 @@ void GXPokeZ(u16 x, u16 y, u32 z)
     SET_REG_FIELD(0x2FC, addr, 2, 22, 1);
     *(u32 *)addr = z;
 }
+*/
 
 GXDrawSyncCallback GXSetDrawSyncCallback(GXDrawSyncCallback cb)
 {
@@ -376,61 +376,63 @@ u32 GXCompressZ16(u32 z24, GXZFmt16 zfmt)
     u32 z24n;
     s32 exp;
     s32 shift;
-#if DEBUG
-#define temp exp
-#else
     s32 temp;
     u8 unused[4];
-#endif
 
     z24n = ~(z24 << 8);
     temp = __cntlzw(z24n);
     switch (zfmt) {
-    case GX_ZC_LINEAR:
-        z16 = (z24 >> 8) & 0xFFFF;
-        break;
-    case GX_ZC_NEAR:
-        if (temp > 3) {
-            exp = 3;
-        } else {
-            exp = temp;
-        }
-        if (exp == 3) {
-            shift = 7;
-        } else {
-            shift = 9 - exp;
-        }
-        z16 = ((z24 >> shift) & 0x3FFF & ~0xFFFFC000) | (exp << 14);
-        break;
-    case GX_ZC_MID:
-        if (temp > 7) {
-            exp = 7;
-        } else {
-            exp = temp;
-        }
-        if (exp == 7) {
-            shift = 4;
-        } else {
-            shift = 10 - exp;
-        }
-        z16 = ((z24 >> shift) & 0x1FFF & ~0xFFFFE000) | (exp << 13);
-        break;
-    case GX_ZC_FAR:
-        if (temp > 12) {
-            exp = 12;
-        } else {
-            exp = temp;
-        }
-        if (exp == 12) {
-            shift = 0;
-        } else {
-            shift = 11 - exp;
-        }
-        z16 = ((z24 >> shift) & 0xFFF & ~0xFFFFF000) | (exp << 12);
-        break;
-    default:
-        OSPanic(__FILE__, 0x3B0, "GXCompressZ16: Invalid Z format\n");
-        break;
+        case GX_ZC_LINEAR:
+            z16 = (z24 >> 8) & 0xFFFF;
+            break;
+        case GX_ZC_NEAR:
+            if (temp > 3) {
+                exp = 3;
+            }
+            else {
+                exp = temp;
+            }
+            if (exp == 3) {
+                shift = 7;
+            }
+            else {
+                shift = 9 - exp;
+            }
+            z16 = ((z24 >> shift) & 0x3FFF & ~0xFFFFC000) | (exp << 14);
+            break;
+        case GX_ZC_MID:
+            if (temp > 7) {
+                exp = 7;
+            }
+            else {
+                exp = temp;
+            }
+            if (exp == 7) {
+                shift = 4;
+            }
+            else {
+                shift = 10 - exp;
+            }
+            z16 = ((z24 >> shift) & 0x1FFF & ~0xFFFFE000) | (exp << 13);
+            break;
+        case GX_ZC_FAR:
+            if (temp > 12) {
+                exp = 12;
+            }
+            else {
+                exp = temp;
+            }
+            if (exp == 12) {
+                shift = 0;
+            }
+            else {
+                shift = 11 - exp;
+            }
+            z16 = ((z24 >> shift) & 0xFFF & ~0xFFFFF000) | (exp << 12);
+            break;
+        default:
+            OSPanic(__FILE__, 0x3B0, "GXCompressZ16: Invalid Z format\n");
+            break;
     }
     return z16;
 }
@@ -442,45 +444,53 @@ u32 GXDecompressZ16(u32 z16, GXZFmt16 zfmt)
     long exp;
     long shift;
 
-    cb1; cb1; cb1; z16; z16; z16;  // needed to match
+    cb1;
+    cb1;
+    cb1;
+    z16;
+    z16;
+    z16; // needed to match
 
     switch (zfmt) {
-    case GX_ZC_LINEAR:
-        z24 = (z16 << 8) & 0xFFFF00;
-        break;
-    case GX_ZC_NEAR:
-        exp = (z16 >> 14) & 3;
-        if (exp == 3) {
-            shift = 7;
-        } else {
-            shift = 9 - exp;
-        }
-        cb1 = -1 << (24 - exp);
-        z24 = (cb1 | ((z16 & 0x3FFF) << shift)) & 0xFFFFFF;
-        break;
-    case GX_ZC_MID:
-        exp = (z16 >> 13) & 7;
-        if (exp == 7) {
-            shift = 4;
-        } else {
-            shift = 10 - exp;
-        }
-        cb1 = -1 << (24 - exp);
-        z24 = (cb1 | ((z16 & 0x1FFF) << shift)) & 0xFFFFFF;
-        break;
-    case GX_ZC_FAR:
-        exp = (z16 >> 12) & 0xF;
-        if (exp == 12) {
-            shift = 0;
-        } else {
-            shift = 11 - exp;
-        }
-        cb1 = -1 << (24 - exp);
-        z24 = (cb1 | ((z16 & 0xFFF) << shift)) & 0xFFFFFF;
-        break;
-    default:
-        OSPanic(__FILE__, 0x3E2, "GXDecompressZ16: Invalid Z format\n");
-        break;
+        case GX_ZC_LINEAR:
+            z24 = (z16 << 8) & 0xFFFF00;
+            break;
+        case GX_ZC_NEAR:
+            exp = (z16 >> 14) & 3;
+            if (exp == 3) {
+                shift = 7;
+            }
+            else {
+                shift = 9 - exp;
+            }
+            cb1 = -1 << (24 - exp);
+            z24 = (cb1 | ((z16 & 0x3FFF) << shift)) & 0xFFFFFF;
+            break;
+        case GX_ZC_MID:
+            exp = (z16 >> 13) & 7;
+            if (exp == 7) {
+                shift = 4;
+            }
+            else {
+                shift = 10 - exp;
+            }
+            cb1 = -1 << (24 - exp);
+            z24 = (cb1 | ((z16 & 0x1FFF) << shift)) & 0xFFFFFF;
+            break;
+        case GX_ZC_FAR:
+            exp = (z16 >> 12) & 0xF;
+            if (exp == 12) {
+                shift = 0;
+            }
+            else {
+                shift = 11 - exp;
+            }
+            cb1 = -1 << (24 - exp);
+            z24 = (cb1 | ((z16 & 0xFFF) << shift)) & 0xFFFFFF;
+            break;
+        default:
+            OSPanic(__FILE__, 0x3E2, "GXDecompressZ16: Invalid Z format\n");
+            break;
     }
     return z24;
 }

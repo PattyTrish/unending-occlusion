@@ -1,8 +1,8 @@
-#include <libc/string.h>
+#include <dolphin.h>
+#include <string.h>
 
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
-#include <macros.h>
 
 #include "__gx.h"
 
@@ -14,17 +14,17 @@ void GXBeginDisplayList(void *list, u32 size)
 {
     struct __GXFifoObj *CPUFifo = (struct __GXFifoObj *)GXGetCPUFifo();
 
-    CHECK_GXBEGIN(0x7C, "GXBeginDisplayList");
-    ASSERTMSGLINE(0x7D, !gx->inDispList, "GXBeginDisplayList: display list already in progress");
-    ASSERTMSGLINE(0x7E, (size & 0x1F) == 0, "GXBeginDisplayList: size is not 32 byte aligned");
-    ASSERTMSGLINE(0x7F, ((u32)list & 0x1F) == 0, "GXBeginDisplayList: list is not 32 byte aligned");
+    CHECK_GXBEGIN(0x89, "GXBeginDisplayList");
+    ASSERTMSGLINE(0x8A, !__GXData->inDispList, "GXBeginDisplayList: display list already in progress");
+    ASSERTMSGLINE(0x8B, (size & 0x1F) == 0, "GXBeginDisplayList: size is not 32 byte aligned");
+    ASSERTMSGLINE(0x8C, ((u32)list & 0x1F) == 0, "GXBeginDisplayList: list is not 32 byte aligned");
     if (gx->dirtyState != 0) {
         __GXSetDirtyState();
     }
     if (gx->dlSaveContext != 0) {
         memcpy(&__savedGXdata, gx, sizeof(__savedGXdata));
     }
-    DisplayListFifo.base = (u8 *) list;
+    DisplayListFifo.base = (u8 *)list;
     DisplayListFifo.top = (u8 *)list + size - 4;
     DisplayListFifo.size = size;
     DisplayListFifo.count = 0;
@@ -42,9 +42,7 @@ unsigned long GXEndDisplayList(void)
     u32 reg;
     BOOL enabled;
     u32 cpenable;
-#if !DEBUG
-    u8 unused[4];  // needed to match
-#endif
+    u8 unused[4];
 
     CHECK_GXBEGIN(0xB5, "GXEndDisplayList");
     ASSERTMSGLINE(0xB6, gx->inDispList == TRUE, "GXEndDisplayList: no display list in progress");
@@ -70,7 +68,7 @@ unsigned long GXEndDisplayList(void)
     return 0;
 }
 
-void GXCallDisplayList(void *list, u32 nbytes)
+void GXCallDisplayList(const void *list, u32 nbytes)
 {
     CHECK_GXBEGIN(0xEC, "GXCallDisplayList");
     ASSERTMSGLINE(0xED, !gx->inDispList, "GXCallDisplayList: display list already in progress");
@@ -80,13 +78,10 @@ void GXCallDisplayList(void *list, u32 nbytes)
     if (gx->dirtyState != 0) {
         __GXSetDirtyState();
     }
-#if DEBUG
-    __GXShadowDispList(list, nbytes);
-#endif
-    if (*(u32 *)&gx->vNum != 0) {  // checks both vNum and bpSent
+    if (*(u32 *)&gx->vNumNot == 0) { // checks both vNum and bpSent
         __GXSendFlushPrim();
     }
     GX_WRITE_U8(0x40);
-    GX_WRITE_U32(list);
+    GX_WRITE_U32((u32)list);
     GX_WRITE_U32(nbytes);
 }

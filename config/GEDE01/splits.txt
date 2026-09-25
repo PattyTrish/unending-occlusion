@@ -430,6 +430,80 @@ dolphin/card/CARDNet.c:
 	.text       start:0x802229CC end:0x80222A90
 	.sdata      start:0x8064C450 end:0x8064C458
 
+dolphin/gx/GXInit.c:
+	.text       start:0x80222A90 end:0x80223B7C
+	.bss        start:0x80641EA0 end:0x80642418
+	.sdata      start:0x8064C458 end:0x8064C460
+	.sbss       start:0x8064DB80 end:0x8064DB90
+	.sdata2     start:0x80651660 end:0x80651680
+
+dolphin/gx/GXFifo.c:
+	.text       start:0x80223B7C end:0x80224908
+	.sbss       start:0x8064DB90 end:0x8064DBB0
+
+dolphin/gx/GXAttr.c:
+	.text       start:0x80224908 end:0x80226300
+	.data       start:0x802FED20 end:0x802FEF98
+	.sdata      start:0x8064C460 end:0x8064C470
+
+dolphin/gx/GXMisc.c:
+	.text       start:0x80226300 end:0x80226A28
+	.sbss       start:0x8064DBB0 end:0x8064DBC8
+
+dolphin/gx/GXGeometry.c:
+	.text       start:0x80226A28 end:0x80226DE0
+
+dolphin/gx/GXFrameBuf.c:
+	.text       start:0x80226DE0 end:0x80227874
+	.data       start:0x802FEF98 end:0x802FF088
+	.sdata2     start:0x80651680 end:0x80651688
+
+dolphin/gx/GXLight.c:
+	.text       start:0x80227874 end:0x80228250
+	.data       start:0x802FF088 end:0x802FF0A8
+	.sdata2     start:0x80651688 end:0x806516D8
+
+dolphin/gx/GXTexture.c:
+	.text       start:0x80228250 end:0x80229294
+	.data       start:0x802FF0A8 end:0x802FF2D0
+	.sdata      start:0x8064C470 end:0x8064C4B0
+	.sdata2     start:0x806516D8 end:0x80651700
+
+dolphin/gx/GXBump.c:
+	.text       start:0x80229294 end:0x80229964
+	.sdata2     start:0x80651700 end:0x80651708
+
+dolphin/gx/GXTev.c:
+	.text       start:0x80229964 end:0x8022A328
+	.data       start:0x802FF2D0 end:0x802FF2F8
+
+dolphin/gx/GXPixel.c:
+	.text       start:0x8022A328 end:0x8022AA70
+	.data       start:0x802FF2F8 end:0x802FF318
+	.sdata2     start:0x80651708 end:0x80651738
+
+dolphin/gx/GXDraw.c:
+	.text       start:0x8022AA70 end:0x8022B2A8
+	.data       start:0x802FF318 end:0x802FF628
+	.bss        start:0x80642418 end:0x806426A0
+	.sdata2     start:0x80651738 end:0x80651770
+
+dolphin/gx/GXStubs.c:
+	.text       start:0x8022B2A8 end:0x8022B2AC
+
+dolphin/gx/GXDisplayList.c:
+	.text       start:0x8022B2AC end:0x8022B4B8
+	.bss        start:0x806426A0 end:0x80642BC0
+	.sbss       start:0x8064DBC8 end:0x8064DBD0
+
+dolphin/gx/GXTransform.c:
+	.text       start:0x8022B4B8 end:0x8022BB10
+	.sdata2     start:0x80651770 end:0x80651788
+
+dolphin/gx/GXPerf.c:
+	.text       start:0x8022BB10 end:0x8022C40C
+	.data       start:0x802FF628 end:0x802FF718
+
 sk/texPalette.c:
 	.text       start:0x8022C53C end:0x8022C668
 
