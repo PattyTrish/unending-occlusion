@@ -442,6 +442,9 @@ config.libs = [
         DolphinLibObject(Matching, "dolphin/pad/Pad.c"),
         DolphinLibObject(Matching, "dolphin/pad/Padclamp.c"),
     ]),
+    DolphinLib("perf", [
+        DolphinLibObject(Matching, "dolphin/perf/perf.c"),
+    ]),
     DolphinLib("support", [
         DolphinLibObject(Matching, "dolphin/support/List.c"),
         DolphinLibObject(Matching, "dolphin/support/string.c"),

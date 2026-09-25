@@ -522,6 +522,14 @@ dolphin/support/List.c:
 dolphin/support/string.c:
 	.text       start:0x8022C950 end:0x8022C9F0
 
+dolphin/perf/perf.c:
+	.text       start:0x8022C9F0 end:0x8022DAE0
+	.data       start:0x802FF758 end:0x802FF820
+	.bss        start:0x80642BD0 end:0x80642BF8
+	.sdata      start:0x8064C4B0 end:0x8064C4B8
+	.sbss       start:0x8064DBD8 end:0x8064DBF8
+	.sdata2     start:0x80651788 end:0x80651790
+
 dolphin/amcExi2/AmcExi.c:
 	.text       start:0x8022DAE0 end:0x8022E120
 	.bss        start:0x80642BF8 end:0x80642C10

@@ -128,9 +128,11 @@ static void PERFGetAllMemMetrics(struct PerfSample * s, unsigned long i) {
     s->fiReq[i] = ((ctrh << 0x10) | ctrl);
 }
 
+/*
 void PERFSetDrawSyncCallback(void (* cb)(unsigned short)) {
     DSCB = cb;
 }
+*/
 
 static void PERFTokenCallback(unsigned short token) {
     long sample;
@@ -184,6 +186,7 @@ static void PERFTokenCallback(unsigned short token) {
     }
 }
 
+/*
 unsigned long PERFInit(unsigned long numSamples, unsigned long numFramesHistory, unsigned long numTypes, void * (* allocator)(unsigned long), void (* deallocator)(void *), void (* initDraw)()) {
     unsigned long i;
     unsigned long size;
@@ -215,7 +218,9 @@ unsigned long PERFInit(unsigned long numSamples, unsigned long numFramesHistory,
     OSInitAlarm();
     return size;
 }
+*/
 
+/*
 void PERFSetEvent(unsigned char id, char * name, PerfType type) {
     GXColor def = {0xFF, 0x19, 0x00, 0xC8};
 
@@ -224,10 +229,13 @@ void PERFSetEvent(unsigned char id, char * name, PerfType type) {
     PERFEvents[id].currSample = -1;
     PERFEvents[id].color = def;
 }
+*/
 
+/*
 void PERFSetEventColor(unsigned char id, GXColor color) {
     PERFEvents[id].color = color; 
 }
+*/
 
 void PERFStartFrame() {
     int enabled = OSDisableInterrupts();
@@ -248,6 +256,7 @@ void PERFStartFrame() {
     OSRestoreInterrupts(enabled);
 }
 
+/*
 void PERFEndFrame() {
     unsigned long i;
     int enabled;
@@ -270,6 +279,7 @@ void PERFEndFrame() {
     }
     OSRestoreInterrupts(enabled);
 }
+*/
 
 void PERFEventStart(unsigned char id) {
     int enabled;
@@ -415,6 +425,7 @@ void PERFStartAutoSampling(float msInterval) {
     OSSetPeriodicAlarm(&PERFAlarm, OSGetTime(), (u32)OSMillisecondsToTicks(msInterval), PERFTimerCallback);
 }
 
+/*
 void PERFStopAutoSampling() {
     int enabled = OSDisableInterrupts();
 
@@ -425,3 +436,4 @@ void PERFStopAutoSampling() {
     OSCancelAlarm(&PERFAlarm);
     OSRestoreInterrupts(enabled);
 }
+*/
