@@ -5,6 +5,15 @@
 
 typedef void (*DSPCallback)(void *task);
 
+#define DSP_TASK_FLAG_CLEARALL 0x00000000
+#define DSP_TASK_FLAG_ATTACHED 0x00000001
+#define DSP_TASK_FLAG_CANCEL 0x00000002
+
+#define DSP_TASK_STATE_INIT 0
+#define DSP_TASK_STATE_RUN 1
+#define DSP_TASK_STATE_YIELD 2
+#define DSP_TASK_STATE_DONE 3
+
 typedef struct STRUCT_DSP_TASK
 {                                   
     /*0x00*/ volatile u32 state;

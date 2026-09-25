@@ -366,6 +366,19 @@ dolphin/ar/arq.c:
 	.text       start:0x8021B4F8 end:0x8021B894
 	.sbss       start:0x8064DB38 end:0x8064DB60
 
+dolphin/dsp/dsp.c:
+	.text       start:0x8021B894 end:0x8021BAA0
+	.data       start:0x802FE9E8 end:0x802FEA20
+	.sbss       start:0x8064DB60 end:0x8064DB68
+
+dolphin/dsp/dsp_debug.c:
+	.text       start:0x8021BAA0 end:0x8021BAF0
+
+dolphin/dsp/dsp_task.c:
+	.text       start:0x8021BAF0 end:0x8021C374
+	.data       start:0x802FEA20 end:0x802FEB60
+	.sbss       start:0x8064DB68 end:0x8064DB80
+
 sk/texPalette.c:
 	.text       start:0x8022C53C end:0x8022C668
 

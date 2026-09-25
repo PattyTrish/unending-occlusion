@@ -347,6 +347,11 @@ config.libs = [
     DolphinLib("db", [
         DolphinLibObject(Matching, "dolphin/db/db.c"),
     ]),
+    DolphinLib("dsp", [
+        DolphinLibObject(Matching, "dolphin/dsp/dsp.c"),
+        DolphinLibObject(Matching, "dolphin/dsp/dsp_debug.c"),
+        DolphinLibObject(Matching, "dolphin/dsp/dsp_task.c"),
+    ]),
     DolphinLib("dvd", [
         DolphinLibObject(Matching, "dolphin/dvd/dvd.c"),
         DolphinLibObject(Matching, "dolphin/dvd/dvderror.c"),
