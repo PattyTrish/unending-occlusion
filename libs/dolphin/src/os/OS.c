@@ -115,6 +115,9 @@ unsigned long OSGetConsoleType() {
     return BootInfo->consoleType;
 }
 
+extern u32 BOOT_REGION_START AT_ADDRESS(0x812FDFF0);
+extern u32 BOOT_REGION_END AT_ADDRESS(0x812FDFEC);
+
 static void ClearArena(void) {
     if (OSGetResetCode() != 0x80000000) {
         __OSSavedRegionStart = NULL;
@@ -123,19 +126,11 @@ static void ClearArena(void) {
         return;
     }
 
-    {
-        u32 end;
-        u32 start;
-
-        start = *(u32 *)0x812FDFF0;
-        end = *(u32 *)0x812FDFEC;
-
-        __OSSavedRegionStart = (void *)start;
-        __OSSavedRegionEnd = (void *)end;
-        if (start == 0) {
-            memset(OSGetArenaLo(), 0, (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
-            return;
-        }
+    __OSSavedRegionStart = (void *)BOOT_REGION_START;
+    __OSSavedRegionEnd = (void *)BOOT_REGION_END;
+    if (BOOT_REGION_START == 0) {
+        memset(OSGetArenaLo(), 0, (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
+        return;
     }
 
     if ((u32)OSGetArenaLo() < (u32)__OSSavedRegionStart) {
