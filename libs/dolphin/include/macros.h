@@ -29,4 +29,6 @@
 #define ASSERT(cond) ASSERTLINE(__LINE__, cond)
 #define ASSERTMSG(cond, msg) ASSERTMSGLINE(__LINE__, cond, msg)
 
+#define ALIGN_NEXT(u, align) ((u + (align - 1)) & (~(align - 1)))
+
 #endif // _H_MACROS_

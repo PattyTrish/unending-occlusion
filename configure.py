@@ -337,6 +337,10 @@ config.libs = [
     DolphinLib("amcnotstub", [
         DolphinLibObject(Matching, "dolphin/amcnotstub/amcnotstub.c"),
     ]),
+    DolphinLib("ar", [
+        DolphinLibObject(Matching, "dolphin/ar/ar.c"),
+        DolphinLibObject(Matching, "dolphin/ar/arq.c"),
+    ]),
     DolphinLib("base", [
         DolphinLibObject(Matching, "dolphin/base/PPCArch.c"),
     ]),
