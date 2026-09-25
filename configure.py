@@ -239,6 +239,14 @@ config.linker_version = "GC/1.3.2"
 
 # Silicon Knights' build of the game
 mw_version_game = config.linker_version
+
+cflags_metrotrk = [
+    *cflags_common,
+    "-i src",
+    "-i src/Runtime",
+    "-i src/MetroTRK",
+]
+
 cflags_game = [
     *cflags_common,
     "-fp_contract on",
@@ -430,13 +438,23 @@ config.libs = [
         DolphinLibObject(Matching, "dolphin/vi/vi.c"),
     ]),
     {
-        "lib": "Runtime.PPCEABI.H",
+        "lib": "MetroTRK",
+        "mw_version": mw_version_game,
+        "cflags": cflags_metrotrk,
+        "progress_category": "sdk",  # str | List[str]
+        "objects": [
+            # Object(Matching, "MetroTRK/__exceptions.s"),
+            # Object(Matching, "MetroTRK/mainloop.c"),
+        ],
+    },
+    {
+        "lib": "Runtime",
         "mw_version": mw_version_game,
         "cflags": cflags_runtime,
         "progress_category": "sdk",  # str | List[str]
         "objects": [
-            Object(Matching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
-            Object(Matching, "Runtime.PPCEABI.H/global_destructor_chain.c"),
+            Object(Matching, "Runtime/__init_cpp_exceptions.cpp"),
+            Object(Matching, "Runtime/global_destructor_chain.c"),
         ],
     },
     {

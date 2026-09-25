@@ -31,12 +31,12 @@ ed/ED_PathFinding_AStar.c:
 MetroTRK/mainloop.c:
 	.text       start:0x800EEB44 end:0x800EEEF8
 
-Runtime.PPCEABI.H/global_destructor_chain.c:
+Runtime/global_destructor_chain.c:
 	.text       start:0x800F5C0C end:0x800F5C54
 	.dtors      start:0x80237F08 end:0x80237F0C
 	.sbss       start:0x8064CC28 end:0x8064CC2C
 
-Runtime.PPCEABI.H/__init_cpp_exceptions.cpp:
+Runtime/__init_cpp_exceptions.cpp:
 	.text       start:0x800F63E4 end:0x800F6460
 	.ctors      start:0x80237EE0 end:0x80237EE4
 	.dtors      start:0x80237F00 end:0x80237F08
@@ -295,6 +295,9 @@ dolphin/os/OSThread.c:
 dolphin/os/OSTime.c:
 	.text       start:0x80210AA0 end:0x80210F1C
 	.data       start:0x802FE0F0 end:0x802FE150
+
+MetroTRK/__exceptions.s:
+	.init       start:0x80003100 end:0x8000518C
 
 dolphin/os/__start.c:
 	.init       start:0x800052C8 end:0x800054F8
