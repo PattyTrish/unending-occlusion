@@ -344,6 +344,23 @@ config.libs = [
     DolphinLib("base", [
         DolphinLibObject(Matching, "dolphin/base/PPCArch.c"),
     ]),
+    DolphinLib("card", [
+        DolphinLibObject(Matching, "dolphin/card/CARDBios.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDUnlock.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDRdwr.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDBlock.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDDir.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDCheck.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDMount.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDFormat.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDOpen.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDCreate.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDRead.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDWrite.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDDelete.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDStat.c"),
+        DolphinLibObject(Matching, "dolphin/card/CARDNet.c"),
+    ]),
     DolphinLib("db", [
         DolphinLibObject(Matching, "dolphin/db/db.c"),
     ]),
