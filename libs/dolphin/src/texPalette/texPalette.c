@@ -65,17 +65,20 @@ static void UnpackTexPalette(TEXPalettePtr pal)
     }
 }
 
+/*
 TEXDescriptorPtr TEXGet(TEXPalettePtr pal, u32 id)
 {
     ASSERTMSGLINE(0x90, id < pal->numDescriptors, "GetTexture():  Texture Not Found ");
     return &pal->descriptorArray[id];
 }
+*/
 
 static void TexFreeFunc(TEXPalettePtr pal)
 {
     OSFree(pal);
 }
 
+/*
 void TEXReleasePalette(TEXPalettePtr *pal)
 {
     if (DOCacheInitialized) {
@@ -85,7 +88,9 @@ void TEXReleasePalette(TEXPalettePtr *pal)
         *pal = NULL;
     }
 }
+*/
 
+/*
 void TEXGetGXTexObjFromPalette(TEXPalettePtr pal, GXTexObj *to, u32 id)
 {
     TEXDescriptorPtr tdp;
@@ -100,7 +105,9 @@ void TEXGetGXTexObjFromPalette(TEXPalettePtr pal, GXTexObj *to, u32 id)
     GXInitTexObj(to, tdp->textureHeader->data, tdp->textureHeader->width, tdp->textureHeader->height, tdp->textureHeader->format, tdp->textureHeader->wrapS, tdp->textureHeader->wrapT, mipMap);
     GXInitTexObjLOD(to, tdp->textureHeader->minFilter, tdp->textureHeader->magFilter, tdp->textureHeader->minLOD, tdp->textureHeader->maxLOD, tdp->textureHeader->LODBias, GX_DISABLE, tdp->textureHeader->edgeLODEnable, GX_ANISO_1);
 }
+*/
 
+/*
 void TEXGetGXTexObjFromPaletteCI(TEXPalettePtr pal, GXTexObj *to, GXTlutObj *tlo, GXTlut tluts, u32 id)
 {
     GXBool mipMap;
@@ -116,3 +123,4 @@ void TEXGetGXTexObjFromPaletteCI(TEXPalettePtr pal, GXTexObj *to, GXTlutObj *tlo
     GXInitTexObjCI(to, tdp->textureHeader->data, tdp->textureHeader->width, tdp->textureHeader->height, tdp->textureHeader->format, tdp->textureHeader->wrapS, tdp->textureHeader->wrapT, mipMap, tluts);
     GXInitTexObjLOD(to, tdp->textureHeader->minFilter, tdp->textureHeader->magFilter, tdp->textureHeader->minLOD, tdp->textureHeader->maxLOD, tdp->textureHeader->LODBias, GX_DISABLE, tdp->textureHeader->edgeLODEnable, GX_ANISO_1);
 }
+*/

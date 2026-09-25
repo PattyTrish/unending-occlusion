@@ -1,5 +1,6 @@
 #include <charPipeline/structures/dolphinString.h>
 
+/*
 u8 Strcat(char *str1, char *str2, char *dst)
 {
     char *srcCursor = str1;
@@ -28,6 +29,7 @@ u8 Strcat(char *str1, char *str2, char *dst)
     *dstCursor = 0;
     return 1;
 }
+*/
 
 void Strcpy(char *dst, char *src)
 {

@@ -507,8 +507,20 @@ dolphin/gx/GXPerf.c:
 	.text       start:0x8022BB10 end:0x8022C40C
 	.data       start:0x802FF628 end:0x802FF718
 
-sk/texPalette.c:
-	.text       start:0x8022C53C end:0x8022C668
+dolphin/texPalette/texPalette.c:
+	.text       start:0x8022C40C end:0x8022C690
+	.data       start:0x802FF718 end:0x802FF758
+
+dolphin/fileCache/fileCache.c:
+	.text       start:0x8022C690 end:0x8022C8BC
+	.bss        start:0x80642BC0 end:0x80642BD0
+	.sbss       start:0x8064DBD0 end:0x8064DBD8
+
+dolphin/support/List.c:
+	.text       start:0x8022C8BC end:0x8022C950
+
+dolphin/support/string.c:
+	.text       start:0x8022C950 end:0x8022C9F0
 
 dolphin/amcExi2/AmcExi.c:
 	.text       start:0x8022DAE0 end:0x8022E120

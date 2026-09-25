@@ -245,6 +245,11 @@ cflags_metrotrk = [
     "-i src",
     "-i src/Runtime",
     "-i src/MetroTRK",
+    "-use_lmw_stmw on",
+    "-pool off",
+    "-sdata 0",
+    "-sdata2 0",
+    "-rostr",
 ]
 
 cflags_game = [
@@ -385,6 +390,9 @@ config.libs = [
         DolphinLibObject(Matching, "dolphin/dvd/dvdqueue.c"),
         DolphinLibObject(Matching, "dolphin/dvd/fstload.c"),
     ]),
+    DolphinLib("fileCache", [
+        DolphinLibObject(Matching, "dolphin/fileCache/fileCache.c"),
+    ]),
     DolphinLib("gx", [
         DolphinLibObject(Matching, "dolphin/gx/GXInit.c"),
         DolphinLibObject(Matching, "dolphin/gx/GXFifo.c"),
@@ -433,6 +441,13 @@ config.libs = [
     DolphinLib("pad", [
         DolphinLibObject(Matching, "dolphin/pad/Pad.c"),
         DolphinLibObject(Matching, "dolphin/pad/Padclamp.c"),
+    ]),
+    DolphinLib("support", [
+        DolphinLibObject(Matching, "dolphin/support/List.c"),
+        DolphinLibObject(Matching, "dolphin/support/string.c"),
+    ]),
+    DolphinLib("texPalette", [
+        DolphinLibObject(Matching, "dolphin/texPalette/texPalette.c"),
     ]),
     DolphinLib("vi", [
         DolphinLibObject(Matching, "dolphin/vi/vi.c"),
@@ -517,7 +532,6 @@ config.libs = [
             Object(NonMatching, "sk/ai_utils.c"),
             Object(NonMatching, "sk/ai_inventory.c"),
             Object(NonMatching, "sk/dvdfs.c"),
-            Object(NonMatching, "sk/texPalette.c"),
             Object(NonMatching, "sk/info.c"),
         ]
     },

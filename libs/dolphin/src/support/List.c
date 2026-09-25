@@ -1,11 +1,13 @@
 #include <charPipeline/structures/List.h>
 
+/*
 void DSInitList(DSListPtr list, Ptr obj, DSLinkPtr link)
 {
     list->Head = NULL;
     list->Tail = NULL;
     list->Offset = (Ptr)link - obj;
 }
+*/
 
 void DSInsertListObject(DSListPtr list, Ptr cursor, Ptr obj)
 {
@@ -44,6 +46,7 @@ void DSInsertListObject(DSListPtr list, Ptr cursor, Ptr obj)
     }
 }
 
+/*
 void DSRemoveListObject(DSListPtr list, Ptr obj)
 {
     DSLinkPtr link = (DSLinkPtr)(obj + list->Offset);
@@ -63,7 +66,9 @@ void DSRemoveListObject(DSListPtr list, Ptr obj)
         link->Next = NULL;
     }
 }
+*/
 
+/*
 void DSAttachList(DSListPtr baseList, DSListPtr attachList)
 {
     DSLinkPtr link;
@@ -83,7 +88,9 @@ void DSAttachList(DSListPtr baseList, DSListPtr attachList)
         linkPrev;  // needed to match
     }
 }
+*/
 
+/*
 void *DSNextListObj(DSListPtr list, Ptr obj)
 {
     if (!list) {
@@ -94,3 +101,4 @@ void *DSNextListObj(DSListPtr list, Ptr obj)
     }
     return ((DSLinkPtr)(obj + list->Offset))->Next;
 }
+*/
