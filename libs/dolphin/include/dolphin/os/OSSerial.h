@@ -28,4 +28,6 @@ u32 SIDecodeType(u32 type);
 void SISetSamplingRate(u32 msec);
 void SIRefreshSamplingRate(void);
 
+extern u32 __PADFixBits;
+
 #endif // _DOLPHIN_OSSERIAL_H

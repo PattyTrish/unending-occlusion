@@ -1,94 +1,115 @@
 #include <dolphin.h>
 #include <dolphin/pad.h>
+#include <dolphin/os/OSSerial.h>
 
-static unsigned char TriggerMin;
-static unsigned char TriggerMax;
+typedef struct PADClampRegion {
+	u8 minTrigger;
+	u8 maxTrigger;
+	s8 minStick;
+	s8 maxStick;
+	s8 xyStick;
+	s8 minSubstick;
+	s8 maxSubstick;
+	s8 xySubstick;
+} PADClampRegion;
+
+static PADClampRegion ClampRegion = {
+	// Triggers
+	30,
+	180,
+
+	// Left stick
+	15,
+	72,
+	40,
+
+	// Right stick
+	15,
+	59,
+	31,
+};
 
 // functions
-static void ClampStick(signed char * px, signed char * py);
-static void ClampTrigger(unsigned char * trigger);
+static void ClampStick(s8* px, s8* py, s8 max, s8 xy, s8 min);
+static void ClampTrigger(u8* trigger);
 
-static void ClampStick(signed char * px, signed char * py) {
-    int x;
-    int y;
-    int signX;
-    int signY;
-    int d;
+static void ClampStick(s8* px, s8* py, s8 max, s8 xy, s8 min) {
+	int x = *px;
+	int y = *py;
+	int signX;
+	int signY;
+	int d;
 
-    x = *px;
-    y = *py;
+	if (0 <= x) {
+		signX = 1;
+	} else {
+		signX = -1;
+		x     = -x;
+	}
 
-    if (x >= 0) {
-        signX = 1;
-    } else {
-        signX = -1;
-        x = -x;
-    }
-    if (y >= 0) {
-        signY = 1;
-    } else {
-        signY = -1;
-        y = -y;
-    }
-    if (x <= 0xF) {
-        x = 0;
-    } else {
-        x -= 0xF;
-    }
-    if (y <= 0xF) {
-        y = 0;
-    } else {
-        y -= 0xF;
-    }
-    if (x == 0 && y == 0) {
-        *px = *py = 0;
-        return;
-    }
-    if ((y * 0x34) <= (x * 0x34)) {
-        d = (x * 0x34) + (y * 0x16);
-        if (d > 0xF08) {
-            x = (s8) ((x * 0xF08) / d);
-            y = (s8) ((y * 0xF08) / d);
-        }
-    } else {
-        d = (y * 0x34) + (x * 0x16);
-        if (d > 0xF08) {
-            x = (s8) ((x * 0xF08) / d);
-            y = (s8) ((y * 0xF08) / d);
-        }
-    }
-    *px = signX * x;
-    *py = signY * y;
+	if (0 <= y) {
+		signY = 1;
+	} else {
+		signY = -1;
+		y     = -y;
+	}
+
+	if (x <= min) {
+		x = 0;
+	} else {
+		x -= min;
+	}
+	if (y <= min) {
+		y = 0;
+	} else {
+		y -= min;
+	}
+
+	if (x == 0 && y == 0) {
+		*px = *py = 0;
+		return;
+	}
+
+	if (xy * y <= xy * x) {
+		d = xy * x + (max - xy) * y;
+		if (xy * max < d) {
+			x = (s8)(xy * max * x / d);
+			y = (s8)(xy * max * y / d);
+		}
+	} else {
+		d = xy * y + (max - xy) * x;
+		if (xy * max < d) {
+			x = (s8)(xy * max * x / d);
+			y = (s8)(xy * max * y / d);
+		}
+	}
+
+	*px = (s8)(signX * x);
+	*py = (s8)(signY * y);
 }
 
-static void ClampTrigger(unsigned char * trigger) {
-    if (*trigger <= TriggerMin) {
-        *trigger = 0;
-        return;
-    }
-    if (TriggerMax < *trigger) {
-        *trigger = TriggerMax;
-    }
-    *trigger -= TriggerMin;
+static void ClampTrigger(u8* trigger) {
+	if (*trigger <= ClampRegion.minTrigger) {
+		*trigger = 0;
+	} else {
+		if (ClampRegion.maxTrigger < *trigger) {
+			*trigger = ClampRegion.maxTrigger;
+		}
+		*trigger -= ClampRegion.minTrigger;
+	}
 }
 
-void PADClamp(PADStatus * status) {
-    int i;
 
-    if (PADGetSpec() < PAD_SPEC_4) {
-        TriggerMin = 0x28;
-        TriggerMax = 0xB4;
-    } else {
-        TriggerMin = 0x10;
-        TriggerMax = 0x9C;
-    }
+void PADClamp(PADStatus* status) {
+	int i;
+	for (i = 0; i < SI_MAX_CHAN; i++, status++) {
+		if (status->err != PAD_ERR_NONE) {
+			continue;
+		}
 
-    for(i = 0; i < 4; i++, status++) {
-        if (status->err == PAD_ERR_NONE) {
-            ClampStick(&status->stickX, &status->stickY);
-            ClampStick(&status->substickX, &status->substickY);
-            ClampTrigger(&status->triggerLeft);
-            ClampTrigger(&status->triggerRight);
-        }
-    }
+		ClampStick(&status->stickX, &status->stickY, ClampRegion.maxStick, ClampRegion.xyStick, ClampRegion.minStick);
+		ClampStick(&status->substickX, &status->substickY, ClampRegion.maxSubstick, ClampRegion.xySubstick, ClampRegion.minSubstick);
+		ClampTrigger(&status->triggerLeft);
+		ClampTrigger(&status->triggerRight);
+	}
 }

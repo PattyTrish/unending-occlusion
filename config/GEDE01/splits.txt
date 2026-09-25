@@ -343,6 +343,17 @@ dolphin/vi/vi.c:
 	.bss        start:0x80641AC8 end:0x80641C10
 	.sbss       start:0x8064DA60 end:0x8064DAB0
 
+dolphin/pad/Padclamp.c:
+	.text       start:0x80218344 end:0x8021857C
+	.sdata      start:0x8064C420 end:0x8064C428
+
+dolphin/pad/Pad.c:
+	.text       start:0x8021857C end:0x8021A044
+	.data       start:0x802FE9D8 end:0x802FE9E8
+	.bss        start:0x80641C10 end:0x80641C60
+	.sdata      start:0x8064C428 end:0x8064C448
+	.sbss       start:0x8064DAB0 end:0x8064DAD8
+
 sk/texPalette.c:
 	.text       start:0x8022C53C end:0x8022C668
 

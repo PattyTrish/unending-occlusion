@@ -375,6 +375,10 @@ config.libs = [
         DolphinLibObject(Matching, "dolphin/os/__start.c"),
         # DolphinLibObject(NonMatching, "dolphin/os/OSSync.c"), need to figure this one out
     ]),
+    DolphinLib("pad", [
+        DolphinLibObject(Matching, "dolphin/pad/Pad.c"),
+        DolphinLibObject(Matching, "dolphin/pad/Padclamp.c"),
+    ]),
     DolphinLib("vi", [
         DolphinLibObject(Matching, "dolphin/vi/vi.c"),
     ]),
