@@ -103,6 +103,6 @@ AI Policy
 
 Generated or otherwise, you are responsible for the code you output!
 
-I've personally been using it to help understand this whole process, rather than have it go at it. Most changes and additions are my own manual additions with Claude helping me out where docs aren't clear.
+I've personally been using it to help understand this whole process, then building up AI-driven automation as I learn first.
 
 AI is not particularly banned or anything, it's just not an excuse to skimp on code quality. No slop allowed!
