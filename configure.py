@@ -266,6 +266,15 @@ cflags_lua = [
     "-i src/lua",
 ]
 
+# SK's modified copy of the SDK's DTK, built as game code with peephole and scheduling off
+cflags_dtk = [
+    *cflags_game,
+    "-opt nopeephole",
+    "-schedule off",
+    "-i libs/dolphin/include",
+    "-i libs/dolphin/include/libc",
+]
+
 # REL flags
 cflags_rel = [
     *cflags_game,
@@ -594,6 +603,17 @@ config.libs = [
             Object(Matching, "msl/w_log.c"),
             Object(Matching, "msl/w_pow.c"),
             Object(Matching, "msl/math_ppc.c"),
+        ],
+    },
+    {
+        # DVD audio streaming: Nintendo's DTK as modified by SK (DTKTrack.offset, two
+        # getters) and linked among SK's objects at 0x801B1028
+        "lib": "dtk",
+        "mw_version": mw_version_game,
+        "cflags": cflags_dtk,
+        "progress_category": "sdk",
+        "objects": [
+            Object(Matching, "dtk/dtk.c"),
         ],
     },
     {

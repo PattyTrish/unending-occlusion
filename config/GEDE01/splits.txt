@@ -499,6 +499,11 @@ sk/sd_debug.c:
 sk/stream.c:
 	.text       start:0x801ADD5C end:0x801ADE0C
 
+dtk/dtk.c:
+	.text       start:0x801B1028 end:0x801B19D8
+	.bss        start:0x8060BF00 end:0x8060C020
+	.sbss       start:0x8064D320 end:0x8064D350
+
 sk/ut_BitOperations.c:
 	.text       start:0x801E78DC end:0x801E7944
 

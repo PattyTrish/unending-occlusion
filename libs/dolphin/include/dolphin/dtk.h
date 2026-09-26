@@ -12,8 +12,9 @@ typedef struct DTKTrack
     /*0x04*/ struct DTKTrack *next;
     /*0x08*/ char *fileName;
     /*0x0C*/ u32 eventMask;
-    /*0x10*/ DTKCallback callback;
-    /*0x14*/ DVDFileInfo dvdFileInfo;
+    /*0x10*/ u32 offset; // ED only: stream offset passed to DVDPrepareStreamAsync
+    /*0x14*/ DTKCallback callback;
+    /*0x18*/ DVDFileInfo dvdFileInfo;
 } DTKTrack;
 
 #define DTK_STATE_STOP    0
@@ -28,7 +29,7 @@ typedef struct DTKTrack
 
 void DTKInit(void);
 void DTKShutdown(void);
-u32 DTKQueueTrack(char *fileName, DTKTrack *track, u32 eventMask, DTKCallback callback);
+u32 DTKQueueTrack(char *fileName, DTKTrack *track, u32 eventMask, u32 offset, DTKCallback callback);
 u32 DTKRemoveTrack(struct DTKTrack *track);
 void DTKFlushTracks(DTKFlushCallback callback);
 void DTKSetSampleRate(u32 samplerate);
@@ -45,5 +46,7 @@ u32 DTKGetInterruptFrequency(void);
 DTKTrack *DTKGetCurrentTrack(void);
 void DTKSetVolume(u8 left, u8 right);
 u16 DTKGetVolume(void);
+u32 DTKGetTrackPosition(void);
+DVDFileInfo *DTKGetCurrentTrackFileInfo(void);
 
 #endif
