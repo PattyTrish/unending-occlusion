@@ -606,6 +606,16 @@ config.libs = [
         ],
     },
     {
+        # Hudson's HVQM4 video decoder (prebuilt library, linked after MSL)
+        "lib": "hvqm4dec",
+        "mw_version": "GC/1.2.5",
+        "cflags": [*cflags_sdk, "-char signed", "-i include"],
+        "progress_category": "sdk",
+        "objects": [
+            Object(NonMatching, "hvqm4dec/hvqm4dec.c"),
+        ],
+    },
+    {
         # DVD audio streaming: Nintendo's DTK as modified by SK (DTKTrack.offset, two
         # getters) and linked among SK's objects at 0x801B1028
         "lib": "dtk",

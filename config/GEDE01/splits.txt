@@ -369,6 +369,12 @@ msl/w_pow.c:
 msl/math_ppc.c:
 	.text       start:0x801023C0 end:0x8010242C
 
+hvqm4dec/hvqm4dec.c:
+	.text       start:0x8010242C end:0x801082D4
+	.rodata     start:0x8023A208 end:0x8023A220
+	.bss        start:0x8032CC08 end:0x8032D648
+	.sbss       start:0x8064CC68 end:0x8064CC70
+
 ed/hvqm4read.c:
 	.text       start:0x80108558 end:0x801086C4
 
