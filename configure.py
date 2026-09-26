@@ -240,16 +240,17 @@ config.linker_version = "GC/1.3.2"
 # Silicon Knights' build of the game
 mw_version_game = config.linker_version
 
-cflags_metrotrk = [
+# MetroTRK v0.10, the same build as Animal Crossing's and Mario Party 4's
+cflags_trk = [
     *cflags_common,
-    "-i src",
-    "-i src/Runtime",
-    "-i src/MetroTRK",
-    "-use_lmw_stmw on",
-    "-pool off",
     "-sdata 0",
     "-sdata2 0",
+    "-inline auto,deferred",
     "-rostr",
+    "-char signed",
+    "-i src",
+    "-i src/msl",
+    "-i libs/dolphin/include",
 ]
 
 cflags_game = [
@@ -470,13 +471,35 @@ config.libs = [
         DolphinLibObject(Matching, "dolphin/vi/vi.c"),
     ]),
     {
-        "lib": "MetroTRK",
-        "mw_version": mw_version_game,
-        "cflags": cflags_metrotrk,
+        "lib": "TRK_MINNOW_DOLPHIN",
+        "mw_version": "GC/1.3",
+        "cflags": cflags_trk,
         "progress_category": "sdk",  # str | List[str]
         "objects": [
-            # Object(Matching, "MetroTRK/__exceptions.s"),
-            # Object(Matching, "MetroTRK/mainloop.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/mainloop.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/nubevent.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/nubinit.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/msg.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/msgbuf.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/serpoll.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/usr_put.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/dispatch.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/msghndlr.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/support.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/mutex_TRK.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/notify.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/flush_cache.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/mem_TRK.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/targimpl.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/targsupp.s"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/__exception.s"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/dolphin_trk.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/mpc_7xx_603e.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/main_TRK.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/dolphin_trk_glue.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/targcont.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/target_options.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/mslsupp.c"),
         ],
     },
     {

@@ -28,8 +28,99 @@ ed/ED_Import.c:
 ed/ED_PathFinding_AStar.c:
 	.text       start:0x800BC6D8 end:0x800BC74C
 
-MetroTRK/mainloop.c:
-	.text       start:0x800EEB44 end:0x800EEEF8
+TRK_MINNOW_DOLPHIN/mainloop.c:
+	.text       start:0x800EEE00 end:0x800EEEF8
+
+TRK_MINNOW_DOLPHIN/nubevent.c:
+	.text       start:0x800EEEF8 end:0x800EF120
+	.bss        start:0x803285E0 end:0x80328608
+
+TRK_MINNOW_DOLPHIN/nubinit.c:
+	.text       start:0x800EF120 end:0x800EF2A0
+	.rodata     start:0x80239BC0 end:0x80239BE0
+	.bss        start:0x80328608 end:0x80328610
+
+TRK_MINNOW_DOLPHIN/msg.c:
+	.text       start:0x800EF2A0 end:0x800EF47C
+
+TRK_MINNOW_DOLPHIN/msgbuf.c:
+	.text       start:0x800EF47C end:0x800EFEA8
+	.rodata     start:0x80239BE0 end:0x80239C00
+	.bss        start:0x80328610 end:0x80329FC0
+
+TRK_MINNOW_DOLPHIN/serpoll.c:
+	.text       start:0x800EFEA8 end:0x800F0274
+	.bss        start:0x80329FC0 end:0x80329FD8
+
+TRK_MINNOW_DOLPHIN/usr_put.c:
+	.text       start:0x800F0274 end:0x800F0300
+
+TRK_MINNOW_DOLPHIN/dispatch.c:
+	.text       start:0x800F0300 end:0x800F039C
+	.data       start:0x8024A798 end:0x8024A820
+	.bss        start:0x80329FD8 end:0x80329FE0
+
+TRK_MINNOW_DOLPHIN/msghndlr.c:
+	.text       start:0x800F039C end:0x800F2BFC
+	.data       start:0x8024A820 end:0x8024A858
+	.bss        start:0x80329FE0 end:0x80329FE8
+
+TRK_MINNOW_DOLPHIN/support.c:
+	.text       start:0x800F2BFC end:0x800F34BC
+
+TRK_MINNOW_DOLPHIN/mutex_TRK.c:
+	.text       start:0x800F34BC end:0x800F34D4
+
+TRK_MINNOW_DOLPHIN/notify.c:
+	.text       start:0x800F34D4 end:0x800F35AC
+
+TRK_MINNOW_DOLPHIN/flush_cache.c:
+	.text       start:0x800F35AC end:0x800F35E4
+
+TRK_MINNOW_DOLPHIN/mem_TRK.c:
+	.init       start:0x80003100 end:0x80003154
+	.text       start:0x800F35E4 end:0x800F36A0
+
+TRK_MINNOW_DOLPHIN/targimpl.c:
+	.text       start:0x800F36A0 end:0x800F4F30
+	.rodata     start:0x80239C00 end:0x80239C88
+	.data       start:0x8024A858 end:0x8024A888
+	.bss        start:0x80329FE8 end:0x8032A568
+
+TRK_MINNOW_DOLPHIN/targsupp.s:
+	.text       start:0x800F4F30 end:0x800F4F50
+
+TRK_MINNOW_DOLPHIN/__exception.s:
+	.init       start:0x80003154 end:0x80005088
+
+TRK_MINNOW_DOLPHIN/dolphin_trk.c:
+	.init       start:0x80005088 end:0x8000518C
+	.text       start:0x800F4F50 end:0x800F5090
+	.data       start:0x8024A888 end:0x8024A8C8
+	.bss        start:0x8032A568 end:0x8032A570
+
+TRK_MINNOW_DOLPHIN/mpc_7xx_603e.c:
+	.text       start:0x800F5090 end:0x800F5408
+
+TRK_MINNOW_DOLPHIN/main_TRK.c:
+	.text       start:0x800F5408 end:0x800F544C
+	.bss        start:0x8032A570 end:0x8032A578
+
+TRK_MINNOW_DOLPHIN/dolphin_trk_glue.c:
+	.text       start:0x800F544C end:0x800F58F8
+	.rodata     start:0x80239C88 end:0x80239CD0
+	.data       start:0x8024A8C8 end:0x8024A8E8
+	.bss        start:0x8032A578 end:0x8032C7A0
+
+TRK_MINNOW_DOLPHIN/targcont.c:
+	.text       start:0x800F58F8 end:0x800F592C
+
+TRK_MINNOW_DOLPHIN/target_options.c:
+	.text       start:0x800F592C end:0x800F5948
+	.bss        start:0x8032C7A0 end:0x8032C7A8
+
+TRK_MINNOW_DOLPHIN/mslsupp.c:
+	.text       start:0x800F5948 end:0x800F5B44
 
 Runtime/global_destructor_chain.c:
 	.text       start:0x800F5C0C end:0x800F5C54
@@ -323,9 +414,6 @@ dolphin/os/OSThread.c:
 dolphin/os/OSTime.c:
 	.text       start:0x80210AA0 end:0x80210F1C
 	.data       start:0x802FE0F0 end:0x802FE150
-
-MetroTRK/__exceptions.s:
-	.init       start:0x80003100 end:0x8000518C
 
 dolphin/os/__start.c:
 	.init       start:0x800052C8 end:0x800054F8
