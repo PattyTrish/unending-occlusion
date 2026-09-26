@@ -1,12 +1,13 @@
 #include <dolphin.h>
 #include <dolphin/mtx.h>
-#include "fake_tgmath.h"
 
 #define qr0 0
 #define qr1 1
 #define qr6 6
 
-asm void PSMTXReorder(register Mtx src, register ROMtx dest) {
+asm void PSMTXReorder(const register Mtx src, register ROMtx dest)
+{
+    /* clang-format off */
     psq_l f0, 0(src), 0, qr0
     psq_l f2, 16(src), 0, qr0
     psq_l f4, 32(src), 0, qr0
@@ -25,9 +26,13 @@ asm void PSMTXReorder(register Mtx src, register ROMtx dest) {
     psq_st f8, 24(dest), 0, qr0
     psq_st f9, 32(dest), 0, qr0
     psq_st f10, 40(dest), 0, qr0
+    /* clang-format on */
 }
 
-asm void PSMTXROMultVecArray(register ROMtx *m, register Vec *srcBase, register Vec *dstBase, register u32 count) {
+#if 0
+asm void PSMTXROMultVecArray(const register ROMtx m, const register Vec *srcBase, register Vec *dstBase, register u32 count)
+{
+    /* clang-format off */
     nofralloc
     stwu r1, -64(r1)
     stfd f14, 8(r1)
@@ -101,9 +106,15 @@ exit:
     lfd f18, 40(r1)
     addi r1, r1, 64
     blr
+    /* clang-format on */
 }
+#endif
 
-asm void PSMTXROSkin2VecArray(register ROMtx *m0, register ROMtx *m1, register f32 * wtBase, register Vec *srcBase, register Vec *dstBase, register u32 count) {
+#if 0
+asm void PSMTXROSkin2VecArray(const register ROMtx m0, const register ROMtx m1, const register f32 *wtBase, const register Vec *srcBase,
+    register Vec *dstBase, register u32 count)
+{
+    /* clang-format off */
     nofralloc
     stwu r1, -160(r1)
     stfd f14, 8(r1)
@@ -212,9 +223,14 @@ loop:
     lfd f30, 136(r1)
     addi r1, r1, 160
     blr
+    /* clang-format on */
 }
+#endif
 
-asm void PSMTXROMultS16VecArray(register ROMtx *m, register S16Vec *srcBase, register Vec *dstBase, register u32 count) {
+#if 0
+asm void PSMTXROMultS16VecArray(const register ROMtx m, const register S16Vec *srcBase, register Vec *dstBase, register u32 count)
+{
+    /* clang-format off */
     nofralloc
     stwu r1, -64(r1)
     stfd f14, 8(r1)
@@ -290,9 +306,14 @@ exit:
     lfd f18, 40(r1)
     addi r1, r1, 64
     blr
+    /* clang-format on */
 }
+#endif
 
-asm void PSMTXMultS16VecArray(register Mtx44 *m, register S16Vec *srcBase, register Vec *dstBase, register u32 count) {
+#if 0
+asm void PSMTXMultS16VecArray(const register Mtx44 m, const register S16Vec *srcBase, register Vec *dstBase, register u32 count)
+{
+    /* clang-format off */
     psq_l f0, 0(m), 0, qr0
     lis r7, 7
     mtspr GQR6, r7
@@ -337,4 +358,6 @@ loop:
     psq_stu f9, 4(dstBase), 1, qr0
     psq_stu f11, 4(dstBase), 1, qr0
     psq_stu f13, 4(dstBase), 1, qr0
+    /* clang-format on */
 }
+#endif

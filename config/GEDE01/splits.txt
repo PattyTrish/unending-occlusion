@@ -334,6 +334,30 @@ dolphin/os/__ppc_eabi_init.c:
 	.init       start:0x800054F8 end:0x8000554C
 	.text       start:0x80210F1C end:0x80210FB0
 
+dolphin/mtx/mtx.c:
+	.text       start:0x80210FB0 end:0x80211710
+	.sdata      start:0x8064C3F0 end:0x8064C3F8
+	.sdata2     start:0x80651608 end:0x80651610
+
+dolphin/mtx/mtxvec.c:
+	.text       start:0x80211710 end:0x80211844
+
+dolphin/mtx/mtx44.c:
+	.text       start:0x80211844 end:0x80211A48
+	.sdata2     start:0x80651610 end:0x80651628
+
+dolphin/mtx/vec.c:
+	.text       start:0x80211A48 end:0x80211DC0
+	.sdata2     start:0x80651628 end:0x80651638
+
+dolphin/mtx/quat.c:
+	.text       start:0x80211DC0 end:0x80212154
+	.rodata     start:0x8023B8D0 end:0x8023B8E0
+	.sdata2     start:0x80651638 end:0x80651660
+
+dolphin/mtx/psmtx.c:
+	.text       start:0x80212154 end:0x802121A0
+
 dolphin/dvd/dvdlow.c:
 	.text       start:0x802121A0 end:0x80212FF4
 	.bss        start:0x80641880 end:0x80641960

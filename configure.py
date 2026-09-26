@@ -411,6 +411,14 @@ config.libs = [
         DolphinLibObject(Matching, "dolphin/gx/GXTransform.c"),
         DolphinLibObject(Matching, "dolphin/gx/GXPerf.c"),
     ]),
+    DolphinLib("mtx", [
+        DolphinLibObject(Matching, "dolphin/mtx/mtx.c"),
+        DolphinLibObject(Matching, "dolphin/mtx/mtxvec.c"),
+        DolphinLibObject(Matching, "dolphin/mtx/mtx44.c"),
+        DolphinLibObject(Matching, "dolphin/mtx/vec.c"),
+        DolphinLibObject(Matching, "dolphin/mtx/quat.c"),
+        DolphinLibObject(Matching, "dolphin/mtx/psmtx.c"),
+    ], mw_version="GC/1.2.5"),
     DolphinLib("odemustubs", [
         DolphinLibObject(Matching, "dolphin/odemustubs/odemustubs.c"),
     ]),
