@@ -122,16 +122,252 @@ TRK_MINNOW_DOLPHIN/target_options.c:
 TRK_MINNOW_DOLPHIN/mslsupp.c:
 	.text       start:0x800F5948 end:0x800F5B44
 
+Runtime/__va_arg.c:
+	.text       start:0x800F5B44 end:0x800F5C0C
+
 Runtime/global_destructor_chain.c:
 	.text       start:0x800F5C0C end:0x800F5C54
 	.dtors      start:0x80237F08 end:0x80237F0C
 	.sbss       start:0x8064CC28 end:0x8064CC2C
+
+Runtime/runtime.c:
+	.text       start:0x800F5C54 end:0x800F63E4
+	.rodata     start:0x80239CD0 end:0x80239CE8
 
 Runtime/__init_cpp_exceptions.cpp:
 	.text       start:0x800F63E4 end:0x800F6460
 	.ctors      start:0x80237EE0 end:0x80237EE4
 	.dtors      start:0x80237F00 end:0x80237F08
 	.sdata      start:0x8064B838 end:0x8064B83C
+
+Runtime/Gecko_setjmp.c:
+	.text       start:0x800F6460 end:0x800F6674
+
+Runtime/Gecko_ExceptionPPC.c:
+	.text       start:0x800F6674 end:0x800F66DC
+	.bss        start:0x8032C7A8 end:0x8032C7B8
+
+Runtime/GCN_Mem_Alloc.c:
+	.text       start:0x800F66DC end:0x800F677C
+	.sbss       start:0x8064CC30 end:0x8064CC38
+
+msl/abort_exit.c:
+	.text       start:0x800F677C end:0x800F68D0
+	.bss        start:0x8032C7B8 end:0x8032C8B8
+	.sbss       start:0x8064CC38 end:0x8064CC48
+
+msl/alloc.c:
+	.text       start:0x800F68D0 end:0x800F6E38
+	.rodata     start:0x80239CE8 end:0x80239D00
+	.bss        start:0x8032C8B8 end:0x8032C8F0
+	.sbss       start:0x8064CC48 end:0x8064CC50
+
+msl/errno.c:
+	.sbss       start:0x8064CC50 end:0x8064CC58
+
+msl/ansi_files.c:
+	.text       start:0x800F6E38 end:0x800F6F40
+	.data       start:0x8024A8E8 end:0x8024AA28
+	.bss        start:0x8032C8F0 end:0x8032CBF0
+
+msl/ansi_fp.c:
+	.text       start:0x800F6F40 end:0x800F8BAC
+	.rodata     start:0x80239D00 end:0x80239DE0
+	.data       start:0x8024AA28 end:0x8024AB90
+	.sdata2     start:0x8064F930 end:0x8064F960
+
+msl/assert.c:
+	.text       start:0x800F8BAC end:0x800F8BF8
+	.rodata     start:0x80239DE0 end:0x80239E10
+
+msl/buffer_io.c:
+	.text       start:0x800F8BF8 end:0x800F8CF0
+
+msl/ctype.c:
+	.text       start:0x800F8CF0 end:0x800F8D8C
+	.data       start:0x8024AB90 end:0x8024AE90
+
+msl/locale.c:
+	.rodata     start:0x80239E10 end:0x80239E18
+	.data       start:0x8024AE90 end:0x8024AEC8
+
+msl/direct_io.c:
+	.text       start:0x800F8D8C end:0x800F90B8
+
+msl/file_io.c:
+	.text       start:0x800F90B8 end:0x800F92B0
+
+msl/FILE_POS.c:
+	.text       start:0x800F92B0 end:0x800F957C
+
+msl/mbstring.c:
+	.text       start:0x800F957C end:0x800F98EC
+	.sdata2     start:0x8064F960 end:0x8064F968
+
+msl/mem.c:
+	.text       start:0x800F98EC end:0x800F9A5C
+
+msl/mem_funcs.c:
+	.text       start:0x800F9A5C end:0x800F9D3C
+
+msl/misc_io.c:
+	.text       start:0x800F9D3C end:0x800F9D4C
+
+msl/printf.c:
+	.text       start:0x800F9D4C end:0x800FBE38
+	.rodata     start:0x80239E18 end:0x80239E40
+	.data       start:0x8024AEC8 end:0x8024B0F8
+	.sdata      start:0x8064B840 end:0x8064B848
+	.sdata2     start:0x8064F968 end:0x8064F970
+
+msl/qsort.c:
+	.text       start:0x800FBE38 end:0x800FBFA8
+
+msl/rand.c:
+	.text       start:0x800FBFA8 end:0x800FBFD0
+	.sdata      start:0x8064B848 end:0x8064B850
+
+msl/float.c:
+	.sdata      start:0x8064B850 end:0x8064B878
+
+msl/scanf.c:
+	.text       start:0x800FBFD0 end:0x800FD018
+	.rodata     start:0x80239E40 end:0x80239E68
+	.data       start:0x8024B0F8 end:0x8024B1C8
+
+msl/signal.c:
+	.text       start:0x800FD018 end:0x800FD0C8
+	.bss        start:0x8032CBF0 end:0x8032CC08
+
+msl/string.c:
+	.text       start:0x800FD0C8 end:0x800FD4E0
+	.rodata     start:0x80239E68 end:0x80239E88
+
+msl/strtold.c:
+	.text       start:0x800FD4E0 end:0x800FE4EC
+	.rodata     start:0x80239E88 end:0x80239EC0
+	.sdata2     start:0x8064F970 end:0x8064F988
+
+msl/strtoul.c:
+	.text       start:0x800FE4EC end:0x800FEC70
+	.data       start:0x8024B1C8 end:0x8024B250
+
+msl/uart_console_io.c:
+	.text       start:0x800FEC70 end:0x800FED34
+	.sbss       start:0x8064CC58 end:0x8064CC60
+
+msl/wchar_io.c:
+	.text       start:0x800FED34 end:0x800FEDBC
+
+msl/e_acos.c:
+	.text       start:0x800FEDBC end:0x800FF0CC
+	.sdata2     start:0x8064F988 end:0x8064FA18
+
+msl/e_atan2.c:
+	.text       start:0x800FF0CC end:0x800FF35C
+	.sdata2     start:0x8064FA18 end:0x8064FA70
+
+msl/e_exp.c:
+	.text       start:0x800FF35C end:0x800FF578
+	.rodata     start:0x80239EC0 end:0x80239EF0
+	.sdata2     start:0x8064FA70 end:0x8064FAE8
+
+msl/e_log.c:
+	.text       start:0x800FF578 end:0x800FF7F4
+	.sbss       start:0x8064CC60 end:0x8064CC68
+	.sdata2     start:0x8064FAE8 end:0x8064FB68
+
+msl/e_pow.c:
+	.text       start:0x800FF7F4 end:0x80100080
+	.rodata     start:0x80239EF0 end:0x80239F20
+	.sdata2     start:0x8064FB68 end:0x8064FC78
+
+msl/e_rem_pio2.c:
+	.text       start:0x80100080 end:0x80100420
+	.rodata     start:0x80239F20 end:0x8023A0A8
+	.sdata2     start:0x8064FC78 end:0x8064FCD0
+
+msl/k_cos.c:
+	.text       start:0x80100420 end:0x80100514
+	.sdata2     start:0x8064FCD0 end:0x8064FD18
+
+msl/k_rem_pio2.c:
+	.text       start:0x80100514 end:0x80101368
+	.rodata     start:0x8023A0A8 end:0x8023A0F8
+	.sdata2     start:0x8064FD18 end:0x8064FD58
+
+msl/k_sin.c:
+	.text       start:0x80101368 end:0x80101408
+	.sdata2     start:0x8064FD58 end:0x8064FD90
+
+msl/k_tan.c:
+	.text       start:0x80101408 end:0x8010161C
+	.rodata     start:0x8023A0F8 end:0x8023A160
+	.sdata2     start:0x8064FD90 end:0x8064FDC8
+
+msl/s_atan.c:
+	.text       start:0x8010161C end:0x8010181C
+	.rodata     start:0x8023A160 end:0x8023A1F8
+	.sdata2     start:0x8064FDC8 end:0x8064FDF0
+
+msl/s_ceil.c:
+	.text       start:0x8010181C end:0x80101960
+	.sdata2     start:0x8064FDF0 end:0x8064FE00
+
+msl/s_copysign.c:
+	.text       start:0x80101960 end:0x80101988
+
+msl/s_cos.c:
+	.text       start:0x80101988 end:0x80101A5C
+	.sdata2     start:0x8064FE00 end:0x8064FE08
+
+msl/s_floor.c:
+	.text       start:0x80101A5C end:0x80101BA4
+	.sdata2     start:0x8064FE08 end:0x8064FE18
+
+msl/s_frexp.c:
+	.text       start:0x80101BA4 end:0x80101C30
+	.sdata2     start:0x8064FE18 end:0x8064FE20
+
+msl/s_ldexp.c:
+	.text       start:0x80101C30 end:0x80101DF4
+	.sdata2     start:0x8064FE20 end:0x8064FE48
+
+msl/s_modf.c:
+	.text       start:0x80101DF4 end:0x80101EF0
+
+msl/s_nextafter.c:
+	.text       start:0x80101EF0 end:0x80102074
+
+msl/s_rint.c:
+	.text       start:0x80102074 end:0x801021D0
+	.rodata     start:0x8023A1F8 end:0x8023A208
+
+msl/s_sin.c:
+	.text       start:0x801021D0 end:0x801022A8
+	.sdata2     start:0x8064FE48 end:0x8064FE50
+
+msl/s_tan.c:
+	.text       start:0x801022A8 end:0x80102320
+	.sdata2     start:0x8064FE50 end:0x8064FE58
+
+msl/w_acos.c:
+	.text       start:0x80102320 end:0x80102340
+
+msl/w_atan2.c:
+	.text       start:0x80102340 end:0x80102360
+
+msl/w_exp.c:
+	.text       start:0x80102360 end:0x80102380
+
+msl/w_log.c:
+	.text       start:0x80102380 end:0x801023A0
+
+msl/w_pow.c:
+	.text       start:0x801023A0 end:0x801023C0
+
+msl/math_ppc.c:
+	.text       start:0x801023C0 end:0x8010242C
 
 ed/hvqm4read.c:
 	.text       start:0x80108558 end:0x801086C4
@@ -414,6 +650,9 @@ dolphin/os/OSThread.c:
 dolphin/os/OSTime.c:
 	.text       start:0x80210AA0 end:0x80210F1C
 	.data       start:0x802FE0F0 end:0x802FE150
+
+Runtime/__mem.c:
+	.init       start:0x8000518C end:0x800052C8
 
 dolphin/os/__start.c:
 	.init       start:0x800052C8 end:0x800054F8
