@@ -668,7 +668,6 @@ config.libs = [
         "cflags": cflags_game,
         "progress_category": "sk",
         "objects": [
-            Object(NonMatching, "sk/SkEngine_FileRead.c"),
             Object(NonMatching, "sk/MemCard.c"),
             Object(NonMatching, "sk/particle.c"),
             Object(NonMatching, "sk/scheduler.c"),
@@ -686,7 +685,6 @@ config.libs = [
             Object(NonMatching, "sk/ai_utils.c"),
             Object(NonMatching, "sk/ai_inventory.c"),
             Object(NonMatching, "sk/dvdfs.c"),
-            Object(NonMatching, "sk/info.c"),
         ]
     },
     {
@@ -695,19 +693,40 @@ config.libs = [
         "cflags": cflags_game,
         "progress_category": "game",
         "objects": [
+            Object(NonMatching, "ed/SkEngine_FileRead.c"),  # SK-named, but links in block A
             Object(NonMatching, "ed/ED_Reset.c"),
             Object(NonMatching, "ed/ED_AI.c"),
             Object(NonMatching, "ed/ED_Import.c"),
             Object(NonMatching, "ed/ED_PathFinding_AStar.c"),
             Object(NonMatching, "ed/ed_ai_Projectile.c"),
-            Object(NonMatching, "ed/hvqm4read.c"),
-            Object(NonMatching, "ed/ch_char.c"),
-            Object(NonMatching, "ed/ch_seq_mgr.c"),
-            Object(NonMatching, "ed/EffectControl.c"),
-            Object(NonMatching, "ed/gos_database.c"),
-            Object(NonMatching, "ed/Inventory.c"),
-            Object(NonMatching, "ed/ld_loaddata.c"),
-        ]
+        ],
+    },
+    {
+        # Block B (0x801082D4..0x8015EA7C), between HVQM4 and Lua: the middle layer
+        "lib": "data",
+        "mw_version": mw_version_game,
+        "cflags": cflags_game,
+        "progress_category": "game",
+        "objects": [
+            Object(NonMatching, "data/hvqm4read.c"),
+            Object(NonMatching, "data/ch_char.c"),
+            Object(NonMatching, "data/ch_seq_mgr.c"),
+            Object(NonMatching, "data/EffectControl.c"),
+            Object(NonMatching, "data/gos_database.c"),
+            Object(NonMatching, "data/Inventory.c"),
+            Object(NonMatching, "data/ld_loaddata.c"),
+        ],
+    },
+    {
+        # Block D (0x8022E7FC..0x80237EE0), after the SDK: Xiph libogg (bitwise) + libvorbis, SK-modified,
+        # ending with SK's threaded Vorbis streamer (~0x802364B8). References: notes/dolphin-decomps/libogg
+        "lib": "vorbis",
+        "mw_version": mw_version_game,
+        "cflags": cflags_game,
+        "progress_category": "sk",
+        "objects": [
+            Object(NonMatching, "vorbis/info.c"),
+        ],
     }
 ]
 

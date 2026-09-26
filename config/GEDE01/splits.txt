@@ -13,7 +13,7 @@ Sections:
 	.sdata2     type:rodata align:8
 	.sbss2      type:bss align:32
 
-sk/SkEngine_FileRead.c:
+ed/SkEngine_FileRead.c:
 	.text       start:0x80024594 end:0x80024638
 
 ed/ED_Reset.c:
@@ -375,25 +375,25 @@ hvqm4dec/hvqm4dec.c:
 	.bss        start:0x8032CC08 end:0x8032D648
 	.sbss       start:0x8064CC68 end:0x8064CC70
 
-ed/hvqm4read.c:
+data/hvqm4read.c:
 	.text       start:0x80108558 end:0x801086C4
 
-ed/ch_char.c:
+data/ch_char.c:
 	.text       start:0x8011EA60 end:0x8011EAB4
 
-ed/ch_seq_mgr.c:
+data/ch_seq_mgr.c:
 	.text       start:0x80135510 end:0x80135748
 
-ed/EffectControl.c:
+data/EffectControl.c:
 	.text       start:0x80149EFC end:0x80149F9C
 
-ed/gos_database.c:
+data/gos_database.c:
 	.text       start:0x801569A0 end:0x80156B1C
 
-ed/Inventory.c:
+data/Inventory.c:
 	.text       start:0x80157504 end:0x8015761C
 
-ed/ld_loaddata.c:
+data/ld_loaddata.c:
 	.text       start:0x801599BC end:0x80159DD0
 
 lua/lcode.c:
@@ -937,5 +937,5 @@ dolphin/odemustubs/odemustubs.c:
 dolphin/amcnotstub/amcnotstub.c:
 	.text       start:0x8022E7F4 end:0x8022E7FC
 
-sk/info.c:
+vorbis/info.c:
 	.text       start:0x80232078 end:0x80232430
