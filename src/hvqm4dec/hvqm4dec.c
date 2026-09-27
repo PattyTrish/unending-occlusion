@@ -147,7 +147,7 @@ static inline void setCode(BitBuffer* const str, u8* top)
 /**
  * @TODO: Documentation
  */
-static inline int getBit(BitBuffer* str)
+static inline u8 getBit(BitBuffer* str)
 {
 	u8 ret;
 
@@ -164,20 +164,19 @@ static inline int getBit(BitBuffer* str)
 /**
  * @TODO: Documentation
  */
-static inline s16 getByte(BitBuffer* str)
-{
-	s16 value;
-
-	value = getBit(str) ? 0x80 : 0;
-	value |= getBit(str) ? 0x40 : 0;
-	value |= getBit(str) ? 0x20 : 0;
-	value |= getBit(str) ? 0x10 : 0;
-	value |= getBit(str) ? 0x08 : 0;
-	value |= getBit(str) ? 0x04 : 0;
-	value |= getBit(str) ? 0x02 : 0;
-	value |= getBit(str) ? 0x01 : 0;
-	return value;
-}
+#define getByte(str, dst) \
+	{ \
+		s16 value; \
+		value = getBit(str) ? 0x80 : 0; \
+		value |= getBit(str) ? 0x40 : 0; \
+		value |= getBit(str) ? 0x20 : 0; \
+		value |= getBit(str) ? 0x10 : 0; \
+		value |= getBit(str) ? 0x08 : 0; \
+		value |= getBit(str) ? 0x04 : 0; \
+		value |= getBit(str) ? 0x02 : 0; \
+		value |= getBit(str) ? 0x01 : 0; \
+		(dst) = value; \
+	}
 
 /**
  * @TODO: Documentation
@@ -197,7 +196,7 @@ static s16 _readTree(Tree* const dst, BitBuffer* const str)
 		return node;
 	} else {
 		// Leaf node (0-255)
-		no  = getByte(str);
+		getByte(str, no);
 		val = no;
 
 		if (readTree_signed && no > 0x7F) {
@@ -237,9 +236,11 @@ static s16 decodeHuff(BitBufferWithTree* code)
 	Tree* tree     = code->tree;
 	BitBuffer* str = &code->str;
 	s16 point      = tree->tree_root;
+	u8 bit;
 
 	while (point >= 0x100) {
-		if (getBit(str)) {
+		bit = getBit(str);
+		if (bit) {
 			point = tree->leaf[1][point];
 		} else {
 			point = tree->leaf[0][point];
@@ -293,12 +294,12 @@ static void Ipic_BasisNumDec(VideoState* ws)
 	BitBufferWithTree* symcode;
 	BitBufferWithTree* runcode;
 
-	runln   = 0;
 	ydat    = ws->pln[Y_IDX].blockInfoTop;
 	symcode = &ws->bsnum[LUMA_IDX];
 	runcode = &ws->bsrun[LUMA_IDX];
 	h_block = ws->pln[LUMA_IDX].nblocks_h;
 	v_block = ws->pln[LUMA_IDX].nblocks_v;
+	runln   = 0;
 
 	for (j = v_block; j > 0; j--) {
 		for (i = h_block; i > 0; i--) {
@@ -627,7 +628,6 @@ static s32 GetAotBasis(VideoState* ws, u8 basisOut[16], s32* pscl, u8* nestTop, 
 	int step_x, step_y;
 	u8 min, max;
 	u8* nP;
-	u8 value;
 
 	code = *ws->aotcd[p].ptr++ << 8;
 	code |= *ws->aotcd[p].ptr++;
@@ -658,161 +658,144 @@ static s32 GetAotBasis(VideoState* ws, u8 basisOut[16], s32* pscl, u8* nestTop, 
 
 	nP = nestTop;
 
-	value = *nP;
-	basisOut[0] = value;
-	min = max = value;
+	min = max = basisOut[0] = *nP;
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[1] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[1] = *nP) > max) {
+		max = basisOut[1];
+	}
+	if (basisOut[1] < min) {
+		min = basisOut[1];
 	}
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[2] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[2] = *nP) > max) {
+		max = basisOut[2];
+	}
+	if (basisOut[2] < min) {
+		min = basisOut[2];
 	}
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[3] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[3] = *nP) > max) {
+		max = basisOut[3];
+	}
+	if (basisOut[3] < min) {
+		min = basisOut[3];
 	}
 
 	nestTop += step_y;
 	nP = nestTop;
 
-	value = *nP;
-	basisOut[4] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[4] = *nP) > max) {
+		max = basisOut[4];
+	}
+	if (basisOut[4] < min) {
+		min = basisOut[4];
 	}
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[5] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[5] = *nP) > max) {
+		max = basisOut[5];
+	}
+	if (basisOut[5] < min) {
+		min = basisOut[5];
 	}
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[6] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[6] = *nP) > max) {
+		max = basisOut[6];
+	}
+	if (basisOut[6] < min) {
+		min = basisOut[6];
 	}
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[7] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[7] = *nP) > max) {
+		max = basisOut[7];
+	}
+	if (basisOut[7] < min) {
+		min = basisOut[7];
 	}
 
 	nestTop += step_y;
 	nP = nestTop;
 
-	value = *nP;
-	basisOut[8] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[8] = *nP) > max) {
+		max = basisOut[8];
+	}
+	if (basisOut[8] < min) {
+		min = basisOut[8];
 	}
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[9] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[9] = *nP) > max) {
+		max = basisOut[9];
+	}
+	if (basisOut[9] < min) {
+		min = basisOut[9];
 	}
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[10] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[10] = *nP) > max) {
+		max = basisOut[10];
+	}
+	if (basisOut[10] < min) {
+		min = basisOut[10];
 	}
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[11] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[11] = *nP) > max) {
+		max = basisOut[11];
+	}
+	if (basisOut[11] < min) {
+		min = basisOut[11];
 	}
 
 	nestTop += step_y;
 	nP = nestTop;
 
-	value = *nP;
-	basisOut[12] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[12] = *nP) > max) {
+		max = basisOut[12];
+	}
+	if (basisOut[12] < min) {
+		min = basisOut[12];
 	}
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[13] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[13] = *nP) > max) {
+		max = basisOut[13];
+	}
+	if (basisOut[13] < min) {
+		min = basisOut[13];
 	}
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[14] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[14] = *nP) > max) {
+		max = basisOut[14];
+	}
+	if (basisOut[14] < min) {
+		min = basisOut[14];
 	}
 
 	nP += step_x;
 
-	value = *nP;
-	basisOut[15] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[15] = *nP) > max) {
+		max = basisOut[15];
+	}
+	if (basisOut[15] < min) {
+		min = basisOut[15];
 	}
 
 	*pscl += decodeHuff(&ws->scale[p]);
@@ -834,7 +817,6 @@ static s32 GetMCAotBasis(VideoState* ws, u8 basisOut[16], s32* pscl, u8* nestTop
 	int step_x, step_y;
 	u8 min, max;
 	u8* nP;
-	u8 value;
 
 	code = *ws->aotcd[p].ptr++ << 8;
 	code |= *ws->aotcd[p].ptr++;
@@ -851,161 +833,144 @@ static s32 GetMCAotBasis(VideoState* ws, u8 basisOut[16], s32* pscl, u8* nestTop
 
 	nP = nestTop;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[0] = value;
-	min = max = value;
+	min = max = basisOut[0] = (*nP >> 4) & 0xF;
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[1] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[1] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[1];
+	}
+	if (basisOut[1] < min) {
+		min = basisOut[1];
 	}
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[2] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[2] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[2];
+	}
+	if (basisOut[2] < min) {
+		min = basisOut[2];
 	}
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[3] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[3] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[3];
+	}
+	if (basisOut[3] < min) {
+		min = basisOut[3];
 	}
 
 	nestTop += step_y;
 	nP = nestTop;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[4] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[4] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[4];
+	}
+	if (basisOut[4] < min) {
+		min = basisOut[4];
 	}
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[5] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[5] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[5];
+	}
+	if (basisOut[5] < min) {
+		min = basisOut[5];
 	}
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[6] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[6] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[6];
+	}
+	if (basisOut[6] < min) {
+		min = basisOut[6];
 	}
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[7] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[7] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[7];
+	}
+	if (basisOut[7] < min) {
+		min = basisOut[7];
 	}
 
 	nestTop += step_y;
 	nP = nestTop;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[8] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[8] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[8];
+	}
+	if (basisOut[8] < min) {
+		min = basisOut[8];
 	}
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[9] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[9] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[9];
+	}
+	if (basisOut[9] < min) {
+		min = basisOut[9];
 	}
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[10] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[10] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[10];
+	}
+	if (basisOut[10] < min) {
+		min = basisOut[10];
 	}
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[11] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[11] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[11];
+	}
+	if (basisOut[11] < min) {
+		min = basisOut[11];
 	}
 
 	nestTop += step_y;
 	nP = nestTop;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[12] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[12] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[12];
+	}
+	if (basisOut[12] < min) {
+		min = basisOut[12];
 	}
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[13] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[13] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[13];
+	}
+	if (basisOut[13] < min) {
+		min = basisOut[13];
 	}
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[14] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[14] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[14];
+	}
+	if (basisOut[14] < min) {
+		min = basisOut[14];
 	}
 
 	nP += step_x;
 
-	value = (*nP >> 4) & 0xF;
-	basisOut[15] = value;
-	if (value > max) {
-		max = value;
-	} else if (value < min) {
-		min = value;
+	if ((basisOut[15] = (*nP >> 4) & 0xF) > max) {
+		max = basisOut[15];
+	}
+	if (basisOut[15] < min) {
+		min = basisOut[15];
 	}
 
 	*pscl += decodeHuff(&ws->scale[p]);
@@ -1021,6 +986,7 @@ static s32 GetAotSum(VideoState* ws, long sum[16], u8 nbasis, u8* nestTop, int n
 	long prev_scl;
 	long scl;
 	u8 bas[16];
+	int unused;
 
 	sum[0] = sum[1] = sum[2] = sum[3] = sum[4] = sum[5] = sum[6] = sum[7] = sum[8] = sum[9] = sum[10] = sum[11] = sum[12] = sum[13]
 	    = sum[14] = sum[15] = prev_scl = 0;
@@ -1054,6 +1020,7 @@ static s32 GetMCAotSum(VideoState* ws, s32 sum[16], u8 nbasis, u8* nestTop, int 
 	s32 prev_scl;
 	s32 scl;
 	u8 bas[16];
+	int unused;
 
 	sum[0] = sum[1] = sum[2] = sum[3] = sum[4] = sum[5] = sum[6] = sum[7] = sum[8] = sum[9] = sum[10] = sum[11] = sum[12] = sum[13]
 	    = sum[14] = sum[15] = prev_scl = 0;
@@ -1512,6 +1479,35 @@ static void MotionComp(VideoState* state, MCHandler* mch, int tx, int ty)
 	}
 }
 
+static void decode_PB_dc(VideoState* ws, MCHandler* mch)
+{
+	int c, i, j;
+	int blocks;
+	MCPlane* pmc;
+	u16* bofsP;
+
+	for (c = 0; c < HVQM_PLANE_COUNT; c++) {
+		pmc    = &mch->pln[c];
+		bofsP  = ws->pln[c].bibUscan;
+		blocks = ws->pln[c].nblocks_mcb;
+		for (i = 0; i < blocks; i++) {
+			j                = *bofsP++;
+			pmc->data[j].dcv = pmc->prev_dcv = pmc->prev_dcv + decodeSOvfSym(&ws->dcval[c], ws->dc_min, ws->dc_max);
+		}
+	}
+}
+
+static void reset_PB_dc(VideoState* ws, MCHandler* mch)
+{
+	int i;
+	MCPlane* pmc;
+
+	for (i = 0; i < HVQM_PLANE_COUNT; i++) {
+		pmc           = &mch->pln[i];
+		pmc->prev_dcv = 0x7F;
+	}
+}
+
 /**
  * @TODO: Documentation
  */
@@ -1619,124 +1615,109 @@ static void PrediAotBlock(VideoState* ws, u8* blk, u8* mblk, int blkWidth, u8 nb
 	max = min = mvc[0] - mean;
 	mov[0]    = min;
 
-	value  = mvc[1] - mean;
-	mov[1] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[1] = mvc[1] - mean) < min) {
+		min = mov[1];
+	}
+	if (mov[1] > max) {
+		max = mov[1];
 	}
 
-	value  = mvc[2] - mean;
-	mov[2] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[2] = mvc[2] - mean) < min) {
+		min = mov[2];
+	}
+	if (mov[2] > max) {
+		max = mov[2];
 	}
 
-	value  = mvc[3] - mean;
-	mov[3] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[3] = mvc[3] - mean) < min) {
+		min = mov[3];
+	}
+	if (mov[3] > max) {
+		max = mov[3];
 	}
 
-	value  = mvc[4] - mean;
-	mov[4] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[4] = mvc[4] - mean) < min) {
+		min = mov[4];
+	}
+	if (mov[4] > max) {
+		max = mov[4];
 	}
 
-	value  = mvc[5] - mean;
-	mov[5] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[5] = mvc[5] - mean) < min) {
+		min = mov[5];
+	}
+	if (mov[5] > max) {
+		max = mov[5];
 	}
 
-	value  = mvc[6] - mean;
-	mov[6] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[6] = mvc[6] - mean) < min) {
+		min = mov[6];
+	}
+	if (mov[6] > max) {
+		max = mov[6];
 	}
 
-	value  = mvc[7] - mean;
-	mov[7] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[7] = mvc[7] - mean) < min) {
+		min = mov[7];
+	}
+	if (mov[7] > max) {
+		max = mov[7];
 	}
 
-	value  = mvc[8] - mean;
-	mov[8] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[8] = mvc[8] - mean) < min) {
+		min = mov[8];
+	}
+	if (mov[8] > max) {
+		max = mov[8];
 	}
 
-	value  = mvc[9] - mean;
-	mov[9] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[9] = mvc[9] - mean) < min) {
+		min = mov[9];
+	}
+	if (mov[9] > max) {
+		max = mov[9];
 	}
 
-	value   = mvc[10] - mean;
-	mov[10] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[10] = mvc[10] - mean) < min) {
+		min = mov[10];
+	}
+	if (mov[10] > max) {
+		max = mov[10];
 	}
 
-	value   = mvc[11] - mean;
-	mov[11] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[11] = mvc[11] - mean) < min) {
+		min = mov[11];
+	}
+	if (mov[11] > max) {
+		max = mov[11];
 	}
 
-	value   = mvc[12] - mean;
-	mov[12] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[12] = mvc[12] - mean) < min) {
+		min = mov[12];
+	}
+	if (mov[12] > max) {
+		max = mov[12];
 	}
 
-	value   = mvc[13] - mean;
-	mov[13] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[13] = mvc[13] - mean) < min) {
+		min = mov[13];
+	}
+	if (mov[13] > max) {
+		max = mov[13];
 	}
 
-	value   = mvc[14] - mean;
-	mov[14] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[14] = mvc[14] - mean) < min) {
+		min = mov[14];
+	}
+	if (mov[14] > max) {
+		max = mov[14];
 	}
 
-	value   = mvc[15] - mean;
-	mov[15] = value;
-	if (value < min) {
-		min = value;
-	} else if (value > max) {
-		max = value;
+	if ((mov[15] = mvc[15] - mean) < min) {
+		min = mov[15];
+	}
+	if (mov[15] > max) {
+		max = mov[15];
 	}
 
 	mns = ws->aotscale_q;
@@ -1851,13 +1832,15 @@ static void getMVector(int* vec, BitBufferWithTree* code, int fcode)
 	int range;
 	int v;
 	int i;
+	u8 bit;
 
 	range = 1 << (fcode + 5);
 	// quantized value
 	v = decodeHuff(code) << fcode;
 	// residual bits
 	for (i = fcode - 1; i >= 0; i--) {
-		v += (getBit(&code->str) ? 1 : 0) << i;
+		bit = getBit(&code->str);
+		v += (bit == 0 ? 0 : 1) << i;
 	}
 	*vec += v;
 	// signed wrap to -range .. range-1
@@ -1902,8 +1885,9 @@ static void initMCBtype(BitBufferWithTree* code, RLDecoder* flag)
 {
 	int value;
 	if (code->str.ptr) {
-		flag->status = (getBit(&code->str) ? 1 : 0) << 1;
-		flag->status |= getBit(&code->str) ? 1 : 0;
+		value = getBit(&code->str) ? 2 : 0;
+		value |= getBit(&code->str) ? 1 : 0;
+		flag->status = value;
 		flag->runlng = decodeUOvfSym(code, 0xFF);
 	}
 }
