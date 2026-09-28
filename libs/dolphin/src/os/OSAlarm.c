@@ -20,6 +20,7 @@ static void DecrementerExceptionHandler(__OSException exception, OSContext* cont
 #define ASSERTREPORT(line, cond) \
     if (!(cond)) { OSReport("OSCheckAlarmQueue: Failed " #cond " in %d", line); return 0; }
 
+/*
 BOOL OSCheckAlarmQueue(void) {
     struct OSAlarm * alarm;
 
@@ -33,6 +34,7 @@ BOOL OSCheckAlarmQueue(void) {
     }
     return TRUE;
 }
+*/
 
 static void SetTimer(struct OSAlarm * alarm) {
     OSTime delta = alarm->fire - __OSGetSystemTime();
@@ -121,6 +123,7 @@ void OSSetAlarm(OSAlarm* alarm, OSTime tick, OSAlarmHandler handler) {
     OSRestoreInterrupts(enabled);
 }
 
+/*
 void OSSetAbsAlarm(struct OSAlarm * alarm, long long time, void (* handler)(struct OSAlarm *, struct OSContext *)) {
     int enabled;
 
@@ -131,6 +134,7 @@ void OSSetAbsAlarm(struct OSAlarm * alarm, long long time, void (* handler)(stru
     ASSERTLINE(0x137, OSCheckAlarmQueue());
     OSRestoreInterrupts(enabled);
 }
+*/
 
 void OSSetPeriodicAlarm(OSAlarm* alarm, OSTime start, OSTime period, OSAlarmHandler handler) {
     BOOL enabled;

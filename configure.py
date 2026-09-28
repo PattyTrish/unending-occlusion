@@ -739,7 +739,7 @@ config.libs = [
         "lib": "vorbis",
         "mw_version": mw_version_vorbis,
         "cflags": cflags_vorbis,
-        "progress_category": "sk",
+        "progress_category": "vorbis",
         "objects": [
             Object(Matching, "vorbis/bitwise.c"),
             Object(Matching, "vorbis/framing.c"),
@@ -775,6 +775,7 @@ config.progress_categories = [
     ProgressCategory("sdk", "SDK Code"),
     ProgressCategory("lua", "Lua"),
     ProgressCategory("sk", "SK"),
+    ProgressCategory("vorbis", "Ogg Vorbis"),
 ]
 config.progress_each_module = args.verbose
 # Optional extra arguments to `objdiff-cli report generate`

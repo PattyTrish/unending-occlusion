@@ -58,6 +58,7 @@ static struct Cell * DLAddFront(struct Cell * list, struct Cell * cell) {
     return cell;
 }
 
+/*
 static struct Cell * DLLookup(struct Cell * list, struct Cell * cell) {
     for(; list; list = list->next) {
         if (list == cell) {
@@ -66,6 +67,7 @@ static struct Cell * DLLookup(struct Cell * list, struct Cell * cell) {
     }
     return NULL;
 }
+*/
 
 static struct Cell * DLExtract(struct Cell * list, struct Cell * cell) {
     if (cell->next) {
@@ -115,6 +117,7 @@ static struct Cell * DLInsert(struct Cell * list, struct Cell * cell) {
     return cell;
 }
 
+/*
 static int DLOverlap(struct Cell * list, void * start, void * end) {
     struct Cell * cell = list;
 
@@ -129,7 +132,9 @@ static int DLOverlap(struct Cell * list, void * start, void * end) {
     }
     return 0;
 }
+*/
 
+/*
 static long DLSize(struct Cell * list) {
     struct Cell * cell;
     long size;
@@ -144,6 +149,7 @@ static long DLSize(struct Cell * list) {
 
     return size;
 }
+*/
 
 void * OSAllocFromHeap(int heap, unsigned long size) {
     struct HeapDesc * hd;
@@ -460,7 +466,7 @@ void OSDestroyHeap(int heap) {
 }
 */
 
-// stripped, but as DLInsert's second caller it keeps DLInsert out of line
+/*
 void OSAddToHeap(int heap, void * start, void * end) {
     struct HeapDesc * hd;
     struct Cell * cell;
@@ -496,6 +502,7 @@ void OSAddToHeap(int heap, void * start, void * end) {
     hd->size += cell->size;
     hd->free = DLInsert(hd->free, cell);
 } 
+*/
 
 // custom macro for OSCheckHeap
 #define ASSERTREPORT(line, cond) \

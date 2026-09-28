@@ -27,6 +27,7 @@ static void RestoreVertState(void)
     GXSetVtxAttrFmtv(3, vat);
 }
 
+/*
 static void vsub(f32 p1[3], f32 p2[3], f32 u[3])
 {
     u32 i;
@@ -35,7 +36,9 @@ static void vsub(f32 p1[3], f32 p2[3], f32 u[3])
         u[i] = p2[i] - p1[i];
     }
 }
+*/
 
+/*
 static void vcross(f32 u[3], f32 v[3], f32 n[3])
 {
     f32 n1[3];
@@ -47,6 +50,7 @@ static void vcross(f32 u[3], f32 v[3], f32 n[3])
     n[1] = n1[1];
     n[2] = n1[2];
 }
+*/
 
 static void normalize(f32 v[3])
 {
@@ -108,6 +112,7 @@ static void SubDivTriangle(u8 depth, u8 i, f32 (*data)[3], u8 (*ndx)[3])
     Subdivide(depth, x0, x1, x2);
 }
 
+// stripped, but kept compiled: commenting it out reorders the float constants in .sdata2
 void GXDrawCylinder(u8 numEdges)
 {
     s32 i;
@@ -161,6 +166,7 @@ void GXDrawCylinder(u8 numEdges)
     RestoreVertState();
 }
 
+/*
 void GXDrawTorus(f32 rc, u8 numc, u8 numt)
 {
     GXAttrType ttype;
@@ -202,6 +208,7 @@ void GXDrawTorus(f32 rc, u8 numc, u8 numt)
     }
     RestoreVertState();
 }
+*/
 
 void GXDrawSphere(u8 numMajor, u8 numMinor)
 {
@@ -250,6 +257,7 @@ void GXDrawSphere(u8 numMajor, u8 numMinor)
     RestoreVertState();
 }
 
+/*
 static void GXDrawCubeFace(f32 nx, f32 ny, f32 nz, f32 tx, f32 ty, f32 tz, f32 bx, f32 by, f32 bz, GXAttrType binormal, GXAttrType texture)
 {
     GXPosition3f32(0.57735026f * (nx + tx + bx), 0.57735026f * (ny + ty + by), 0.57735026f * (nz + tz + bz));
@@ -289,7 +297,9 @@ static void GXDrawCubeFace(f32 nx, f32 ny, f32 nz, f32 tx, f32 ty, f32 tz, f32 b
         GXTexCoord2s8(1, 0);
     }
 }
+*/
 
+/*
 void GXDrawCube(void)
 {
     GXAttrType ntype;
@@ -318,6 +328,7 @@ void GXDrawCube(void)
 
     RestoreVertState();
 }
+*/
 
 static u32 polygons[12][5] = {
     {  0, 12, 10, 11, 16 },
@@ -357,6 +368,7 @@ static f32 verts[20][3] = {
     {  0.5f,       0.5f,       0.5 },
 };
 
+/*
 void GXDrawDodeca(void)
 {
     u32 i;
@@ -386,6 +398,7 @@ void GXDrawDodeca(void)
     }
     RestoreVertState();
 }
+*/
 
 static f32 odata[6][3] = {
     {  1.0f,  0.0f,  0.0f },
@@ -456,6 +469,7 @@ static u8 index[20][3] = {
     {  7,  2, 11 },
 };
 
+/*
 void GXDrawIcosahedron(void)
 {
     s32 i;
@@ -466,7 +480,9 @@ void GXDrawIcosahedron(void)
     }
     RestoreVertState();
 }
+*/
 
+/*
 void GXDrawSphere1(u8 depth)
 {
     s32 i;
@@ -477,7 +493,9 @@ void GXDrawSphere1(u8 depth)
     }
     RestoreVertState();
 }
+*/
 
+/*
 static u32 CmpNormal32(f32 n1[3], f32 n2[3])
 {
     u32 i;
@@ -488,10 +506,12 @@ static u32 CmpNormal32(f32 n1[3], f32 n2[3])
     }
     return TRUE;
 }
+*/
 
 static u32 nrm_cnt;
 static f32 *nrm_tab;
 
+/*
 static void AddNormal(f32 n[3])
 {
     u32 indx;
@@ -508,7 +528,9 @@ static void AddNormal(f32 n[3])
     nrm_tab[indx + 2] = n[2];
     nrm_cnt++;
 }
+*/
 
+/*
 static void SubdivideNrm(u8 depth, f32 v0[3], f32 v1[3], f32 v2[3])
 {
     f32 v01[3];
@@ -536,7 +558,9 @@ static void SubdivideNrm(u8 depth, f32 v0[3], f32 v1[3], f32 v2[3])
     SubdivideNrm(depth - 1, v2, v20, v12);
     SubdivideNrm(depth - 1, v01, v12, v20);
 }
+*/
 
+/*
 static void SubDivNrm(u8 depth, u8 i, f32 (*data)[3], u8 (*ndx)[3])
 {
     f32 *x0 = data[ndx[i][0]];
@@ -545,7 +569,9 @@ static void SubDivNrm(u8 depth, u8 i, f32 (*data)[3], u8 (*ndx)[3])
 
     SubdivideNrm(depth, x0, x1, x2);
 }
+*/
 
+/*
 u32 GXGenNormalTable(u8 depth, f32 *table)
 {
     s32 i;
@@ -557,3 +583,4 @@ u32 GXGenNormalTable(u8 depth, f32 *table)
     }
     return nrm_cnt;
 }
+*/
