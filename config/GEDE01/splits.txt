@@ -937,5 +937,18 @@ dolphin/odemustubs/odemustubs.c:
 dolphin/amcnotstub/amcnotstub.c:
 	.text       start:0x8022E7F4 end:0x8022E7FC
 
+vorbis/bitwise.c:
+	.text       start:0x8022E7FC end:0x8022EAA4
+	.data       start:0x802FF840 end:0x802FF8C8
+
+vorbis/framing.c:
+	.text       start:0x8022EAA4 end:0x8022F700
+	.data       start:0x802FF8C8 end:0x802FFCC8
+	.sdata2     start:0x80651790 end:0x80651798
+
 vorbis/info.c:
 	.text       start:0x80232078 end:0x80232430
+
+vorbis/mdct.c:
+	.text       start:0x80233658 end:0x802345E4
+	.sdata2     start:0x80651838 end:0x80651860

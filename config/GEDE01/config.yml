@@ -10,3 +10,5 @@ mw_comment_version: 10
 block_relocations:
 # texture index bits in lbl_802662C0 that look like SIInterruptHandler+0x294
 - source: 0x8028AF8C
+# crc_lookup[242] (libogg framing.c) = 0x803AC667, which looks like a .bss address
+- source: 0x802FFC90

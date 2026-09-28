@@ -275,6 +275,21 @@ cflags_dtk = [
     "-i libs/dolphin/include/libc",
 ]
 
+# Xiph libogg/libvorbis as built by SK, with GC/1.3 like MSL: functions come out last to first (deferred), and
+# 1.3's auto-inliner inlines ogg_sync_init but not ogg_page_checksum_set (1.3.2's inlines both)
+# and string literals are read-only (framing.c's page magic is in .sdata2)
+mw_version_vorbis = "GC/1.3"
+cflags_vorbis = [
+    *cflags_common,
+    "-fp_contract on",
+    "-str reuse,readonly",
+    "-inline auto,deferred",
+    '-pragma "float_constants on"',  # working hypothesis: mdct_init's cos(...)*.5 multiplies in single
+    *includes_game,
+    "-i src/vorbis",
+    "-i include/PowerPC_EABI_Support/Msl/MSL_C/MSL_Common",  # <math.h>
+]
+
 # REL flags
 cflags_rel = [
     *cflags_game,
@@ -718,13 +733,17 @@ config.libs = [
         ],
     },
     {
-        # Block D (0x8022E7FC..0x80237EE0), after the SDK: Xiph libogg (bitwise) + libvorbis, SK-modified,
-        # ending with SK's threaded Vorbis streamer (~0x802364B8). References: notes/dolphin-decomps/libogg
+        # Block D (0x8022E7FC..0x80237EE0), after the SDK: Xiph libogg (bitwise.c, framing.c), SK's allocator,
+        # then libvorbis (SK-modified) alphabetically, ending with SK's threaded Vorbis streamer (~0x802364B8).
+        # Each file's functions are linked last to first (deferred inlining).
         "lib": "vorbis",
-        "mw_version": mw_version_game,
-        "cflags": cflags_game,
+        "mw_version": mw_version_vorbis,
+        "cflags": cflags_vorbis,
         "progress_category": "sk",
         "objects": [
+            Object(Matching, "vorbis/bitwise.c"),
+            Object(Matching, "vorbis/framing.c"),
+            Object(Matching, "vorbis/mdct.c"),
             Object(NonMatching, "vorbis/info.c"),
         ],
     }
