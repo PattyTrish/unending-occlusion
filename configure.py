@@ -200,7 +200,6 @@ cflags_common = [
     "-align powerpc",
     "-enum int",
     "-fp hardware",
-    "-Cpp_exceptions off",
     "-O4,p",
     '-pragma "cats off"',
     '-pragma "warn_notinlined off"',
@@ -243,6 +242,7 @@ mw_version_game = config.linker_version
 # MetroTRK v0.10, the same build as Animal Crossing's and Mario Party 4's
 cflags_trk = [
     *cflags_common,
+    "-Cpp_exceptions off",
     "-sdata 0",
     "-sdata2 0",
     "-inline auto,deferred",
@@ -255,6 +255,7 @@ cflags_trk = [
 
 cflags_game = [
     *cflags_common,
+    "-Cpp_exceptions off",
     "-fp_contract on",
     "-str reuse",
     *includes_game,
@@ -281,6 +282,7 @@ cflags_dtk = [
 mw_version_vorbis = "GC/1.3"
 cflags_vorbis = [
     *cflags_common,
+    "-Cpp_exceptions off",
     "-fp_contract on",
     "-str reuse,readonly",
     "-inline auto,deferred",
@@ -288,6 +290,26 @@ cflags_vorbis = [
     *includes_game,
     "-i src/vorbis",
     "-i include/PowerPC_EABI_Support/Msl/MSL_C/MSL_Common",  # <math.h>
+]
+
+# Factor 5's MusyX, linked in block C after DTK. Mario Party 4's flags, but GC/1.2.5n with lmw/stmw (MP4: 1.3.2, off):
+# 1.2.5n schedules mtlr last in epilogues (synthdata.c dataGetFX).
+# The version sits between 1.5.3 and 1.5.4 as the source's gates draw it: see extra_cflags per object.
+mw_version_musyx = "GC/1.2.5n"
+cflags_musyx = [
+    *cflags_common,
+    "-Cpp_exceptions on",  # every extab entry in the DOL belongs to MusyX
+
+    "-fp_contract off",
+    "-str reuse,pool,readonly",
+    "-inline auto",
+    "-DMUSY_TARGET=MUSY_TARGET_DOLPHIN",
+    "-DMUSY_VERSION_MAJOR=1",
+    "-DMUSY_VERSION_MINOR=5",
+    "-DMUSY_VERSION_PATCH=4",
+    "-i src/musyx",
+    "-i libs/dolphin/include",
+    "-i libs/dolphin/include/libc",
 ]
 
 # REL flags
@@ -301,6 +323,7 @@ cflags_rel = [
 mw_version_runtime = "GC/1.3"
 cflags_runtime = [
     *cflags_common,
+    "-Cpp_exceptions off",
     "-fp_contract on",
     "-str reuse,pool,readonly",
     "-gccinc",
@@ -315,6 +338,7 @@ cflags_runtime = [
 # each file's functions are emitted last to first)
 cflags_msl = [
     *cflags_common,
+    "-Cpp_exceptions off",
     "-fp_contract on",
     "-str reuse,pool,readonly",
     "-common off",
@@ -327,6 +351,7 @@ cflags_msl = [
 mw_version_sdk = "GC/1.2.5n"
 cflags_sdk = [
     *cflags_common,
+    "-Cpp_exceptions off",
     "-fp_contract off",  # SDK float code has no fused multiply-adds
     "-str reuse",
     "-inline auto",
@@ -545,7 +570,7 @@ config.libs = [
         "lib": "Runtime",
         "mw_version": mw_version_runtime,
         "cflags": cflags_runtime,
-        "progress_category": "sdk",  # str | List[str]
+        "progress_category": "sdk",
         "objects": [
             Object(Matching, "Runtime/__mem.c"),
             Object(Matching, "Runtime/__va_arg.c"),
@@ -642,6 +667,30 @@ config.libs = [
         ],
     },
     {
+        # Factor 5's MusyX sound library (0x801B2380..0x801CE384), in Mario Party 4's link order, seq.c to
+        # hw_memory.c; none of the FX files (reverb, delay, chorus) are linked
+        "lib": "musyx",
+        "mw_version": mw_version_musyx,
+        "cflags": cflags_musyx,
+        "progress_category": "musyx",
+        "objects": [
+            Object(Matching, "musyx/synthdata.c"),
+            Object(Matching, "musyx/synth_ac.c"),
+            Object(Matching, "musyx/synth_dbtab.c"),
+            Object(Matching, "musyx/synth_adsr.c"),
+            Object(NonMatching, "musyx/hw_volconv.c"),
+            Object(Matching, "musyx/snd_init.c"),
+            Object(Matching, "musyx/snd_math.c"),
+            Object(Matching, "musyx/snd_midictrl.c"),
+            Object(Matching, "musyx/snd_service.c"),
+            Object(Matching, "musyx/hardware.c"),
+            Object(Matching, "musyx/dsp_import.c"),
+            Object(NonMatching, "musyx/hw_aramdma.c"),
+            Object(Matching, "musyx/hw_dolphin.c"),
+            Object(Matching, "musyx/hw_memory.c"),
+        ],
+    },
+    {
         # Embedded Lua 4.0 core (4.0, not 4.0.1: see ldo.c protectedparser, lparser.c
         # retstat, lvm.c traceexec; lstring.c carries the 4.0.1 udata fix). Linked
         # alphabetically lcode..lzio, then lapi.c and lauxlib.c after lzio.c.
@@ -655,24 +704,24 @@ config.libs = [
         "objects": [
             # Confirmed present via __FILE__ strings, in link order.
             # Addresses are *interior anchors*, not split boundaries.
-            Object(Matching, "lua/ldo.c"),       # anchor 0x801604F8
-            Object(Matching, "lua/lfunc.c"),     # anchor 0x801610E8
-            Object(Matching, "lua/lgc.c"),       # anchor 0x80161B58
-            Object(Matching, "lua/lapi.c"),       # anchor ?
-            Object(Matching, "lua/lauxlib.c"),   # luaL_openlib only; follows lapi.c
-            Object(Matching, "lua/lcode.c"),       # anchor ?
-            Object(Matching, "lua/ldebug.c"),       # anchor ?
-            Object(Matching, "lua/llex.c"),      # anchor ?
-            Object(Matching, "lua/lmem.c"),      # anchor 0x8016393C
-            Object(Matching, "lua/lobject.c"),   # anchor 0x80163A9C
-            Object(Matching, "lua/lparser.c"),   # anchor 0x80164A64
-            Object(Matching, "lua/lstate.c"),       # anchor 0x80166894
-            Object(Matching, "lua/lstring.c"),   # anchor 0x80166AC4
-            Object(Matching, "lua/ltable.c"),    # anchor 0x80167558
-            Object(Matching, "lua/ltm.c"),    # anchor ?
-            Object(Matching, "lua/lundump.c"),   # anchor 0x80168114
-            Object(Matching, "lua/lvm.c"),    # anchor ?
-            Object(Matching, "lua/lzio.c"),    # anchor ?
+            Object(Matching, "lua/ldo.c"),
+            Object(Matching, "lua/lfunc.c"),
+            Object(Matching, "lua/lgc.c"),
+            Object(Matching, "lua/lapi.c"),
+            Object(Matching, "lua/lauxlib.c"),
+            Object(Matching, "lua/lcode.c"),
+            Object(Matching, "lua/ldebug.c"),
+            Object(Matching, "lua/llex.c"),
+            Object(Matching, "lua/lmem.c"),
+            Object(Matching, "lua/lobject.c"),
+            Object(Matching, "lua/lparser.c"),
+            Object(Matching, "lua/lstate.c"),
+            Object(Matching, "lua/lstring.c"),
+            Object(Matching, "lua/ltable.c"),
+            Object(Matching, "lua/ltm.c"),
+            Object(Matching, "lua/lundump.c"),
+            Object(Matching, "lua/lvm.c"),
+            Object(Matching, "lua/lzio.c"),
             # No stdlib (lbaselib, lstrlib, ...) is linked. SK replacements live
             # outside this lib: luaM_realloc (sk/SKtest.c, 0x8016B5CC), strtod (0x8016BA4C).
         ],
@@ -708,6 +757,7 @@ config.libs = [
         "cflags": cflags_game,
         "progress_category": "game",
         "objects": [
+            Object(NonMatching, "ed/main.c"),
             Object(NonMatching, "ed/SkEngine_FileRead.c"),  # SK-named, but links in block A
             Object(NonMatching, "ed/ED_Reset.c"),
             Object(NonMatching, "ed/ED_AI.c"),
@@ -776,6 +826,7 @@ config.progress_categories = [
     ProgressCategory("lua", "Lua"),
     ProgressCategory("sk", "SK"),
     ProgressCategory("vorbis", "Ogg Vorbis"),
+    ProgressCategory("musyx", "MusyX"),
 ]
 config.progress_each_module = args.verbose
 # Optional extra arguments to `objdiff-cli report generate`

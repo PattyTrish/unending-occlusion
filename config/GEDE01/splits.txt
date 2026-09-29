@@ -13,6 +13,9 @@ Sections:
 	.sdata2     type:rodata align:8
 	.sbss2      type:bss align:32
 
+ed/main.c:
+	.text       start:0x8001D640 end:0x8001D91C
+
 ed/SkEngine_FileRead.c:
 	.text       start:0x80024594 end:0x80024638
 
@@ -509,6 +512,92 @@ dtk/dtk.c:
 	.text       start:0x801B1028 end:0x801B19D8
 	.bss        start:0x8060BF00 end:0x8060C020
 	.sbss       start:0x8064D320 end:0x8064D350
+
+musyx/synthdata.c:
+	extab       start:0x80005810 end:0x800058C0
+	extabindex  start:0x80006098 end:0x800061A0
+	.text       start:0x801BB5D0 end:0x801BD398
+	.bss        start:0x8061C748 end:0x80626D80
+	.sbss       start:0x8064D3F0 end:0x8064D438
+
+musyx/synth_ac.c:
+	extab       start:0x800059E0 end:0x800059E8
+	extabindex  start:0x80006350 end:0x8000635C
+	.text       start:0x801C2980 end:0x801C2AAC
+	.data       start:0x802525A8 end:0x802529A8
+	.sdata2     start:0x80650F48 end:0x80650F60
+
+musyx/synth_dbtab.c:
+	.data       start:0x802529A8 end:0x80253130
+
+musyx/synth_adsr.c:
+	extab       start:0x800059E8 end:0x80005A18
+	extabindex  start:0x8000635C end:0x800063A4
+	.text       start:0x801C2AAC end:0x801C3158
+	.sdata2     start:0x80650F60 end:0x80650F88
+
+musyx/hw_volconv.c:
+	extab       start:0x80005AB8 end:0x80005AC0
+	extabindex  start:0x80006494 end:0x800064A0
+	.text       start:0x801C79C8 end:0x801C8160
+	.data       start:0x80253148 end:0x80253370
+	.sdata2     start:0x80650F88 end:0x80650FB0
+
+musyx/snd_init.c:
+	extab       start:0x80005B48 end:0x80005B58
+	extabindex  start:0x8000656C end:0x80006584
+	.text       start:0x801CA288 end:0x801CA3D8
+
+musyx/snd_math.c:
+	.text       start:0x801CA3D8 end:0x801CA798
+	.sdata2     start:0x80651000 end:0x80651020
+
+musyx/snd_midictrl.c:
+	extab       start:0x80005B58 end:0x80005C00
+	extabindex  start:0x80006584 end:0x80006680
+	.text       start:0x801CA798 end:0x801CC2E4
+	.rodata     start:0x8023B348 end:0x8023B458
+	.data       start:0x80253370 end:0x802533B8
+	.bss        start:0x8062A230 end:0x80630A30
+
+musyx/snd_service.c:
+	extab       start:0x80005C00 end:0x80005C10
+	extabindex  start:0x80006680 end:0x80006698
+	.text       start:0x801CC2E4 end:0x801CC468
+	.data       start:0x802533B8 end:0x80253BC0
+	.sdata      start:0x8064C2E0 end:0x8064C2E8
+
+musyx/hardware.c:
+	extab       start:0x80005C10 end:0x80005CC8
+	extabindex  start:0x80006698 end:0x800067AC
+	.text       start:0x801CC468 end:0x801CD46C
+	.rodata     start:0x8023B458 end:0x8023B558
+	.sdata      start:0x8064C2E8 end:0x8064C2F8
+	.sbss       start:0x8064D4D8 end:0x8064D4E8
+	.sdata2     start:0x80651020 end:0x80651038
+
+musyx/dsp_import.c:
+	.data       start:0x80253BC0 end:0x802555A0
+	.sdata      start:0x8064C2F8 end:0x8064C300
+
+musyx/hw_aramdma.c:
+	extab       start:0x80005CC8 end:0x80005D00
+	extabindex  start:0x800067AC end:0x80006800
+	.text       start:0x801CD46C end:0x801CDE34
+	.bss        start:0x80630A30 end:0x80631340
+	.sbss       start:0x8064D4E8 end:0x8064D510
+
+musyx/hw_dolphin.c:
+	extab       start:0x80005D00 end:0x80005D70
+	extabindex  start:0x80006800 end:0x800068A8
+	.text       start:0x801CDE34 end:0x801CE330
+	.bss        start:0x80631340 end:0x806333A0
+	.sbss       start:0x8064D510 end:0x8064D538
+
+musyx/hw_memory.c:
+	extab       start:0x80005D70 end:0x80005D80
+	extabindex  start:0x800068A8 end:0x800068C0
+	.text       start:0x801CE330 end:0x801CE384
 
 sk/ut_BitOperations.c:
 	.text       start:0x801E78DC end:0x801E7944
