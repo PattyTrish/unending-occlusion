@@ -11,6 +11,8 @@
 extern "C" {
 #endif
 
+float floorf(float x); // MSL's math_ppc.c; the SDK libc's math.h lacks it (MP4's math.h has it)
+
 #if MUSY_TARGET == MUSY_TARGET_DOLPHIN
 typedef signed char s8;
 typedef unsigned char u8;

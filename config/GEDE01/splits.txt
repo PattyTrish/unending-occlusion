@@ -513,12 +513,36 @@ dtk/dtk.c:
 	.bss        start:0x8060BF00 end:0x8060C020
 	.sbss       start:0x8064D320 end:0x8064D350
 
+musyx/seq.c:
+	extab       start:0x80005600 end:0x80005678
+	extabindex  start:0x80005D80 end:0x80005E34
+	.text       start:0x801B244C end:0x801B5B20
+	.data       start:0x80252110 end:0x80252160
+	.bss        start:0x8060C020 end:0x80619860
+	.sbss       start:0x8064D380 end:0x8064D3A0
+	.sdata2     start:0x80650EB0 end:0x80650EC8
+
+musyx/synth.c:
+	extab       start:0x80005678 end:0x80005730
+	extabindex  start:0x80005E34 end:0x80005F48
+	.text       start:0x801B5B20 end:0x801B8C28
+	.bss        start:0x80619860 end:0x8061AE48
+	.sbss       start:0x8064D3A0 end:0x8064D3E8
+	.sdata2     start:0x80650EC8 end:0x80650F08
+
 musyx/synthdata.c:
 	extab       start:0x80005810 end:0x800058C0
 	extabindex  start:0x80006098 end:0x800061A0
 	.text       start:0x801BB5D0 end:0x801BD398
 	.bss        start:0x8061C748 end:0x80626D80
 	.sbss       start:0x8064D3F0 end:0x8064D438
+
+musyx/synthvoice.c:
+	extab       start:0x80005998 end:0x800059E0
+	extabindex  start:0x800062E4 end:0x80006350
+	.text       start:0x801C0F40 end:0x801C2980
+	.bss        start:0x80626DA0 end:0x80627D60
+	.sbss       start:0x8064D458 end:0x8064D470
 
 musyx/synth_ac.c:
 	extab       start:0x800059E0 end:0x800059E8
@@ -536,12 +560,42 @@ musyx/synth_adsr.c:
 	.text       start:0x801C2AAC end:0x801C3158
 	.sdata2     start:0x80650F60 end:0x80650F88
 
+musyx/synth_vsamples.c:
+	extab       start:0x80005A18 end:0x80005A38
+	extabindex  start:0x800063A4 end:0x800063D4
+	.text       start:0x801C3158 end:0x801C38C0
+	.bss        start:0x80627D60 end:0x806286B0
+
+musyx/s_data.c:
+	extab       start:0x80005A38 end:0x80005A70
+	extabindex  start:0x800063D4 end:0x80006428
+	.text       start:0x801C38C0 end:0x801C40D4
+	.bss        start:0x806286B0 end:0x80628CB0
+	.sbss       start:0x8064D470 end:0x8064D478
+
+musyx/hw_dspctrl.c:
+	extab       start:0x80005A70 end:0x80005AB8
+	extabindex  start:0x80006428 end:0x80006494
+	.text       start:0x801C40D4 end:0x801C79C8
+	.rodata     start:0x8023B2F0 end:0x8023B348
+	.data       start:0x80253130 end:0x80253148
+	.bss        start:0x80628CB0 end:0x80629390
+	.sbss       start:0x8064D478 end:0x8064D4B8
+
 musyx/hw_volconv.c:
 	extab       start:0x80005AB8 end:0x80005AC0
 	extabindex  start:0x80006494 end:0x800064A0
 	.text       start:0x801C79C8 end:0x801C8160
 	.data       start:0x80253148 end:0x80253370
 	.sdata2     start:0x80650F88 end:0x80650FB0
+
+musyx/snd3d.c:
+	extab       start:0x80005AC0 end:0x80005B48
+	extabindex  start:0x800064A0 end:0x8000656C
+	.text       start:0x801C8160 end:0x801CA288
+	.bss        start:0x80629390 end:0x8062A230
+	.sbss       start:0x8064D4B8 end:0x8064D4D8
+	.sdata2     start:0x80650FB0 end:0x80651000
 
 musyx/snd_init.c:
 	extab       start:0x80005B48 end:0x80005B58

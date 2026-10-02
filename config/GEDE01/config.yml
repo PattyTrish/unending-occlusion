@@ -10,5 +10,15 @@ mw_comment_version: 10
 block_relocations:
 # texture index bits in lbl_802662C0 that look like SIInterruptHandler+0x294
 - source: 0x8028AF8C
+# texture words in lbl_802662C0 that look like pointers into MusyX's seqInstance (seq.c)
+- source: 0x8029CBF8
+- source: 0x8029D5E8
+- source: 0x8029D870
+- source: 0x8029DA20
+- source: 0x8029E210
+- source: 0x8029EC40
+- source: 0x8029F640
+- source: 0x8029FE78
+- source: 0x802A0280
 # crc_lookup[242] (libogg framing.c) = 0x803AC667, which looks like a .bss address
 - source: 0x802FFC90
