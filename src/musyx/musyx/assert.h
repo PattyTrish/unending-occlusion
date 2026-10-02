@@ -51,7 +51,7 @@ static inline void panic(const char* file, int line, const char* msg, ...) {
 #ifdef MUSYX_DEBUG
 #define MUSY_ASSERT_MSG(cond, msg) ((cond) || (MUSY_PANIC(__FILE__, __LINE__, msg), 0))
 #else
-#define MUSY_ASSERT_MSG(cond, msg)
+#define MUSY_ASSERT_MSG(cond, msg) ((void)0) // a dead statement: stops sndStreamADPCMParameter self-inlining
 #endif
 #endif
 

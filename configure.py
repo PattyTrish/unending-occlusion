@@ -667,7 +667,7 @@ config.libs = [
         ],
     },
     {
-        # Factor 5's MusyX sound library (0x801B2380..0x801CE384), in Mario Party 4's link order, seq.c to
+        # Factor 5's MusyX sound library (0x801B244C..0x801CE384), in Mario Party 4's link order, seq.c to
         # hw_memory.c; none of the FX files (reverb, delay, chorus) are linked
         "lib": "musyx",
         "mw_version": mw_version_musyx,
@@ -676,7 +676,11 @@ config.libs = [
         "objects": [
             Object(NonMatching, "musyx/seq.c"),
             Object(Matching, "musyx/synth.c"),
+            Object(Matching, "musyx/seq_api.c"),
+            Object(Matching, "musyx/snd_synthapi.c"),
+            Object(NonMatching, "musyx/stream.c"),
             Object(Matching, "musyx/synthdata.c"),
+            Object(NonMatching, "musyx/synthmacros.c"),
             Object(Matching, "musyx/synthvoice.c"),
             Object(Matching, "musyx/synth_ac.c"),
             Object(Matching, "musyx/synth_dbtab.c"),

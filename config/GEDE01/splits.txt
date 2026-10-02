@@ -530,12 +530,39 @@ musyx/synth.c:
 	.sbss       start:0x8064D3A0 end:0x8064D3E8
 	.sdata2     start:0x80650EC8 end:0x80650F08
 
+musyx/seq_api.c:
+	extab       start:0x80005730 end:0x80005750
+	extabindex  start:0x80005F48 end:0x80005F78
+	.text       start:0x801B8C28 end:0x801B8D88
+
+musyx/snd_synthapi.c:
+	extab       start:0x80005750 end:0x800057B8
+	extabindex  start:0x80005F78 end:0x80006014
+	.text       start:0x801B8D88 end:0x801B9350
+
+musyx/stream.c:
+	extab       start:0x800057B8 end:0x80005810
+	extabindex  start:0x80006014 end:0x80006098
+	.text       start:0x801B9350 end:0x801BB5D0
+	.bss        start:0x8061AE48 end:0x8061C748
+	.sbss       start:0x8064D3E8 end:0x8064D3F0
+	.sdata2     start:0x80650F08 end:0x80650F20
+
 musyx/synthdata.c:
 	extab       start:0x80005810 end:0x800058C0
 	extabindex  start:0x80006098 end:0x800061A0
 	.text       start:0x801BB5D0 end:0x801BD398
 	.bss        start:0x8061C748 end:0x80626D80
 	.sbss       start:0x8064D3F0 end:0x8064D438
+
+musyx/synthmacros.c:
+	extab       start:0x800058C0 end:0x80005998
+	extabindex  start:0x800061A0 end:0x800062E4
+	.text       start:0x801BD398 end:0x801C0F40
+	.data       start:0x80252160 end:0x802525A8
+	.bss        start:0x80626D80 end:0x80626DA0
+	.sbss       start:0x8064D438 end:0x8064D458
+	.sdata2     start:0x80650F20 end:0x80650F48
 
 musyx/synthvoice.c:
 	extab       start:0x80005998 end:0x800059E0
