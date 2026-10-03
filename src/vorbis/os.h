@@ -23,14 +23,39 @@
 #ifdef __MWERKS__
 /* Silicon Knights (inferred): ED calls cos/sin/log and rounds each result to float at once (bl cos; frsp), as
    the era's MSL inline float wrappers do (cf. Mario Party 4's math.h). rint stays double.
-   alloca: the decoder (mapping0_inverse, res0, floor0) needs it and MWCC has the intrinsic */
+   alloca: SK's bump allocator on its second pool (0x8022F8C4, name unknown), one argument: proven by
+   codebook.c vorbis_book_decodevs_add, which calls it where upstream uses alloca */
+void *fn_8022F8C4(long size);
+/* SK built libvorbis with live asserts (NDEBUG is set project-wide): info.c's assert(0)s call MSL's
+   __assertion_failed with "0", "info.c" and the line */
+void __assertion_failed(char const *condition, char const *filename, int lineno);
+#  define assert(condition) ((condition) ? ((void)0) : __assertion_failed(#condition, __FILE__, __LINE__))
 inline float cosf(float x) { return (float)cos((double)x); }
 inline float sinf(float x) { return (float)sin((double)x); }
 inline float logf(float x) { return (float)log((double)x); }
+inline float atanf(float x) { return (float)atan((double)x); } /* floor0.c toBARK: float math */
+/* lsp.c: sqrt is MSL's single-precision sqrtf (our MSL math.h declares it for C++ only) */
+inline float sqrtf(float x)
+{
+	const double _half  = .5;
+	const double _three = 3.0;
+	volatile float y;
+	if (x > 0.0f) {
+		double guess = __frsqrte((double)x);
+		guess = _half * guess * (_three - guess * guess * x);
+		guess = _half * guess * (_three - guess * guess * x);
+		guess = _half * guess * (_three - guess * guess * x);
+		y = (float)(x * guess);
+		return y;
+	}
+	return x;
+}
 #  define cos cosf
 #  define sin sinf
+#  define HAVE_ATANF
+#  define HAVE_SQRTF
 #  define HAVE_LOGF
-#  define alloca(x) __alloca(x)
+#  define alloca(x) fn_8022F8C4(x)
 #endif
 
 #ifndef _V_IFDEFJAIL_H_

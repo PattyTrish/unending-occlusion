@@ -21,9 +21,10 @@
 /* Silicon Knights: an arena allocator (0x8022F780, name unknown) that can neither grow nor free a block.
    Inferred from framing.c: ogg_sync_buffer's realloc branch and ogg_sync_clear's free compile to nothing */
 void *fn_8022F780(long size);
-void *calloc(unsigned long, unsigned long);
 #define _ogg_malloc  fn_8022F780
-#define _ogg_calloc  calloc
+/* _ogg_calloc: one call, no memset (sharedbook.c), and SK's macro is unparenthesized: info.c's
+   _ogg_calloc(vc->comments+1, sizeof(...)) allocates comments + 4 bytes in ED */
+#define _ogg_calloc(n, s) fn_8022F780(n * s)
 #define _ogg_realloc(p, n) (p)
 #define _ogg_free(p)
 #else

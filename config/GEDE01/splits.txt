@@ -1116,9 +1116,63 @@ vorbis/framing.c:
 	.data       start:0x802FF8C8 end:0x802FFCC8
 	.sdata2     start:0x80651790 end:0x80651798
 
+vorbis/block.c:
+	.text       start:0x8022F93C end:0x80230128
+	.sdata2     start:0x80651798 end:0x806517B0
+
+vorbis/codebook.c:
+	.text       start:0x80230128 end:0x80230B24
+	.data       start:0x802FFCC8 end:0x802FFCF0
+
+vorbis/floor0.c:
+	.text       start:0x80230B24 end:0x80231318
+	.data       start:0x802FFCF0 end:0x802FFD18
+	.sdata2     start:0x806517B0 end:0x806517E0
+
+vorbis/floor1.c:
+	.text       start:0x80231318 end:0x80231F10
+	.data       start:0x802FFD18 end:0x80300140
+	.sdata2     start:0x806517E0 end:0x806517E8
+
 vorbis/info.c:
-	.text       start:0x80232078 end:0x80232430
+	.text       start:0x80231F10 end:0x802328A4
+	.sdata2     start:0x806517E8 end:0x806517F8
+
+vorbis/lsp.c:
+	.text       start:0x802328A4 end:0x80232C44
+	.sdata2     start:0x806517F8 end:0x80651830
+
+vorbis/mapping0.c:
+	.text       start:0x80232C44 end:0x80233658
+	.data       start:0x80300140 end:0x80300160
+	.sdata2     start:0x80651830 end:0x80651838
+
+vorbis/registry.c:
+	.data       start:0x80300160 end:0x80300170
+	.sdata      start:0x8064C4C8 end:0x8064C4D8
 
 vorbis/mdct.c:
 	.text       start:0x80233658 end:0x802345E4
 	.sdata2     start:0x80651838 end:0x80651860
+
+vorbis/res0.c:
+	.text       start:0x802345E4 end:0x8023570C
+	.data       start:0x80300170 end:0x803001E0
+	.sdata2     start:0x80651860 end:0x80651870
+
+vorbis/sharedbook.c:
+	.text       start:0x8023570C end:0x80236164
+	.bss        start:0x80642C10 end:0x80643C20
+	.sdata2     start:0x80651870 end:0x80651888
+
+vorbis/synthesis.c:
+	.text       start:0x80236164 end:0x80236308
+
+vorbis/time0.c:
+	.text       start:0x80236308 end:0x8023633C
+	.data       start:0x803001E0 end:0x80300200
+	.sdata2     start:0x80651888 end:0x80651890
+
+vorbis/window.c:
+	.text       start:0x8023633C end:0x802364B8
+	.sdata2     start:0x80651890 end:0x806518B0

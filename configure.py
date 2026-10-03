@@ -804,8 +804,20 @@ config.libs = [
         "objects": [
             Object(Matching, "vorbis/bitwise.c"),
             Object(Matching, "vorbis/framing.c"),
+            Object(Matching, "vorbis/block.c"),
+            Object(Matching, "vorbis/codebook.c"),
+            Object(Matching, "vorbis/floor0.c"),
+            Object(Matching, "vorbis/floor1.c"),
+            Object(Matching, "vorbis/info.c"),
+            Object(Matching, "vorbis/lsp.c"),
+            Object(Matching, "vorbis/mapping0.c"),
             Object(Matching, "vorbis/mdct.c"),
-            Object(NonMatching, "vorbis/info.c"),
+            Object(Matching, "vorbis/registry.c"),
+            Object(Matching, "vorbis/res0.c"),
+            Object(Matching, "vorbis/sharedbook.c"),
+            Object(Matching, "vorbis/synthesis.c"),
+            Object(Matching, "vorbis/time0.c"),
+            Object(Matching, "vorbis/window.c"),
         ],
     }
 ]

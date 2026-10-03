@@ -57,11 +57,11 @@ typedef struct vorbis_info{
    analysis/synthesis state.  The DSP state belongs to a specific
    logical bitstream ****************************************************/
 typedef struct vorbis_dsp_state{
-  int analysisp;
+  /* Silicon Knights: no analysisp (encoder flag); pcm_returned at 0x14 */
   vorbis_info *vi;
 
-  float **pcm;
-  float **pcmret;
+  short **pcm;    /* Silicon Knights: 16-bit PCM (blockin converts and clamps) */
+  short **pcmret;
   int      pcm_storage;
   int      pcm_current;
   int      pcm_returned;
@@ -202,7 +202,7 @@ extern int      vorbis_synthesis_headerin(vorbis_info *vi,vorbis_comment *vc,
 extern int      vorbis_synthesis_init(vorbis_dsp_state *v,vorbis_info *vi);
 extern int      vorbis_synthesis(vorbis_block *vb,ogg_packet *op);
 extern int      vorbis_synthesis_blockin(vorbis_dsp_state *v,vorbis_block *vb);
-extern int      vorbis_synthesis_pcmout(vorbis_dsp_state *v,float ***pcm);
+extern int      vorbis_synthesis_pcmout(vorbis_dsp_state *v,short ***pcm);
 extern int      vorbis_synthesis_read(vorbis_dsp_state *v,int samples);
 extern long     vorbis_packet_blocksize(vorbis_info *vi,ogg_packet *op);
 
