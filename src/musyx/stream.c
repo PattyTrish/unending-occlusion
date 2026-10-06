@@ -745,8 +745,6 @@ void sndStreamMixParameterVolume(u32 stid, u8 vol, u8 auxa, u8 auxb) {
 }
 #endif
 
-#pragma push
-#pragma inline_depth(3)
 void sndStreamFrq(u32 stid, u32 frq) {
   u32 i;     // r31
   u16 pitch; // r27
@@ -760,7 +758,7 @@ void sndStreamFrq(u32 stid, u32 frq) {
       hwSetPitch(streamInfo[i].voice, pitch);
     }
 
-    if (streamInfo[i].nextStreamHandle != -1) {
+    if (streamInfo[i].nextStreamHandle != 0xffffffff) {
       sndStreamFrq(streamInfo[i].nextStreamHandle, frq);
     }
   } else {
@@ -769,7 +767,6 @@ void sndStreamFrq(u32 stid, u32 frq) {
 
   hwEnableIrq();
 }
-#pragma pop
 
 #if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 2)
 void sndStreamLPFParameter(u32 stid, u32 enable, u32 frq) {

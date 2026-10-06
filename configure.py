@@ -686,7 +686,7 @@ config.libs = [
             Object(Matching, "musyx/synth_dbtab.c"),
             Object(Matching, "musyx/synth_adsr.c"),
             Object(Matching, "musyx/synth_vsamples.c"),
-            Object(NonMatching, "musyx/s_data.c"),
+            Object(Matching, "musyx/s_data.c"),
             Object(Matching, "musyx/hw_dspctrl.c"),
             Object(NonMatching, "musyx/hw_volconv.c"),
             Object(Matching, "musyx/snd3d.c"),
@@ -804,6 +804,7 @@ config.libs = [
         "objects": [
             Object(Matching, "vorbis/bitwise.c"),
             Object(Matching, "vorbis/framing.c"),
+            Object(Matching, "vorbis/sk_alloc.c"),
             Object(Matching, "vorbis/block.c"),
             Object(Matching, "vorbis/codebook.c"),
             Object(Matching, "vorbis/floor0.c"),
@@ -818,6 +819,7 @@ config.libs = [
             Object(Matching, "vorbis/synthesis.c"),
             Object(Matching, "vorbis/time0.c"),
             Object(Matching, "vorbis/window.c"),
+            Object(NonMatching, "vorbis/sk_streamer.c", mw_version=mw_version_game, extra_cflags=["-i libs/dolphin/include"]),
         ],
     }
 ]

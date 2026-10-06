@@ -43,6 +43,9 @@ static u32 aramWrite; // size: 0x4
 static u32 aramStream;                        // size: 0x4
 static void* (*aramUploadCallback)(u32, u32); // size: 0x4
 static u32 aramUploadChunkSize;               // size: 0x4
+/* Silicon Knights: when set, aramUploadData hands each request to this instead of ARQPostRequest
+   (set from sk/sd_debug.c; name unknown) */
+static void (*lbl_8064D4FC)(ARQRequest*); // size: 0x4
 
 static ARAMTransferQueue aramQueueLo;
 static ARAMTransferQueue aramQueueHi;
@@ -60,9 +63,10 @@ static void aramQueueInit() {
 }
 
 static void aramQueueCallback(unsigned long ptr) {
-  u32 i;                        // r31
-  ARQRequest* arq;              // r29
-  ARAMTransferQueue* aramQueue; // r30
+  ARQRequest* arq;
+  ARAMTransferJob* job;
+  ARAMTransferQueue* aramQueue;
+  u32 i;
 
   arq = (ARQRequest*)ptr;
   if (arq->priority == 1) {
@@ -71,14 +75,24 @@ static void aramQueueCallback(unsigned long ptr) {
     aramQueue = &aramQueueLo;
   }
 
-  for (i = 0; i < 16; ++i) {
-    if (arq == &aramQueue->queue[i].arq && aramQueue->queue[i].callback) {
-      aramQueue->queue[i].callback(aramQueue->queue[i].user);
+  for (i = 0, job = aramQueue->queue; i < 16; ++job, ++i) {
+    if (arq == &job->arq && job->callback) {
+      job->callback(aramQueue->queue[i].user);
     }
   }
 
   --aramQueue->valid;
 }
+
+/* Silicon Knights: installs the upload hook (0x801CD504, name unknown) */
+void fn_801CD504(void (*hook)(ARQRequest*)) {
+  int old = OSDisableInterrupts();
+  lbl_8064D4FC = hook;
+  OSRestoreInterrupts(old);
+}
+
+/* Silicon Knights: aramQueueCallback for the hook to complete a request with (0x801CD538, name unknown) */
+void fn_801CD538(unsigned long ptr) { aramQueueCallback(ptr); }
 
 void aramUploadData(void* mram, unsigned long aram, unsigned long len, unsigned long highPrio,
                     void (*callback)(size_t), unsigned long user) {
@@ -99,14 +113,18 @@ void aramUploadData(void* mram, unsigned long aram, unsigned long len, unsigned 
       aramQueue->queue[aramQueue->write].arq.callback = aramQueueCallback;
       aramQueue->queue[aramQueue->write].callback = callback;
       aramQueue->queue[aramQueue->write].user = user;
-      ARQPostRequest(&aramQueue->queue[aramQueue->write].arq,
-                     aramQueue->queue[aramQueue->write].arq.owner,
-                     aramQueue->queue[aramQueue->write].arq.type,
-                     aramQueue->queue[aramQueue->write].arq.priority,
-                     aramQueue->queue[aramQueue->write].arq.source,
-                     aramQueue->queue[aramQueue->write].arq.dest,
-                     aramQueue->queue[aramQueue->write].arq.length,
-                     aramQueue->queue[aramQueue->write].arq.callback);
+      if (lbl_8064D4FC != NULL) {
+        lbl_8064D4FC(&aramQueue->queue[aramQueue->write].arq);
+      } else {
+        ARQPostRequest(&aramQueue->queue[aramQueue->write].arq,
+                       aramQueue->queue[aramQueue->write].arq.owner,
+                       aramQueue->queue[aramQueue->write].arq.type,
+                       aramQueue->queue[aramQueue->write].arq.priority,
+                       aramQueue->queue[aramQueue->write].arq.source,
+                       aramQueue->queue[aramQueue->write].arq.dest,
+                       aramQueue->queue[aramQueue->write].arq.length,
+                       aramQueue->queue[aramQueue->write].arq.callback);
+      }
       ++aramQueue->valid;
       aramQueue->write = (aramQueue->write + 1) % 16;
       OSRestoreInterrupts(old);
@@ -170,6 +188,7 @@ unsigned long aramGetFirstUserAddress() { return ARGetBaseAddress() + 0x500; }
 unsigned long aramGetUserBytes(unsigned long totalBytes) { return totalBytes - 0x500; }
 #endif
 
+/*
 void aramSetUploadCallback(void* (*callback)(unsigned long, unsigned long),
                            unsigned long chunckSize) {
   unsigned long acs; // r30
@@ -182,6 +201,7 @@ void aramSetUploadCallback(void* (*callback)(unsigned long, unsigned long),
 
   aramUploadCallback = callback;
 }
+*/
 
 #if MUSY_VERSION >= MUSY_VERSION_CHECK(2, 0, 2)
 u32 aramGetAvailableBytes(ARAMInfo* ai) {

@@ -71,17 +71,29 @@ static MEM_DATA* GetPoolAddr(u16 id, MEM_DATA* m) {
 }
 
 static MEM_DATA* GetMacroAddr(u16 id, POOL_DATA* pool) {
-  return pool == NULL ? NULL : GetPoolAddr(id, (MEM_DATA*)((u8*)pool + pool->macroOff));
+  if (pool == NULL) {
+    return NULL;
+  }
+  return GetPoolAddr(id, (MEM_DATA*)((u8*)pool + pool->macroOff));
 }
 
 static MEM_DATA* GetCurveAddr(u16 id, POOL_DATA* pool) {
-  return pool == NULL ? NULL : GetPoolAddr(id, (MEM_DATA*)((u8*)pool + pool->curveOff));
+  if (pool == NULL) {
+    return NULL;
+  }
+  return GetPoolAddr(id, (MEM_DATA*)((u8*)pool + pool->curveOff));
 }
 static MEM_DATA* GetKeymapAddr(u16 id, POOL_DATA* pool) {
-  return pool == NULL ? NULL : GetPoolAddr(id, (MEM_DATA*)((u8*)pool + pool->keymapOff));
+  if (pool == NULL) {
+    return NULL;
+  }
+  return GetPoolAddr(id, (MEM_DATA*)((u8*)pool + pool->keymapOff));
 }
 static MEM_DATA* GetLayerAddr(u16 id, POOL_DATA* pool) {
-  return pool == NULL ? NULL : GetPoolAddr(id, (MEM_DATA*)((u8*)pool + pool->layerOff));
+  if (pool == NULL) {
+    return NULL;
+  }
+  return GetPoolAddr(id, (MEM_DATA*)((u8*)pool + pool->layerOff));
 }
 
 static void InsertData(u16 id, void* data, u8 dataType, u32 remove) {
@@ -235,9 +247,11 @@ static void InsertFXTab(unsigned short gid, FX_DATA* fd) { dataInsertFX(gid, fd-
 
 static void RemoveFXTab(unsigned short gid) { dataRemoveFX(gid); }
 
+/*
 void sndSetSampleDataUploadCallback(void* (*callback)(u32, u32), u32 chunckSize) {
   hwSetSaveSampleCallback(callback, chunckSize);
 }
+*/
 
 bool sndPushGroup(void* prj_data, u16 gid, void* samples, void* sdir, void* pool) {
   GROUP_DATA* g; // r31

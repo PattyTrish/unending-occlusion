@@ -1116,6 +1116,10 @@ vorbis/framing.c:
 	.data       start:0x802FF8C8 end:0x802FFCC8
 	.sdata2     start:0x80651790 end:0x80651798
 
+vorbis/sk_alloc.c:
+	.text       start:0x8022F700 end:0x8022F93C
+	.sbss       start:0x8064DC08 end:0x8064DC30
+
 vorbis/block.c:
 	.text       start:0x8022F93C end:0x80230128
 	.sdata2     start:0x80651798 end:0x806517B0
@@ -1176,3 +1180,10 @@ vorbis/time0.c:
 vorbis/window.c:
 	.text       start:0x8023633C end:0x802364B8
 	.sdata2     start:0x80651890 end:0x806518B0
+
+vorbis/sk_streamer.c:
+	.text       start:0x802364B8 end:0x80237EDC
+	.rodata     start:0x8023B8E0 end:0x8023B927
+	.bss        start:0x80643C20 end:0x8064A580
+	.sdata      start:0x8064C4D8 end:0x8064C4DC
+	.sbss       start:0x8064DC30 end:0x8064DC7C
