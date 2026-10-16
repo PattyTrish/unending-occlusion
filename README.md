@@ -103,6 +103,10 @@ AI Policy
 
 Generated or otherwise, you are responsible for the code you output!
 
-I've personally been using it to help understand this whole process, then building up AI-driven automation as I learn first.
+I've personally been using it to help understand this whole process, then building up AI-driven automation as I learn first. So far, I have used it to accelerate matching known libraries. No need to reinvent the wheel here, I figure.
+
+Human-made notes are available at `docs/decomp-notes/`.
+
+The actual game + engine code will be going a lot slower, as this is a whole new set of unknown source code that I want to understand, which will form the main contribution to the community.
 
 AI is not particularly banned or anything, it's just not an excuse to skimp on code quality. No slop allowed!
